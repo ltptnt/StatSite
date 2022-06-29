@@ -1,4 +1,0 @@
-django
-numpy
-random
-matplotlib
