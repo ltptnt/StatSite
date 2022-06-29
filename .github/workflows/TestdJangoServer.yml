@@ -1,4 +1,4 @@
-name: Django CI
+name: Check Django
 
 on:
   push:
@@ -13,7 +13,7 @@ jobs:
     strategy:
       max-parallel: 4
       matrix:
-        python-version: [3.8, 3.9, 3.10.5]
+        python-version: [3.7, 3.8, 3.9, 3.10.5]
 
     steps:
     - uses: actions/checkout@v3
@@ -27,4 +27,4 @@ jobs:
         pip install -r requirements.txt
     - name: Run Server
       run: |
-        python manage.py runserver
+        python manage.py check
