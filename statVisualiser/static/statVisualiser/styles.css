@@ -79,7 +79,7 @@ h4 {
 }
 
 .styled-table tbody tr:nth-of-type(even) {
-    background-color: #f3f3f3;
+    background-color: #c9c9c9;
 }
 
 .styled-table tbody tr:last-of-type {
