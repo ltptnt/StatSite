@@ -15,7 +15,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
@@ -27,17 +26,16 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
-    'statVisualiser.apps.StatvisualiserConfig',     #The Stat Visualiser app
-    'django.contrib.admin',                         #The admin site.
-    'django.contrib.auth',                          #An authentication system.
-    'django.contrib.contenttypes',                  #A framework for content types.
-    'django.contrib.sessions',                      #A session framework.
-    'django.contrib.messages',                      #A messaging framework.
-    'django.contrib.staticfiles',                   #A framework for managing static files.
+    'statVisualiser.apps.StatVisualiserConfig',  # The Stat Visualiser app
+    'django.contrib.admin',  # The admin site.
+    'django.contrib.auth',  # An authentication system.
+    'django.contrib.contenttypes',  # A framework for content types.
+    'django.contrib.sessions',  # A session framework.
+    'django.contrib.messages',  # A messaging framework.
+    'django.contrib.staticfiles',  # A framework for managing static files.
 ]
 
 MIDDLEWARE = [
@@ -70,7 +68,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'statsite.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
@@ -80,7 +77,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -100,7 +96,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
@@ -111,7 +106,6 @@ TIME_ZONE = 'Australia/Brisbane'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/

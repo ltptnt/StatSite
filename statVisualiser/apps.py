@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class StatvisualiserConfig(AppConfig):
+class StatVisualiserConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'statVisualiser'

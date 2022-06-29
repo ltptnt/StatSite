@@ -16,17 +16,6 @@ def index(request):
     return HttpResponse(template.render(context, request))
 
 
-
-
-
-
-
-
-
-
-
-
-
 """
 def index(request):
     graph = ""
