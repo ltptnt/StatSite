@@ -1,0 +1,95 @@
+body {
+    font-family:'Open Sans', sans-serif;
+    font-size:14px;
+    margin: auto;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family:'Open Sans', sans-serif;
+}
+
+h1 {
+    line-height:50px;
+    font-weight:900;
+    font-size:40px;
+    text-transform:uppercase;
+    color: #DCFDFDFF;
+    margin: auto;
+}
+
+h2 {
+    line-height:50px;
+}
+h3 {
+    line-height:30px;
+    padding-bottom:20px;
+}
+h4 {
+    padding-top:10px;
+    line-height:40px;
+    padding-bottom:20px;
+}
+
+.graph {
+    margin: auto;
+    text-align: center;
+
+}
+
+.centered {
+    text-align: center;
+}
+
+.database {
+    margin: auto;
+    background: #dcfdfd;
+    padding-bottom: 30px;
+}
+
+.picker {
+    margin: auto;
+    padding-top: 15px;
+}
+
+.title_bar {
+    background: black;
+    padding-top: 30px;
+    padding-bottom: 35px;
+    margin-bottom: -20px;
+
+}
+
+.styled-table {
+    text-align: center;
+    border-collapse: collapse;
+    margin-left:auto;
+    margin-right:auto;
+    min-width: 200px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    background: #ffffff;
+}
+
+.styled-table thead tr {
+    background-color: #000000;
+    color: #ffffff;
+}
+
+.styled-table tbody tr {
+    border-bottom: 1px solid #ffffff;
+}
+
+.styled-table tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+
+.styled-table tbody tr:last-of-type {
+    border-bottom: 2px solid #000000;
+}
+
+form {
+    margin: auto;
+    text-align: center;
+}
+
+
+

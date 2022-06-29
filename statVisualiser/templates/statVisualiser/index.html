@@ -1,0 +1,42 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Statistics Simulator</title>
+        <link rel="stylesheet" href="{% static 'statVisualiser/styles.css' %}">
+    </head>
+    <body>
+        <div class="title_bar">
+        <h1>  Stats & Stuff</h1>
+    </div>
+        <div class="database">
+            <h2 class="centered">Distributions</h2>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Equation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for x in dist %}
+                    <tr>
+                        <td>{{ x.name }}</td>
+                        <td>{{ x.supported_region }}</td>
+                        <td>{{ x.param }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="picker">
+                <h2 class="centered">Select a Distribution</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ picker }}
+                    <input type="submit" value="Submit">
+                </form>
+            </div>
+        </div>
+    </body>
+</html>
