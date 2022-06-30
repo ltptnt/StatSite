@@ -69,7 +69,31 @@ class Poisson(Variable):
     def trial(self) -> int:
         found = False
         trial = rd.random()
-        while not found:
-            val = 0
-            if np.abs(self.cdf(val) - trial) < 0.0001:
+        val=0
+        if 0<=cdf(val)<cdf(val+1):
+            return val
+        val+=1
+        while(not found):
+            if cdf(val-1)<=cdf(val)<cdf(val+1):
                 return val
+            val+=1
+
+class Bernoulli(Variable):
+    continuous = False
+    def __init__(self, prob):
+        self.prob = prob
+
+    def get_region(self):
+        return "{0,1}"
+
+    def trial(self):
+        if rd.random() <= self.prob:
+            return 1
+        return 0
+
+    def pdf(self, x: int):
+        return self.prob ** x * (1 - self.prob) ** (1 - x)
+
+    def cdf(self, x: int):
+        return x
+
