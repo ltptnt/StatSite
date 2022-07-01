@@ -28,6 +28,9 @@ class Variable(ABC):
     @abstractmethod
     def trial(self) -> float:
         pass
+    @abstractmethod
+    def __str__(self):
+        pass
 
     def graph_pdf(self, min: float, max: float, **kwargs):
         if self.continuous:
@@ -51,9 +54,9 @@ class Variable(ABC):
 
 
 class Exponential(Variable):
+    continuous = True
     def __init__(self, rate: float):
         self.rate = rate
-        continuous = True
 
     def get_region(self):
         return "(0,∞)"
@@ -66,6 +69,9 @@ class Exponential(Variable):
 
     def trial(self) -> float:
         return -np.log(-rd.random() + 1) / self.rate
+
+    def __str__(self):
+        return "Exp({0})".format(self.rate)
 
 
 class Poisson(Variable):
@@ -89,18 +95,21 @@ class Poisson(Variable):
         val = 0
         next = self.cdf(val+1)
         current = self.cdf(val)
-        old=0
-        if old <= current < next:
+        old = 0
+        if current <= trial < self.cdf(val+1):
             return val
         val += 1
         "Loop depth here could be a problem"
         while not found:
-            old=current
-            current=next
-            next=self.cdf(val+1)
-            if old <= current < next:
+            old = current
+            current = next
+            next = self.cdf(val+1)
+            if old <= trial < next:
                 return val
             val += 1
+
+    def __str__(self):
+        return "Poi({0})".format(self.rate)
 
 
 class Bernoulli(Variable):
@@ -122,42 +131,85 @@ class Bernoulli(Variable):
     def cdf(self, x: int):
         return x
 
+    def __str__(self):
+        return "Ber({0})".format(self.prob)
+
+
 class Binomial(Variable):
     continuous = False
-    def __init__(self,trials,prob):
+
+    def __init__(self, trials: int, prob: float):
         self.prob = prob
-        self.trials=prob
+        self.trials = trials
+
+    def get_region(self):
+        return "{0,...,{0}}".format(self.trials)
 
     def trial(self):
         event = Bernoulli(self.prob)
-        return sum([event.trial() for i in range(0,self.trials)])
+        return sum([event.trial() for i in range(0, self.trials)])
 
-    def pdf(self, x):
-        return math.comb(self.trials, x) * (self.rate) ** x * (1 - self.rate) ** (self.trials-x)
+    def pdf(self, x: int):
+        return math.comb(self.trials, x) * self.prob ** x * (1 - self.prob) ** (self.trials-x)
 
-class Convolution(object):
-    def __init__(self, var1:Variable, var2:Variable):
-        self.var1=var1
-        self.var2=var2
-        continuous = var1.continuous or var2.continuous
+    def __str__(self):
+        return "Bin({0}, {1})".format(self.trials,self.prob)
 
-    def graph_supported_region(self):
-        var1_trials = [self.var1.trial() for i in range(10**5)]
-        var2_trials = [self.var2.trial() for i in range(10**5)]
-        convolution_trials=[var1_trials[i]*var2_trials[i] for i in var1_trials]
 
-        fig, axes = plt.subplot(2)
-        fig.suptitle("work")
-        axes[0].scatter(convolution_trials,var1_trials)
-        axes[1].scatter(convolution_trials,var2_trials)
-        print(fig)
+def graph_supported_region(var1, var2):
+    #Generating the supported region through inverse-transform processes
+    var1_trials = [var1.trial() for i in range(10**5)]
+    var2_trials = [var2.trial() for i in range(10**5)]
+    convolution_trials = [var1_trials[i]*var2_trials[i] for i in range(len(var1_trials))]
 
+    #Creating the figures used
+    fig1 = plt.figure(figsize=(8, 8))
+    fig1.suptitle("Density plot and cross of the two variables.")
+    fig, axs = plt.subplots(2, sharex="col")
+    fig.suptitle("Heaps of data")
+    #Edits the ratio of histograms to scatter, the number of graphs etc
+    gs = fig1.add_gridspec(2, 2, width_ratios=(7, 2), height_ratios=(2, 7),
+                          left=0.1, right=0.9, bottom=0.1, top=0.9,
+                          wspace=0.05, hspace=0.05)
+    # Settings to set the scope of the plot
+    var1_lim, var1_max = min(var1_trials), max(var1_trials)
+    var2_lim, var2_max = min(var2_trials), max(var2_trials)
+
+    # Adding the plots
+    # The marginal dist vs the convolution for each variable
+    axs[0].scatter(convolution_trials, var1_trials)
+    axs[0].set_ylabel(str(var1))
+    axs[1].scatter(convolution_trials, var2_trials)
+    axs[1].set_ylabel(str(var2))
+    axs[1].set_xlabel("Convolution of {0}".format("{0} x {1}".format(str(var1),str(var2))))
+    fig.show()
+    # The density of each variable alongside the convolution
+    ax = fig1.add_subplot(gs[1, 0])
+    ax_histx = fig1.add_subplot(gs[0, 0], sharex=ax)
+    ax_histy = fig1.add_subplot(gs[1, 1], sharey=ax)
+    ax_histx.tick_params(axis="x", labelbottom=False)
+    ax_histy.tick_params(axis="y", labelleft=False)
+
+    ax.set_xlim(var1_lim - 1, var1_max + 1)
+    ax.set_ylim(var2_lim - 1, var2_max + 1)
+
+    ax.scatter(var1_trials, var2_trials)
+    ax_histx.hist(var1_trials, density=True)
+    ax_histy.hist(var2_trials, density=True, orientation="horizontal")
+
+    #Setting the limits
+    axs[0].set_xlim(min(convolution_trials)-1, max(convolution_trials) + 1)
+    axs[0].set_ylim(var1_lim - 1, var1_max + 1)
+    axs[1].set_ylim(var2_lim - 1, var2_max + 1)
+
+
+    fig1.show()
+    return fig, fig1
 
 def main():
-    a = Poisson(2)
-    b = Bernoulli(0.5)
-    c = Convolution(a,b)
-    c.graph_supported_region()
+    a = Exponential(2)
+    b = Binomial(4, 0.5)
+    graph_supported_region(a,b)
 
 
 if __name__ == '__main__':
