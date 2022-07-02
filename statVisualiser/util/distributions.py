@@ -49,7 +49,6 @@ class Variable(ABC):
         else:
             x1 = [i for i in range(int(minim), int(maxim) + 1)]
             pmf = [self.pdf(i) for i in x1]
-            print(pmf)
             bins = [i for i in range(int(minim), int(maxim) + 2)]
             ax = fig.add_subplot()
             ax.bar(x1, pmf, width=1, **kwargs)
@@ -67,7 +66,6 @@ class Variable(ABC):
             return fig
         else:
             return self.graph_pdf(fig, minim, maxim, cumulative=True)
-
 
 
 class Exponential(Variable):
