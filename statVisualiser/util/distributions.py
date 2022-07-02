@@ -6,6 +6,7 @@ import scipy.stats as st
 from abc import ABC, abstractmethod, abstractproperty
 from mpl_toolkits import mplot3d
 
+DP = 3
 """
 Abstract class representing the basic methods a distribution needs
 """
@@ -37,25 +38,36 @@ class Variable(ABC):
     def __str__(self):
         pass
 
-    def graph_pdf(self, min: float, max: float, **kwargs):
+# Additional functionality, specifying what tile to add the pdf to in the case of multiple graphs
+    def graph_pdf(self, fig: plt.Figure, minim: float, maxim: float, **kwargs):
         if self.continuous:
-            x1 = np.linspace(min, max, 10 ** 5)
+            x1 = np.linspace(minim, maxim, 10 ** 5)
             pdf = [self.pdf(i) for i in x1]
-            return plt.plot(x1, pdf, **kwargs)
+            ax = fig.add_subplot()
+            ax.plot(x1, pdf, **kwargs)
+            return fig
         else:
-            x1 = [i for i in range(min, max)]
+            x1 = [i for i in range(int(minim), int(maxim) + 1)]
             pmf = [self.pdf(i) for i in x1]
-            return plt.scatter(x1, pmf, **kwargs)
+            print(pmf)
+            bins = [i for i in range(int(minim), int(maxim) + 2)]
+            ax = fig.add_subplot()
+            ax.bar(x1, pmf, width=1, **kwargs)
+            ax.set_title("PMF of {}".format(str(self)))
+            ax.set_xlabel("x")
+            ax.set_ylabel("Probability X=x")
+            return fig
 
-    def graph_cdf(self, minim: float, maxim: float, **kwargs):
+    def graph_cdf(self, fig: plt.Figure, minim: float, maxim: float, **kwargs):
         if self.continuous:
             x1 = np.linspace(minim, maxim, 10 ** 5)
             cdf = [self.cdf(i) for i in x1]
-            return plt.plot(x1, cdf, **kwargs)
+            ax = fig.add_subplot()
+            ax.plot(x1, cdf, **kwargs)
+            return fig
         else:
-            x1 = [i for i in range(np.floor(minim), np.ceil(maxim) + 1)]
-            cdf = [self.cdf(i) for i in x1]
-            return plt.scatter(x1, cdf, **kwargs)
+            return self.graph_pdf(fig, minim, maxim, cumulative=True)
+
 
 
 class Exponential(Variable):
@@ -64,7 +76,7 @@ class Exponential(Variable):
         self.rate = rate
 
     def get_region(self):
-        return "(0,∞)"
+       return 0, 10**6
 
     def pdf(self, x: float):
         return 0 if x <= 0 else self.rate * np.e ** (-self.rate * x)
@@ -76,7 +88,7 @@ class Exponential(Variable):
         return -np.log(-rd.random() + 1) / self.rate
 
     def __str__(self):
-        return "Exp({0})".format(self.rate)
+        return "Exp({0})".format(round(self.rate, DP))
 
 
 class Normal(Variable):
@@ -87,7 +99,7 @@ class Normal(Variable):
         self.sd = deviation
 
     def get_region(self):
-        return "()"
+        return 10**6, 10**6
 
     def pdf(self, x: float) -> float:
         return 1/(self.sd*np.sqrt(2*np.pi)) * math.e**(-1/2*((x-self.mean)/self.sd)**2)
@@ -100,7 +112,7 @@ class Normal(Variable):
         return st.norm.rvs(loc=self.mean, scale=self.sd)
 
     def __str__(self):
-        return "N({0},{1}\u00b2)".format(self.mean, self.sd)
+        return "N({0},{1}\u00b2)".format(round(self.mean, 3), round(self.sd, DP))
 
 
 class Poisson(Variable):
@@ -110,7 +122,7 @@ class Poisson(Variable):
         self.rate = rate
 
     def get_region(self):
-        return "(0,1,..,∞) for x in the integers"
+        return 0, self.rate * 10**5
 
     def pdf(self, x: int):
         if x % 1 != 0 or x < 0:
@@ -138,16 +150,17 @@ class Poisson(Variable):
             val += 1
 
     def __str__(self):
-        return "Poi({0})".format(self.rate)
+        return "Poi({0})".format(round(self.rate, DP))
 
 
 class Bernoulli(Variable):
     continuous = False
+
     def __init__(self, prob):
         self.prob = prob
 
     def get_region(self):
-        return "{0,1}"
+        return 0, 1
 
     def trial(self):
         if rd.random() <= self.prob:
@@ -172,7 +185,7 @@ class Binomial(Variable):
         self.trials = trials
 
     def get_region(self):
-        return "{0,...,{0}}".format(self.trials)
+        return 0, self.trials
 
     def trial(self):
         event = Bernoulli(self.prob)
@@ -182,7 +195,7 @@ class Binomial(Variable):
         return math.comb(self.trials, x) * self.prob ** x * (1 - self.prob) ** (self.trials-x)
 
     def __str__(self):
-        return "Bin({0}, {1})".format(self.trials,self.prob)
+        return "Bin({0}, {1})".format(self.trials, round(self.prob,DP))
 
 
 def graph_supported_region(var1, var2):
@@ -226,9 +239,8 @@ def graph_supported_region(var1, var2):
         ax_histx.hist(var1_trials, density=True, bins=10**5)
     else:
         ax_histx.hist(var1_trials, density=True)
-
     if var2.continuous:
-        ax_histy.hist(var2_trials, density=True, orientation="horizontal", bin=10**5)
+        ax_histy.hist(var2_trials, density=True, orientation="horizontal", bins=10**5)
     else:
         ax_histy.hist(var2_trials, density=True, orientation="horizontal")
 
@@ -260,8 +272,8 @@ def convolution3d(var1,var2):
 def main():
     a = Normal(0, 1)
     b = Exponential(1)
-    c = convolution3d(a, b)
-    c.show()
+    c = a.graph_cdf(0,1)
+    print(c)
 
 
 if __name__ == '__main__':
