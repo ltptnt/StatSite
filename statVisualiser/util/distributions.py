@@ -1,10 +1,10 @@
 import math
 import random as rd
-import numpy as np
+from abc import ABC, abstractmethod
+
 import matplotlib.pyplot as plt
+import numpy as np
 import scipy.stats as st
-from abc import ABC, abstractmethod, abstractproperty
-from mpl_toolkits import mplot3d
 
 DP = 3
 """
@@ -39,33 +39,57 @@ class Variable(ABC):
         pass
 
 # Additional functionality, specifying what tile to add the pdf to in the case of multiple graphs
-    def graph_pdf(self, fig: plt.Figure, minim: float, maxim: float, **kwargs):
+    """
+    Notes for functionality:
+    If just inputting min and max, you get a figure with the axes.
+    However, if you want to add it to an existing figure (e.g a collection of graphs), \n
+    input the figure object and specify its geometry.
+    - accepts matplotlib kwargs.
+    - Continuous variables use a pyplot plot
+    - Discrete variables use a bar plot
+    Requires the figure to have a gridspec. If triple digit specifications are entered, a new gridspec is made \n
+    and the graph is plotted to the requested square.
+    """
+    def graph_pdf(self, minim: float, maxim: float, fig=None, geometry=None, titles=False, **kwargs):
+        if geometry is None:
+            geometry = 111
+        if fig is None:
+            fig = plt.figure()
+        ax = fig.add_subplot(geometry)
+        if titles:
+            ax.set_xlabel(str(self))
+            ax.set_ylabel("Probability X=x")
         if self.continuous:
             x1 = np.linspace(minim, maxim, 10 ** 5)
             pdf = [self.pdf(i) for i in x1]
-            ax = fig.add_subplot()
             ax.plot(x1, pdf, **kwargs)
-            return fig
         else:
             x1 = [i for i in range(int(minim), int(maxim) + 1)]
             pmf = [self.pdf(i) for i in x1]
-            bins = [i for i in range(int(minim), int(maxim) + 2)]
-            ax = fig.add_subplot()
             ax.bar(x1, pmf, width=1, **kwargs)
-            ax.set_title("PMF of {}".format(str(self)))
-            ax.set_xlabel("x")
-            ax.set_ylabel("Probability X=x")
-            return fig
+        return fig
 
-    def graph_cdf(self, fig: plt.Figure, minim: float, maxim: float, **kwargs):
+    def graph_cdf(self, minim: float, maxim: float, fig=None, geometry=None, titles=False,  **kwargs):
+        if fig is None:
+            fig = plt.figure()
+        if geometry is None:
+            geometry = 111
+        ax = fig.add_subplot(geometry)
+        if titles:
+            ax.set_xlabel(str(self))
+            ax.set_ylabel("Probability X \u2264 x ")
         if self.continuous:
             x1 = np.linspace(minim, maxim, 10 ** 5)
             cdf = [self.cdf(i) for i in x1]
-            ax = fig.add_subplot()
             ax.plot(x1, cdf, **kwargs)
-            return fig
         else:
-            return self.graph_pdf(fig, minim, maxim, cumulative=True)
+            bot, top = self.get_region()
+            cdf = [self.pdf(bot)]
+            x1 = [i for i in range(bot, int(maxim)+1)]
+            for i in range(1, len(x1)):
+                cdf.append(cdf[i-1]+self.pdf(i))
+            ax.bar(x1, cdf, width=1, **kwargs)
+        return fig
 
 
 class Exponential(Variable):
@@ -87,6 +111,29 @@ class Exponential(Variable):
 
     def __str__(self):
         return "Exp({0})".format(round(self.rate, DP))
+
+
+class Uniform(Variable):
+    continuous = True
+
+    def __init__(self, minim, maxim):
+        self.max = maxim
+        self.min = minim
+
+    def get_region(self):
+        return self.min, self.max
+
+    def pdf(self, x: float) -> float:
+        return 1/(self.max-self.min) if self.min <= x <= self.max else 0
+
+    def cdf(self, x: float)-> float:
+        return (x-self.min)/(self.max-self.min) if self.min <= x <= self.max else 0
+
+    def trial(self) -> float:
+        return rd.uniform(self.min, self.max)
+
+    def __str__(self):
+        return "U[{}, {}]".format(self.min, self.max)
 
 
 class Normal(Variable):
@@ -198,8 +245,8 @@ class Binomial(Variable):
 
 def graph_supported_region(var1, var2):
     #Generating the supported region through inverse-transform processes
-    var1_trials = [var1.trial() in range(10**5)]
-    var2_trials = [var2.trial() in range(10**5)]
+    var1_trials = [var1.trial() for _ in range(10**5)]
+    var2_trials = [var2.trial() for _ in range(10**5)]
     convolution_trials = [var1_trials[i]*var2_trials[i] for i in range(len(var1_trials))]
 
     #Creating the figures used
@@ -234,11 +281,11 @@ def graph_supported_region(var1, var2):
     ax.set_ylim(var2_lim, var2_max + 1)
 
     if var1.continuous:
-        ax_histx.hist(var1_trials, density=True, bins=10**5)
+        ax_histx.hist(var1_trials, density=True, bins=10**3)
     else:
         ax_histx.hist(var1_trials, density=True)
     if var2.continuous:
-        ax_histy.hist(var2_trials, density=True, orientation="horizontal", bins=10**5)
+        ax_histy.hist(var2_trials, density=True, orientation="horizontal", bins=10**3)
     else:
         ax_histy.hist(var2_trials, density=True, orientation="horizontal")
 
@@ -268,11 +315,16 @@ def convolution3d(var1,var2):
 
 
 def main():
-    a = Normal(0, 1)
-    b = Exponential(1)
-    c = a.graph_cdf(0,1)
-    print(c)
-
+   # a = Normal(0, 1)
+    #b = Exponential(1/10)
+   # fig, fig1 = graph_supported_region(a, b)
+   # fig.show()
+    #fig1.show()
+    a = Uniform(1, 2)
+    b = Uniform(2, 4)
+    a.graph_pdf(0, 3,titles=True).show()
+    b.graph_cdf(0, 5, titles=True).show()
+    graph_supported_region(a, b)
 
 if __name__ == '__main__':
     main()

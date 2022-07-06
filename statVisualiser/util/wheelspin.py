@@ -8,12 +8,12 @@ def wheel_spin(bet: float, variable: dist.Variable) -> float:
 
 
 def main() -> list:
-    variable = dist.Bernoulli(0.51)
+    variable = dist.Bernoulli(0.75)
     bank = 100
     seq = [bank]
-    iterations = 1000
+    iterations = 100
     for n in range(1, iterations):
-        bet = bank / 8
+        bet = 2/3*bank
         bank -= bet
         bank += (wheel_spin(bet, variable))
         seq.append(bank)
