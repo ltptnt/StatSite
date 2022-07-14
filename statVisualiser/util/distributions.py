@@ -181,16 +181,15 @@ class Poisson(Variable):
         val = 0
         next = self.cdf(val+1)
         current = self.cdf(val)
-        old = 0
+
         if current <= trial < self.cdf(val+1):
             return val
         val += 1
         "Loop depth here could be a problem"
         while not found:
-            old = current
             current = next
             next = self.cdf(val+1)
-            if old <= trial < next:
+            if current <= trial < next:
                 return val
             val += 1
 
@@ -216,7 +215,7 @@ class Bernoulli(Variable):
         return self.prob ** x * (1 - self.prob) ** (1 - x)
 
     def cdf(self, x: int):
-        return x
+        return x if x in [0, 1] else 0
 
     def __str__(self):
         return "Ber({0})".format(self.prob)
@@ -320,11 +319,13 @@ def main():
    # fig, fig1 = graph_supported_region(a, b)
    # fig.show()
     #fig1.show()
-    a = Uniform(1, 2)
-    b = Uniform(2, 4)
-    a.graph_pdf(0, 3,titles=True).show()
-    b.graph_cdf(0, 5, titles=True).show()
-    graph_supported_region(a, b)
+    #a = Uniform(1, 2)
+    #b = Uniform(2, 4)
+    #a.graph_pdf(0, 3,titles=True).show()
+    #b.graph_cdf(0, 5, titles=True).show()
+    #graph_supported_region(a, b)
+    a=Bernoulli(0.5)
+    print(a.cdf(1),a.cdf(2))
 
 if __name__ == '__main__':
     main()
