@@ -1,9 +1,9 @@
 from django import forms
-from .models import Distributions
+from .models import Distribution
 
 
 class Picker(forms.Form):
-    Equation = forms.ModelChoiceField(queryset=Distributions.objects.all(), required=True)
+    Equation = forms.ModelChoiceField(queryset=Distribution.objects.all(), required=True)
     Min = forms.IntegerField()
     Max = forms.IntegerField()
 

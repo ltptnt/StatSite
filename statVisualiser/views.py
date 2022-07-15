@@ -1,13 +1,13 @@
 from django.http import HttpResponse
 from django.template import loader
-from .models import Distributions
+from .models import Distribution
 from .forms import Picker
 from io import StringIO
 
 
 def index(request):
     data_picker = Picker()
-    dist = Distributions.objects.all().values()
+    dist = Distribution.objects.all().values()
     template = loader.get_template('statVisualiser/index.html')
     context = {
         'dist': dist,
