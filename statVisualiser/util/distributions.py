@@ -144,7 +144,7 @@ class Normal(Variable):
         self.sd = deviation
 
     def get_region(self):
-        return 10**6, 10**6
+        return -10**6, 10**6
 
     def pdf(self, x: float) -> float:
         return 1/(self.sd*np.sqrt(2*np.pi)) * math.e**(-1/2*((x-self.mean)/self.sd)**2)
@@ -314,18 +314,19 @@ def convolution3d(var1,var2):
 
 
 def main():
-   # a = Normal(0, 1)
-    #b = Exponential(1/10)
-   # fig, fig1 = graph_supported_region(a, b)
-   # fig.show()
+    a = Normal(0, 1)
+    b = Exponential(1/10)
+    # fig, fig1 = graph_supported_region(a, b)
+    # fig.show()
     #fig1.show()
+    print(a.get_region())
     #a = Uniform(1, 2)
     #b = Uniform(2, 4)
     #a.graph_pdf(0, 3,titles=True).show()
     #b.graph_cdf(0, 5, titles=True).show()
-    #graph_supported_region(a, b)
+    graph_supported_region(a, b)
     a=Bernoulli(0.5)
-    print(a.cdf(1),a.cdf(2))
+    print(a.cdf(1), a.cdf(2))
 
 if __name__ == '__main__':
     main()
