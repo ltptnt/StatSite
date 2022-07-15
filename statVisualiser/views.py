@@ -1,18 +1,33 @@
 from django.http import HttpResponse
 from django.template import loader
-from .models import Distributions
+from .models import Distribution
 from .forms import Picker
 from io import StringIO
 
 
 def index(request):
     data_picker = Picker()
-    dist = Distributions.objects.all().values()
+    dist = Distribution.objects.all().values()
     template = loader.get_template('statVisualiser/index.html')
     context = {
         'dist': dist,
         'picker': data_picker,
     }
+    return HttpResponse(template.render(context, request))
+
+
+def distributions(request):
+    template = loader.get_template('statVisualiser/distributions.html')
+    context = {}
+    return HttpResponse(template.render(context, request))
+
+
+# Need Large numbers then wheel spin here. Ordered as seen on website navigation bar to avoid confusion
+
+
+def about(request):
+    template = loader.get_template('statVisualiser/about.html')
+    context = {}
     return HttpResponse(template.render(context, request))
 
 

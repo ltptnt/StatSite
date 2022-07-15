@@ -20,6 +20,7 @@ h1 {
 h2 {
     line-height:50px;
 }
+
 h3 {
     line-height:30px;
     padding-bottom:20px;
@@ -42,7 +43,7 @@ h4 {
 
 .database {
     margin: auto;
-    background: #dcfdfd;
+    background: #ffffff;
     padding-bottom: 30px;
 }
 
@@ -52,12 +53,24 @@ h4 {
 }
 
 .title_bar {
-    background: black;
-    padding-top: 30px;
-    padding-bottom: 35px;
+    background: #111518;
+    padding-top: 20px;
+    padding-bottom: 40px;
+    padding-left: 10px;
     margin-bottom: -20px;
-
 }
+
+.navbar {
+    padding-bottom: 0px;
+    top: 0;
+    position: sticky;
+    position: -webkit-sticky /* For silly safari */ ;
+}
+
+.text {
+    width: 200px;
+}
+
 
 .styled-table {
     text-align: center;
@@ -91,5 +104,36 @@ form {
     text-align: center;
 }
 
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #232a32;
+    position: -webkit-sticky; /* Safari */
+    position: sticky;
+    top: 0;
+}
 
+li {
+    float: left;
+}
 
+li a {
+    display: block;
+    color: #ECF7FF;
+    text-align: center;
+    font-weight: 600;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li a:hover {
+    background-color: #191f23;;
+    color: #ECF7FF;
+}
+
+li a.active {
+    background-color: #ECF7FF;
+    color: #232a32;
+}

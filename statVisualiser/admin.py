@@ -3,4 +3,4 @@ from statVisualiser.models import *
 
 # Register your models here.
 
-admin.site.register(Distributions)
+admin.site.register(Distribution)
