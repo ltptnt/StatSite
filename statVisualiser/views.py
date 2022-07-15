@@ -16,6 +16,21 @@ def index(request):
     return HttpResponse(template.render(context, request))
 
 
+def distributions(request):
+    template = loader.get_template('statVisualiser/distributions.html')
+    context = {}
+    return HttpResponse(template.render(context, request))
+
+
+# Need Large numbers then wheel spin here. Ordered as seen on website navigation bar to avoid confusion
+
+
+def about(request):
+    template = loader.get_template('statVisualiser/about.html')
+    context = {}
+    return HttpResponse(template.render(context, request))
+
+
 """
 def index(request):
     graph = ""
