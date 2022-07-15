@@ -326,7 +326,6 @@ def main():
     fig = make_subplots(rows=2, cols=2)
     a = Binomial(10, 0.5)
     b = Exponential(1/2)
-    c = Binomial(8,0.8)
     a.graph_pdf(0, 10, fig=fig, geom=(1, 2), titles=True)
     b.graph_pdf(0, 10, fig=fig, geom=(2, 1), titles=True)
     a.graph_cdf(0, 10, fig=fig, geom=(1, 1))
