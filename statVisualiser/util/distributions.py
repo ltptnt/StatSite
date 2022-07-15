@@ -2,7 +2,9 @@ import math
 import random as rd
 from abc import ABC, abstractmethod
 
-import matplotlib.pyplot as plt
+from plotly.subplots import make_subplots
+import plotly.graph_objs as go
+import plotly.express as px
 import numpy as np
 import scipy.stats as st
 
@@ -50,45 +52,52 @@ class Variable(ABC):
     Requires the figure to have a gridspec. If triple digit specifications are entered, a new gridspec is made \n
     and the graph is plotted to the requested square.
     """
-    def graph_pdf(self, minim: float, maxim: float, fig=None, geometry=None, titles=False, **kwargs):
-        if geometry is None:
-            geometry = 111
-        if fig is None:
-            fig = plt.figure()
-        ax = fig.add_subplot(geometry)
-        if titles:
-            ax.set_xlabel(str(self))
-            ax.set_ylabel("Probability X=x")
+    def graph_pdf(self, minim: float, maxim: float, fig=None, geom=None, titles=False, **kwargs):
         if self.continuous:
             x1 = np.linspace(minim, maxim, 10 ** 5)
             pdf = [self.pdf(i) for i in x1]
-            ax.plot(x1, pdf, **kwargs)
+            trace = go.Scatter(x=x1, y=pdf, name="PDF of " + str(self))
         else:
             x1 = [i for i in range(int(minim), int(maxim) + 1)]
             pmf = [self.pdf(i) for i in x1]
-            ax.bar(x1, pmf, width=1, **kwargs)
+            trace = go.Bar(x=x1, y=pmf, name="PMF of " + str(self))
+
+        if fig is None:
+            fig = make_subplots()
+            if geom is None:
+                fig.add_trace(trace)
+        else:
+            if geom is None:
+                fig.add_trace(trace)
+            else:
+                fig.add_trace(trace, row=geom[0], col=geom[1])
+
+        if titles:
+            fig.update_layout(title=str(self))
+
         return fig
 
-    def graph_cdf(self, minim: float, maxim: float, fig=None, geometry=None, titles=False,  **kwargs):
-        if fig is None:
-            fig = plt.figure()
-        if geometry is None:
-            geometry = 111
-        ax = fig.add_subplot(geometry)
-        if titles:
-            ax.set_xlabel(str(self))
-            ax.set_ylabel("Probability X \u2264 x ")
+    def graph_cdf(self, minim: float, maxim: float, fig=None, geom=None, titles=False,  **kwargs):
         if self.continuous:
             x1 = np.linspace(minim, maxim, 10 ** 5)
             cdf = [self.cdf(i) for i in x1]
-            ax.plot(x1, cdf, **kwargs)
+            trace = go.Scatter(x=x1, y=cdf, name="CDF of " + str(self))
         else:
             bot, top = self.get_region()
             cdf = [self.pdf(bot)]
-            x1 = [i for i in range(bot, int(maxim)+1)]
+            x1 = [i for i in range(bot, int(maxim) + 1)]
             for i in range(1, len(x1)):
-                cdf.append(cdf[i-1]+self.pdf(i))
-            ax.bar(x1, cdf, width=1, **kwargs)
+                cdf.append(cdf[i - 1] + self.pdf(i))
+            trace = go.Bar(x=x1, y=cdf, name="CDF of " + str(self))
+        if fig is None:
+            fig = make_subplots()
+            if geom is None:
+                fig.add_trace(trace)
+        if geom is not None:
+            fig.add_trace(trace, row=geom[0], col=geom[1])
+        if titles:
+            fig.update_layout(title="CDF of " + str(self))
+
         return fig
 
 
@@ -314,18 +323,15 @@ def convolution3d(var1,var2):
 
 
 def main():
-   # a = Normal(0, 1)
-    #b = Exponential(1/10)
-   # fig, fig1 = graph_supported_region(a, b)
-   # fig.show()
-    #fig1.show()
-    #a = Uniform(1, 2)
-    #b = Uniform(2, 4)
-    #a.graph_pdf(0, 3,titles=True).show()
-    #b.graph_cdf(0, 5, titles=True).show()
-    #graph_supported_region(a, b)
-    a=Bernoulli(0.5)
-    print(a.cdf(1),a.cdf(2))
+    fig = make_subplots(rows=2, cols=2)
+    a = Binomial(10, 0.5)
+    b = Exponential(1/2)
+    a.graph_pdf(0, 10, fig=fig, geom=(1, 2), titles=True)
+    b.graph_pdf(0, 10, fig=fig, geom=(2, 1), titles=True)
+    a.graph_cdf(0, 10, fig=fig, geom=(1, 1))
+    b.graph_cdf(0, 10, fig=fig, geom=(2, 2))
+    fig.show()
+
 
 if __name__ == '__main__':
     main()
