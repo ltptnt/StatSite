@@ -56,11 +56,11 @@ class Variable(ABC):
         if self.continuous:
             x1 = np.linspace(minim, maxim, 10 ** 5)
             pdf = [self.pdf(i) for i in x1]
-            trace = go.Scatter(x=x1, y=pdf, name="PDF of " + str(self))
+            trace = go.Scatter(x=x1, y=pdf, name="PDF of " + str(self), **kwargs)
         else:
             x1 = [i for i in range(int(minim), int(maxim) + 1)]
             pmf = [self.pdf(i) for i in x1]
-            trace = go.Bar(x=x1, y=pmf, name="PMF of " + str(self))
+            trace = go.Bar(x=x1, y=pmf, name="PMF of " + str(self), **kwargs)
 
         if fig is None:
             fig = make_subplots()
@@ -81,14 +81,14 @@ class Variable(ABC):
         if self.continuous:
             x1 = np.linspace(minim, maxim, 10 ** 5)
             cdf = [self.cdf(i) for i in x1]
-            trace = go.Scatter(x=x1, y=cdf, name="CDF of " + str(self))
+            trace = go.Scatter(x=x1, y=cdf, name="CDF of " + str(self), **kwargs)
         else:
             bot, top = self.get_region()
             cdf = [self.pdf(bot)]
             x1 = [i for i in range(bot, int(maxim) + 1)]
             for i in range(1, len(x1)):
                 cdf.append(cdf[i - 1] + self.pdf(i))
-            trace = go.Bar(x=x1, y=cdf, name="CDF of " + str(self))
+            trace = go.Bar(x=x1, y=cdf, name="CDF of " + str(self), **kwargs)
         if fig is None:
             fig = make_subplots()
             if geom is None:
