@@ -1,6 +1,5 @@
 body {
     font-family:'Open Sans', sans-serif;
-    font-size:14px;
     margin: auto;
 }
 
@@ -61,7 +60,7 @@ h4 {
 }
 
 .navbar {
-    padding-bottom: 0px;
+    padding-bottom: 0;
     top: 0;
     position: sticky;
     position: -webkit-sticky /* For silly safari */ ;
@@ -77,9 +76,13 @@ h4 {
     border-collapse: collapse;
     margin-left:auto;
     margin-right:auto;
-    min-width: 200px;
+    min-width: 300px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
     background: #ffffff;
+}
+
+.styled-table thead tr th {
+    padding: 10px 10px;
 }
 
 .styled-table thead tr {
@@ -89,6 +92,10 @@ h4 {
 
 .styled-table tbody tr {
     border-bottom: 1px solid #ffffff;
+}
+
+.styled-table tbody tr td {
+    padding: 5px 10px;
 }
 
 .styled-table tbody tr:nth-of-type(even) {
