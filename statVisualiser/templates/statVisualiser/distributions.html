@@ -20,7 +20,40 @@
 
             </ul>
         </div>
-
+        <div class="database">
+            <h2 class="centered">Distributions</h2>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Continuous</th>
+                        <th>Variable Count</th>
+                        <th>Minimum Supported Region</th>
+                        <th>Maximum Supported Region</th>
+                        <th>Required Variables</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for x in dist %}
+                    <tr>
+                        <td>{{ x.name }}</td>
+                        <td>{{ x.continuous }}</td>
+                        <td>{{ x.required_variable_count }}</td>
+                        <td>{{ x.supported_region_min }}</td>
+                        <td>{{ x.supported_region_max }}</td>
+                        <td>{{ x.required_variable_names }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="picker">
+                <h2 class="centered">Select a Distribution</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ picker }}
+                    <input type="submit" value="Submit">
+                </form>
+            </div>
 
 
     </body>
