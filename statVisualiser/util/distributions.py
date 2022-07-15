@@ -331,6 +331,7 @@ def main():
     a.graph_cdf(0, 10, fig=fig, geom=(1, 1))
     b.graph_cdf(0, 10, fig=fig, geom=(2, 2))
     fig.show()
+    #
 
 
 if __name__ == '__main__':
