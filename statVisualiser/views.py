@@ -1,24 +1,29 @@
 from django.http import HttpResponse
 from django.template import loader
-from .models import Distribution
-from .forms import Picker
+from .models import *
+from .forms import *
 from io import StringIO
 
 
 def index(request):
-    data_picker = Picker()
-    dist = Distribution.objects.all().values()
     template = loader.get_template('statVisualiser/index.html')
-    context = {
-        'dist': dist,
-        'picker': data_picker,
-    }
+    context = {}
     return HttpResponse(template.render(context, request))
 
 
 def distributions(request):
+    dist_select = DistributionPicker()
+    dist_table = Distribution.objects.all().values()
     template = loader.get_template('statVisualiser/distributions.html')
-    context = {}
+    context = {
+        'dist': dist_table,
+        'picker': dist_select,
+    }
+    if request.method == "POST":
+        form = DistributionPicker(request.POST)
+        if form.is_valid():
+            data = form.get_data()
+            print("tesing " + str(data))
     return HttpResponse(template.render(context, request))
 
 
