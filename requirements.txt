@@ -2,3 +2,5 @@ django
 numpy
 matplotlib
 scipy
+plotly
+pandas
