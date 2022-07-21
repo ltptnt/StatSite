@@ -7,12 +7,13 @@ from django.core.exceptions import ValidationError
 class DistributionSelect(forms.Form):
     Type = forms.ModelChoiceField(label='Distribution', queryset=Distribution.objects.all(), required=True)
     Rate = forms.FloatField(label='Rate', required=False)
-    Rate = forms.FloatField(label='Rate', required=False)
+    Min = forms.FloatField(label='Minimum Value', required=False)
     Max = forms.FloatField(label='Maximum Value', required=False)
     Mean = forms.FloatField(label='Mean', required=False)
     Sd = forms.FloatField(label='Standard Deviation', required=False)
     Probability = forms.FloatField(label='Probability', min_value=0, max_value=1, required=False)
     Trials = forms.IntegerField(label='Trials', min_value=0, required=False)
+
 
     def get_data(self) -> dict[str, float] | dict[str, int]:
         data = dict()
