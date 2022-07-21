@@ -33,7 +33,7 @@ h4 {
 .graph {
     margin: auto;
     text-align: center;
-
+    width: fit-content;
 }
 
 .centered {
@@ -153,4 +153,8 @@ li a:hover {
 li a.active {
     background-color: #ECF7FF;
     color: #232a32;
+}
+
+.graph {
+    text-align: center;
 }
