@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',  # A framework for managing static files.
 ]
 
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
