@@ -2,8 +2,11 @@
 <!DOCTYPE html>
 <html lang="en-AU">
     <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <title>Statistics Simulator</title>
         <link rel="stylesheet" href="{% static 'statVisualiser/styles.css' %}">
+
     </head>
     <body>
         <div class="title_bar">
@@ -43,6 +46,7 @@
                 </tbody>
             </table>
         </div>
+
         <div class = "picker">
             <form method="post">
                 {% csrf_token %}
@@ -62,7 +66,7 @@
             </form>
         </div>
 
-        <div class="graph centered">
+        <div class="graph">
             {% if graph %}
                 {{ graph|safe }}
             {% else %}
