@@ -28,8 +28,6 @@
                         <th>Name</th>
                         <th>Continuous</th>
                         <th>Variable Count</th>
-                        <th>Minimum Supported Region</th>
-                        <th>Maximum Supported Region</th>
                         <th>Required Variables</th>
                     </tr>
                 </thead>
@@ -39,22 +37,37 @@
                         <td>{{ x.name }}</td>
                         <td>{{ x.continuous }}</td>
                         <td>{{ x.required_variable_count }}</td>
-                        <td>{{ x.supported_region_min }}</td>
-                        <td>{{ x.supported_region_max }}</td>
                         <td>{{ x.required_variable_names }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
-            <div class="picker">
-                <h2 class="centered">Select a Distribution</h2>
-                <form method="post">
-                    {% csrf_token %}
-                    {{ picker }}
-                    <input type="submit" value="Submit">
-                </form>
-            </div>
+        </div>
+        <div class = "picker">
+            <form method="post">
+                {% csrf_token %}
+                <div class = "left">
+                <h2 class="centered">Distribution 1</h2>
+                <table class="styled-table">
+                {{ picker1.as_table }}
+                </table>
+                </div>
+                <div class = "right">
+                <h2 class="centered">Distribution 2</h2>
+                <table class="styled-table">
+                {{ picker2.as_table }}
+                </table>
+                </div>
+                <input class="centered" type="submit" value="Submit">
+            </form>
+        </div>
 
-
+        <div class="graph centered">
+            {% if graph %}
+                {{ graph|safe }}
+            {% else %}
+                <p>Please enter parameters</p>
+            {% endif %}
+        </div>
     </body>
 </html>
