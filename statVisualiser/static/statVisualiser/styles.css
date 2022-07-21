@@ -49,6 +49,21 @@ h4 {
 .picker {
     margin: auto;
     padding-top: 15px;
+    width: 70%;
+    text-align: center;
+
+}
+
+.left {
+    float: left;
+    width: 50%;
+    text-align: center;
+}
+
+.right {
+    float: left;
+    width: 50%;
+    text-align: center;
 }
 
 .title_bar {
@@ -104,11 +119,6 @@ h4 {
 
 .styled-table tbody tr:last-of-type {
     border-bottom: 2px solid #000000;
-}
-
-form {
-    margin: auto;
-    text-align: center;
 }
 
 ul {
