@@ -24,8 +24,8 @@ def distributions(request):
     }
 
     if request.method == "POST":
-        pick_one = DistributionSelect(request.POST, prefix='picker1')
-        pick_two = DistributionSelect(request.POST, prefix='picker2')
+        pick_one = DistributionSelect(request.POST, prefix='picker1', label_suffix='')
+        pick_two = DistributionSelect(request.POST, prefix='picker2', label_suffix='')
 
         if pick_one.is_valid() and pick_two.is_valid():
             fig = make_subplots(rows=2, cols=2)
@@ -67,3 +67,4 @@ def about(request):
     template = loader.get_template('statVisualiser/about.html')
     context = {}
     return HttpResponse(template.render(context, request))
+

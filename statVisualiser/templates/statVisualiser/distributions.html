@@ -50,14 +50,10 @@
         <div class = "picker">
             <form method="post">
                 {% csrf_token %}
-                <div class = "left">
                 <h2 class="centered">Distribution 1</h2>
                 {{ picker1.as_p }}
-                </div>
-                <div class = "right">
                 <h2 class="centered">Distribution 2</h2>
                 {{ picker2.as_p }}
-                </div>
                 <input class="centered" type="submit" value="Submit">
             </form>
         </div>
@@ -65,7 +61,7 @@
             {% if graph %}
                 {{ graph|safe }}
             {% else %}
-                <p>Please enter parameters</p>
+                <div id="blank_graph">Please enter parameters to see a Graph!</div>
             {% endif %}
         </div>
 
@@ -120,7 +116,5 @@
             };
 
 </script>
-
-
     </body>
 </html>
