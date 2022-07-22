@@ -7,6 +7,7 @@ import plotly.graph_objs as go
 import plotly.express as px
 import numpy as np
 import scipy.stats as st
+import gmpy2 as gm
 
 DP = 3
 """
@@ -64,8 +65,7 @@ class Variable(ABC):
 
         if fig is None:
             fig = make_subplots()
-            if geom is None:
-                fig.add_trace(trace)
+            fig.add_trace(trace)
         else:
             if geom is None:
                 fig.add_trace(trace)
@@ -103,17 +103,18 @@ class Variable(ABC):
 
 class Exponential(Variable):
     continuous = True
+
     def __init__(self, rate: float):
         self.rate = rate
 
     def get_region(self):
-       return 0, 10**6
+        return 0, 10/self.rate
 
     def pdf(self, x: float):
-        return 0 if x <= 0 else self.rate * np.e ** (-self.rate * x)
+        return 0 if x < 0 else self.rate * np.e ** (-self.rate * x)
 
     def cdf(self, x: float) -> float:
-        return 0 if x <= 0 else 1 - np.e ** (-self.rate * x)
+        return 0 if x < 0 else 1 - np.e ** (-self.rate * x)
 
     def trial(self) -> float:
         return -np.log(-rd.random() + 1) / self.rate
@@ -153,7 +154,7 @@ class Normal(Variable):
         self.sd = deviation
 
     def get_region(self):
-        return 10**6, 10**6
+        return -4*self.sd+self.mean, 4*self.sd+self.mean
 
     def pdf(self, x: float) -> float:
         return 1/(self.sd*np.sqrt(2*np.pi)) * math.e**(-1/2*((x-self.mean)/self.sd)**2)
@@ -176,13 +177,18 @@ class Poisson(Variable):
         self.rate = rate
 
     def get_region(self):
-        return 0, self.rate * 10**5
+        return 0, self.rate * 5+1
 
     def pdf(self, x: int):
         if x % 1 != 0 or x < 0:
             return 0
         else:
-            return np.e ** (-self.rate) * self.rate ** x / math.factorial(x)
+            a = -self.rate + x * math.log(self.rate) - math.log(math.factorial(x))
+            #a = pow(gm.const_euler(), -self.rate)*
+
+            #print(pow(gm.mpfr(str(self.rate)), x))
+
+            return np.e ** a
 
     def trial(self) -> int:
         found = False
@@ -250,89 +256,99 @@ class Binomial(Variable):
     def __str__(self):
         return "Bin({0}, {1})".format(self.trials, round(self.prob,DP))
 
-
-def graph_supported_region(var1, var2):
+#This might be useless
+def graph_density_sum(var1, var2):
     #Generating the supported region through inverse-transform processes
     var1_trials = [var1.trial() for _ in range(10**5)]
     var2_trials = [var2.trial() for _ in range(10**5)]
     convolution_trials = [var1_trials[i]*var2_trials[i] for i in range(len(var1_trials))]
+    fig = px.density_heatmap(x=var1_trials, y=var2_trials, z=convolution_trials, histfunc="count",
+                             marginal_x="histogram", marginal_y="histogram",
+                             )
+    return fig
 
-    #Creating the figures used
-    fig1 = plt.figure(figsize=(8, 8))
-    fig1.suptitle("Density plot and cross of the two variables.")
-    fig, axs = plt.subplots(2, sharex="col")
-    fig.suptitle("Heaps of data")
-    #Edits the ratio of histograms to scatter, the number of graphs etc
-    gs = fig1.add_gridspec(2, 2, width_ratios=(7, 2), height_ratios=(2, 7),
-                          left=0.1, right=0.9, bottom=0.1, top=0.9,
-                          wspace=0.05, hspace=0.05)
-    # Settings to set the scope of the plot
-    var1_lim, var1_max = min(var1_trials), max(var1_trials)
-    var2_lim, var2_max = min(var2_trials), max(var2_trials)
 
-    # Adding the plots
-    # The marginal dist vs the convolution for each variable
-    axs[0].scatter(convolution_trials, var1_trials)
-    axs[0].set_ylabel(str(var1))
-    axs[1].scatter(convolution_trials, var2_trials)
-    axs[1].set_ylabel(str(var2))
-    axs[1].set_xlabel("Convolution of {0}".format("{0} x {1}".format(str(var1),str(var2))))
+def convolution3d(var1, var2, fig=None, geom=None, type="product", **kwargs):
+    var1_trials = [var1.trial() for i in range(10 ** 5)]
+    var2_trials = [var2.trial() for i in range(10 ** 5)]
+    if type in "product":
+        title_text="Product of "
+        convolution_trials = [var1_trials[i] * var2_trials[i] for i in range(len(var1_trials))]
+    elif type in "sum":
+        title_text = "Sum of "
+        convolution_trials = [var1_trials[i] + var2_trials[i] for i in range(len(var1_trials))]
+    else:
+        raise TypeError("Only product and sum are supported")
+    if fig is None:
+        fig = px.scatter_3d(x=var1_trials, y=var2_trials, z=convolution_trials)
+    else:
+        trace = px.scatter_3d(x=var1_trials, y=var2_trials, z=convolution_trials)
+        if geom is None:
+            fig.add_trace(trace)
+        else:
+            fig.add_trace(trace, row=geom[0], col=geom[1])
+    fig.update_layout(title="Simulated supported region of the convolution, ",
+                      scene=dict(xaxis_title=str(var1),
+                                 yaxis_title=str(var2),
+                                 zaxis_title=title_text + str(var1) + " and " + str(var2)))
+    return fig
 
-    # The density of each variable alongside the convolution
-    ax = fig1.add_subplot(gs[1, 0])
-    ax_histx = fig1.add_subplot(gs[0, 0], sharex=ax)
-    ax_histy = fig1.add_subplot(gs[1, 1], sharey=ax)
-    ax_histx.tick_params(axis="x", labelbottom=False)
-    ax_histy.tick_params(axis="y", labelleft=False)
 
-    ax.set_xlim(var1_lim, var1_max + 1)
-    ax.set_ylim(var2_lim, var2_max + 1)
-
+def convolution_pdf(var1, var2):
+    min1, max1 = var1.get_region()
+    min2, max2 = var2.get_region()
     if var1.continuous:
-        ax_histx.hist(var1_trials, density=True, bins=10**3)
+        var1_region = np.linspace(max(min1, -100), min(max1, 100), 10**3)
     else:
-        ax_histx.hist(var1_trials, density=True)
+        var1_region = [i for i in range(min1, max1+1)]
+
     if var2.continuous:
-        ax_histy.hist(var2_trials, density=True, orientation="horizontal", bins=10**3)
+        var2_region = np.linspace(max(min2, -100), min(max2, 100), 10**3)
     else:
-        ax_histy.hist(var2_trials, density=True, orientation="horizontal")
+        var2_region = [i for i in range(int(min2), int(max2+1))]
 
-    ax.scatter(var1_trials, var2_trials)
+    var1_pdf = [var1.pdf(i) for i in var1_region]
+    var2_pdf = [var2.pdf(i) for i in var2_region]
+    conv_pdf = [[] for i in var1_region]
+    for i in range(len(var1_region)):
+        for y in var2_pdf:
+            conv_pdf[i].append(var1_pdf[i]*y)
+    fig = go.Figure(data=go.Surface(y=var1_region, x=var2_region, z=conv_pdf))
+    fig.update_layout(
+        title="PDF of the convolution of " + str(var1) + " and " + str(var2),
+        coloraxis_colorbar=dict(title="Density"),
+        scene=dict(
+            xaxis_title="X ~ " + str(var2),
+            yaxis_title="Y ~ " + str(var1),
+            zaxis_title="Probability density of X*Y"),
+    )
+    return fig
 
-    #Setting the limits
-    axs[0].set_xlim(min(convolution_trials)-1, max(convolution_trials) + 1)
-    axs[0].set_ylim(var1_lim, var1_max + 1)
-    axs[1].set_ylim(var2_lim, var2_max + 1)
 
-    fig.show()
-    fig1.show()
-    return fig, fig1
-
-
-def convolution3d(var1,var2):
-    fig = plt.figure()
-    ax = plt.axes(projection="3d")
+def convolution_cdf(var1, var2):
     var1_trials = [var1.trial() for i in range(10 ** 5)]
     var2_trials = [var2.trial() for i in range(10 ** 5)]
     convolution_trials = [var1_trials[i] * var2_trials[i] for i in range(len(var1_trials))]
-    ax.scatter3D(var1_trials, var2_trials, convolution_trials)
-    ax.set_xlabel(str(var1))
-    ax.set_ylabel(str(var2))
-    ax.set_zlabel("Convolution of {} and {}".format(str(var1), str(var2)))
+    cdf_points = np.linspace(min(convolution_trials), max(convolution_trials), 1000)
+    probability = []
+    for point in cdf_points:
+        probability.append(len([i for i in convolution_trials if i <= point])/10**5)
+    fig = px.scatter(x=cdf_points, y=probability)
+    fig.update_layout(title="CDF of the convolution of " + str(var1) + " and " + str(var2),
+                      xaxis_title="x",
+                      yaxis_title="Probability X=x")
     return fig
+    #fig = px.scatter_3d(x=var1_trials, y=var2_trials, z=convolution_trials)
 
 
 def main():
     fig = make_subplots(rows=2, cols=2)
-    a = Binomial(10, 0.5)
-    b = Exponential(1/2)
-    a.graph_pdf(0, 10, fig=fig, geom=(1, 2), titles=True)
-    b.graph_pdf(0, 10, fig=fig, geom=(2, 1), titles=True)
-    a.graph_cdf(0, 10, fig=fig, geom=(1, 1))
-    b.graph_cdf(0, 10, fig=fig, geom=(2, 2))
-    fig.show()
-    #
-
+    a = Normal(0,1)
+    b = Exponential(2)
+#    graph_supported_region(a, b).show()
+    convolution_cdf(a, b).show()
+    convolution_pdf(a,b).show()
+    #a.graph_pdf(-4,4).show()
 
 if __name__ == '__main__':
     main()
