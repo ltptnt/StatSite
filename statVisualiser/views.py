@@ -68,10 +68,12 @@ def dist_selector(picker: DistributionSelect) -> Variable | None:
         case _:
             return None
 
-# Need Large numbers then wheel spin here. Ordered as seen on website navigation bar to avoid confusion
 
 def large_numbers(request):
-    pass
+    template = loader.get_template("statVisualiser/largeNumbers.html")
+    context = {}
+
+    return HttpResponse(template.render(context, request))
 
 
 def wheel_spin(request):

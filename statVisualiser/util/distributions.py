@@ -300,14 +300,15 @@ def graph_density_sum(var1, var2):
 def two_var_3d(var1, var2, fig=None, geom=None, type="product", **kwargs):
     var1_trials = [var1.trial() for i in range(10 ** 5)]
     var2_trials = [var2.trial() for i in range(10 ** 5)]
-    if type in "product":
-        title_text="Product of "
-        convolution_trials = [var1_trials[i] * var2_trials[i] for i in range(len(var1_trials))]
-    elif type in "sum":
-        title_text = "Sum of "
-        convolution_trials = [var1_trials[i] + var2_trials[i] for i in range(len(var1_trials))]
-    else:
-        raise TypeError("Only product and sum are supported")
+    match type:
+        case "product":
+            title_text = "Product of "
+            convolution_trials = [var1_trials[i] * var2_trials[i] for i in range(len(var1_trials))]
+        case "sum":
+            title_text = "Sum of "
+            convolution_trials = [var1_trials[i] + var2_trials[i] for i in range(len(var1_trials))]
+        case _:
+            raise TypeError("Only product and sum are supported")
     if fig is None:
         fig = px.scatter_3d(x=var1_trials, y=var2_trials, z=convolution_trials)
     else:

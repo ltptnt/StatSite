@@ -9,7 +9,7 @@ Used to generate a frame of the large numbers animation. var must be Binomial. c
 """
 
 
-def binomial_normal(min_trials: int, max_trials: int, prob: float, steps=5):
+def binomial_normal(min_trials: int, max_trials: int, prob: float, steps=10):
     fig = make_subplots()
     titles = []
     for trials in range(min_trials, max_trials+1, steps):
@@ -50,44 +50,40 @@ def binomial_normal(min_trials: int, max_trials: int, prob: float, steps=5):
 
 
 def binomial_poi_approx(min_trials: int, max_trials: int, mean: int, steps=10):
-        fig = make_subplots()
-        titles = []
-        for trials in range(min_trials, max_trials + 1, steps):
-            prob = mean/trials
-            binom = dt.Binomial(trials, prob)
-            converge = dt.Poisson(mean)
-            minim, maxim = binom.get_region()
-            binom.graph_pdf(0, maxim, fig=fig)
-            converge.graph_pdf(0, maxim, fig=fig)
-            titles.append("Poisson Approximation to " + str(binom))
-        fig.data[0].visible = True
-        fig.update_layout(xaxis_title="Probability X=x")
-        increment = []
-        for i in range(0, len(fig.data), 2):
-            step = dict(method="update",
-                        args=[{"visible": [False] * len(fig.data)},
-                              {"title": titles[int(i / 2)]}],
-                        label=round(i / 2) * steps + min_trials
-                        )
-            step["args"][0]["visible"][i] = True  # Toggle i'th trace to "visible"
-            step["args"][0]["visible"][i + 1] = True  # Toggle i'th trace to "visible"
-            increment.append(step)
+    fig = make_subplots()
+    for trials in range(min_trials, max_trials + 1, steps):
+        prob = mean/trials
+        binom = dt.Binomial(trials, prob)
+        converge = dt.Poisson(mean)
+        minim, maxim = binom.get_region()
+        binom.graph_pdf(0, maxim, fig=fig)
+    fig.data[0].visible = True
+    fig.update_layout(xaxis_title="Probability X=x", title="Binomial approximation with a mean of " + str(mean))
+    increment = []
+    for i in range(0, len(fig.data), 2):
+        step = dict(method="update",
+                    args=[{"visible": [False] * len(fig.data)}],
+                    label=round(i / 2) * steps + min_trials
+                    )
+        step["args"][0]["visible"][i] = True  # Toggle i'th trace to "visible"
+        step["args"][0]["visible"][i + 1] = True  # Toggle i'th trace to "visible"
+        increment.append(step)
 
-        sliders = [dict(
-            active=10,
-            currentvalue={"prefix": "Trials: "},
-            pad={"t": 50},
-            steps=increment
-        )]
+    sliders = [dict(
+        active=10,
+        currentvalue={"prefix": "Trials: "},
+        pad={"t": 50},
+        steps=increment
+    )]
 
-        fig.update_layout(
-            sliders=sliders
-        )
-        for i in fig.data:
-            i.visible = False
-        fig.data[0].visible = True
-        fig.data[1].visible = True
-        return fig
+    fig.update_layout(
+        sliders=sliders
+    )
+    for i in fig.data:
+        i.visible = False
+    fig.data[0].visible = True
+    fig.data[1].visible = True
+    return fig
 
 
 def main():
