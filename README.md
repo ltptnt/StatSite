@@ -4,3 +4,10 @@
 
 Python Webserver that Visualises Statistical Models
 Developed using python 3.10 and will therefore only worn using this version (and theroretically those greater than 3.10.0) due to the use of switch statements which were included in the 3.10 realease.
+
+Exponential: 0,inf
+Normal: -inf, inf
+Binomial: {0,...,number of trials}
+Uniform: [a, b], a, b elem of real numbers
+Bernoulli: {0,1}
+Poisson: {0, ..., inf}
