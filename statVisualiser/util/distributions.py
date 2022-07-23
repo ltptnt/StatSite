@@ -39,7 +39,6 @@ class Variable(ABC):
     returns:
     the value of the distribution that corresponds to the cdf value of the input x.
     """
-
     @abstractmethod
     def inverse_cdf(self, x:float):
         pass
@@ -57,8 +56,8 @@ class Variable(ABC):
     If just inputting min and max, you get a figure with the axes.
     However, if you want to add it to an existing figure (e.g a collection of graphs), \n
     input the figure object and specify its geometry.
-    - accepts matplotlib kwargs.
-    - Continuous variables use a pyplot plot
+    - accepts plotly kwargs
+    - Continuous variables use a scatter plot
     - Discrete variables use a bar plot
     Requires the figure to have a gridspec. If triple digit specifications are entered, a new gridspec is made \n
     and the graph is plotted to the requested square.
@@ -127,7 +126,7 @@ class Exponential(Variable):
         return 0 if x < 0 else 1 - np.e ** (-self.rate * x)
 
     def inverse_cdf(self, x: float):
-        return -np.log(x + 1) / self.rate
+        return -np.log(1 - x) / self.rate
 
     def __str__(self):
         return "Exp({0})".format(round(self.rate, DP))
@@ -150,7 +149,7 @@ class Uniform(Variable):
         return (x-self.min)/(self.max-self.min) if self.min <= x <= self.max else 0
 
     def inverse_cdf(self, x: float) -> float:
-        return 1/(self.max-self.min)*x
+        return x*(self.max-self.min) + self.min if self.min <= x <= self.max else 0
 
     def __str__(self):
         return "U[{}, {}]".format(self.min, self.max)
@@ -255,12 +254,15 @@ class Binomial(Variable):
         return 0, self.trials
 
     def inverse_cdf(self, x: float):
+        if x == 1:
+            return self.trials
         val = 0
         found = False
         next = self.cdf(val + 1)
         current = self.cdf(val)
-
+        print(current, next)
         if current <= x < self.cdf(val + 1):
+            print("prankt")
             return val
         val += 1
         "Loop depth here could be a problem"
@@ -276,7 +278,9 @@ class Binomial(Variable):
         return sum([event.trial() for i in range(0, self.trials)])
 
     def pdf(self, x: int):
-        return math.comb(self.trials, x) * self.prob ** x * (1 - self.prob) ** (self.trials-x)
+        a = math.log(math.comb(self.trials, x)) + x * math.log(self.prob) \
+            + (self.trials - x) * math.log(1 - self.prob)
+        return np.e ** a
 
     def __str__(self):
         return "Bin({0}, {1})".format(self.trials, round(self.prob,DP))
@@ -293,7 +297,7 @@ def graph_density_sum(var1, var2):
     return fig
 
 
-def convolution3d(var1, var2, fig=None, geom=None, type="product", **kwargs):
+def two_var_3d(var1, var2, fig=None, geom=None, type="product", **kwargs):
     var1_trials = [var1.trial() for i in range(10 ** 5)]
     var2_trials = [var2.trial() for i in range(10 ** 5)]
     if type in "product":
@@ -368,12 +372,11 @@ def convolution_cdf(var1, var2):
 
 def main():
     fig = make_subplots(rows=2, cols=2)
-    a = Normal(0,1)
-    b = Exponential(2)
-#    graph_supported_region(a, b).show()
-    convolution_cdf(a, b).show()
-    convolution_pdf(a,b).show()
-    #a.graph_pdf(-4,4).show()
+    a = Exponential(2)
+    a.graph_pdf(0, 5).show()
+    a.graph_cdf(0, 5).show()
+    print(a.inverse_cdf(0.5))
+
 
 if __name__ == '__main__':
     main()
