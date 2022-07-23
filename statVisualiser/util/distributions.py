@@ -7,8 +7,6 @@ import plotly.graph_objs as go
 import plotly.express as px
 import numpy as np
 import scipy.stats as st
-import gmpy2 as gm
-
 DP = 3
 """
 Abstract class representing the basic methods a distribution needs
@@ -34,9 +32,21 @@ class Variable(ABC):
     def prob_between(self, x: float, y: float):
         return self.cdf(y)-self.cdf(x)
 
+    """
+    Param:
+    x: between 0 and 1, representing the probability that X is less than or equal to an unknown x 
+    
+    returns:
+    the value of the distribution that corresponds to the cdf value of the input x.
+    """
+
     @abstractmethod
-    def trial(self) -> float:
+    def inverse_cdf(self, x:float):
         pass
+
+    def trial(self) -> float:
+        return self.inverse_cdf(rd.random())
+
     @abstractmethod
     def __str__(self):
         pass
@@ -116,8 +126,8 @@ class Exponential(Variable):
     def cdf(self, x: float) -> float:
         return 0 if x < 0 else 1 - np.e ** (-self.rate * x)
 
-    def trial(self) -> float:
-        return -np.log(-rd.random() + 1) / self.rate
+    def inverse_cdf(self, x: float):
+        return -np.log(x + 1) / self.rate
 
     def __str__(self):
         return "Exp({0})".format(round(self.rate, DP))
@@ -139,8 +149,8 @@ class Uniform(Variable):
     def cdf(self, x: float)-> float:
         return (x-self.min)/(self.max-self.min) if self.min <= x <= self.max else 0
 
-    def trial(self) -> float:
-        return rd.uniform(self.min, self.max)
+    def inverse_cdf(self, x: float) -> float:
+        return 1/(self.max-self.min)*x
 
     def __str__(self):
         return "U[{}, {}]".format(self.min, self.max)
@@ -163,6 +173,9 @@ class Normal(Variable):
         x = (x-self.mean)/self.sd
         return st.norm.cdf(x, loc=0, scale=1)
 
+    def inverse_cdf(self, x: float):
+        return st.norm.ppf(x, loc=self.mean, scale=self.sd)
+
     def trial(self) -> float:
         return st.norm.rvs(loc=self.mean, scale=self.sd)
 
@@ -184,27 +197,22 @@ class Poisson(Variable):
             return 0
         else:
             a = -self.rate + x * math.log(self.rate) - math.log(math.factorial(x))
-            #a = pow(gm.const_euler(), -self.rate)*
-
-            #print(pow(gm.mpfr(str(self.rate)), x))
-
             return np.e ** a
 
-    def trial(self) -> int:
-        found = False
-        trial = rd.random()
+    def inverse_cdf(self, x: float):
         val = 0
-        next = self.cdf(val+1)
+        found = False
+        next = self.cdf(val + 1)
         current = self.cdf(val)
 
-        if current <= trial < self.cdf(val+1):
+        if current <= x < self.cdf(val + 1):
             return val
         val += 1
         "Loop depth here could be a problem"
         while not found:
             current = next
-            next = self.cdf(val+1)
-            if current <= trial < next:
+            next = self.cdf(val + 1)
+            if current <= x < next:
                 return val
             val += 1
 
@@ -221,8 +229,8 @@ class Bernoulli(Variable):
     def get_region(self):
         return 0, 1
 
-    def trial(self):
-        if rd.random() <= self.prob:
+    def inverse_cdf(self, x: float):
+        if x <= self.prob:
             return 1
         return 0
 
@@ -245,6 +253,23 @@ class Binomial(Variable):
 
     def get_region(self):
         return 0, self.trials
+
+    def inverse_cdf(self, x: float):
+        val = 0
+        found = False
+        next = self.cdf(val + 1)
+        current = self.cdf(val)
+
+        if current <= x < self.cdf(val + 1):
+            return val
+        val += 1
+        "Loop depth here could be a problem"
+        while not found:
+            current = next
+            next = self.cdf(val + 1)
+            if current <= x < next:
+                return val
+            val += 1
 
     def trial(self):
         event = Bernoulli(self.prob)
