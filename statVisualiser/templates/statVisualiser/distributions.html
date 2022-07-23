@@ -40,7 +40,7 @@
                         <td>{{ x.name }}</td>
                         <td>{{ x.continuous }}</td>
                         <td>{{ x.required_variable_count }}</td>
-                        <td>{{ x.required_variable_names }}</td>
+                        <td id="{{ x.name }}">{{ x.required_variable_names|stringformat:'a' }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -50,28 +50,71 @@
         <div class = "picker">
             <form method="post">
                 {% csrf_token %}
-                <div class = "left">
                 <h2 class="centered">Distribution 1</h2>
-                <table class="styled-table">
-                {{ picker1.as_table }}
-                </table>
-                </div>
-                <div class = "right">
+                {{ picker1.as_p }}
                 <h2 class="centered">Distribution 2</h2>
-                <table class="styled-table">
-                {{ picker2.as_table }}
-                </table>
-                </div>
+                {{ picker2.as_p }}
                 <input class="centered" type="submit" value="Submit">
             </form>
         </div>
-
         <div class="graph">
             {% if graph %}
                 {{ graph|safe }}
             {% else %}
-                <p>Please enter parameters</p>
+                <div id="blank_graph">Please enter parameters to see a Graph!</div>
             {% endif %}
         </div>
+
+    <script type="text/javascript">
+        function Picker1() {
+            HideAll('1')
+            Hide('1')
+        }
+
+        function Picker2() {
+            HideAll('2')
+            Hide('2')
+        }
+        function HideAll(id) {
+            document.getElementById('picker'+id+'-Mean').style.display = 'none';
+            document.getElementById('picker'+id+'-Rate').style.display = 'none';
+            document.getElementById('picker'+id+'-Min').style.display = 'none';
+            document.getElementById('picker'+id+'-Max').style.display = 'none';
+            document.getElementById('picker'+id+'-Probability').style.display = 'none';
+            document.getElementById('picker'+id+'-Trials').style.display = 'none';
+            document.getElementById('picker'+id+'-Sd').style.display = 'none';
+
+            let labels = document.getElementsByTagName('label');
+            for(let i = 0; i < labels.length; i++ ) {
+                if (labels[i].htmlFor.includes('picker'+id) && !labels[i].htmlFor.includes('Type')) {
+                    labels[i].style.display = 'none'
+                }
+            }
+        }
+        function Hide(id) {
+            HideAll(id);
+            let name = document.getElementById('picker' + id + '-Type').options[document.getElementById('picker' + id + '-Type').selectedIndex].innerHTML
+            const list = JSON.parse(document.getElementById(name).innerHTML.replace(/'/g, '"'));
+            let labels = document.getElementsByTagName('label');
+
+            for (let i = 0; i < list.length; i++) {
+                for (let j = 0; j < labels.length; j++) {
+                    if (labels[j].htmlFor.includes('picker' + id + '-' +list[i])) {
+                        labels[j].style.display = ''
+                    }
+                }
+                document.getElementById('picker' + id + '-' + list[i]).style.display = '';
+            }
+        }
+
+            window.onload = function() {
+                HideAll("1")
+                HideAll("2")
+                document.getElementById('picker1-Type').onchange = Picker1;
+                document.getElementById('picker2-Type').onchange = Picker2;
+
+            };
+
+</script>
     </body>
 </html>

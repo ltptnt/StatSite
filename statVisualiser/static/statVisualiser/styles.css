@@ -49,20 +49,7 @@ h4 {
 .picker {
     margin: auto;
     padding-top: 15px;
-    width: 70%;
-    text-align: center;
-
-}
-
-.left {
-    float: left;
-    width: 50%;
-    text-align: center;
-}
-
-.right {
-    float: left;
-    width: 50%;
+    width: 10%;
     text-align: center;
 }
 
@@ -152,9 +139,48 @@ li a:hover {
 
 li a.active {
     background-color: #ECF7FF;
-    color: #232a32;
+    color: #232A32;
 }
 
 .graph {
     text-align: center;
+    margin-bottom: 100px;
+    margin-top: 100px;
+    width: 700px;
+    height: 500px;
+}
+
+#blank_graph {
+    line-height: 500px;
+    width: 700px;
+    height: 500px;
+    background-color: #ECF7FF;
+    text-align: center;
+    margin-bottom: 100px;
+    margin-top: 100px;
+}
+
+input[type=number], select {
+    border: 3px solid #83a2b7;
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    -webkit-transition: 0.25s;
+    transition: 0.25s;
+    outline: none;
+}
+
+input[type=number]:focus, select:focus {
+    border: 3px solid #232A32;
+}
+
+input[type=submit] {
+    background-color: #191f23;
+    border: none;
+    color: #dcfdfd;
+    padding: 16px 32px;
+     text-decoration: none;
+    margin: 4px 2px;
+     cursor: pointer;
 }

@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 
 
 class DistributionSelect(forms.Form):
-    Type = forms.ModelChoiceField(label='Distribution', queryset=Distribution.objects.all(), required=True)
+    Type = forms.ModelChoiceField(label='Distribution', queryset=Distribution.objects.all(), required=True, blank=False, empty_label='')
     Rate = forms.FloatField(label='Rate', required=False)
     Min = forms.FloatField(label='Minimum Value', required=False)
     Max = forms.FloatField(label='Maximum Value', required=False)
