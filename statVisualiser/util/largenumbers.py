@@ -42,6 +42,10 @@ def binomial_normal(min_trials: int, max_trials: int, prob: float, steps=5):
     fig.update_layout(
         sliders=sliders
     )
+    for i in fig.data:
+        i.visible = False
+    fig.data[0].visible = True
+    fig.data[1].visible = True
     return fig
 
 
@@ -79,12 +83,16 @@ def binomial_poi_approx(min_trials: int, max_trials: int, mean: int, steps=10):
         fig.update_layout(
             sliders=sliders
         )
+        for i in fig.data:
+            i.visible = False
+        fig.data[0].visible = True
+        fig.data[1].visible = True
         return fig
 
 
 def main():
-    #fig = binomial_poi_approx(10, 100, 5)
-    fig = binomial_normal(10,100,0.5)
+    fig = binomial_poi_approx(10, 100, 5)
+    #fig = binomial_normal(10, 100,0.5)
     fig.show()
     # anim = approx_anim(fig)
     # writer = an.FFMpegWriter(fps=60)

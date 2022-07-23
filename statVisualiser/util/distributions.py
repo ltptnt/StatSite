@@ -40,7 +40,7 @@ class Variable(ABC):
     the value of the distribution that corresponds to the cdf value of the input x.
     """
     @abstractmethod
-    def inverse_cdf(self, x:float):
+    def inverse_cdf(self, x: float):
         pass
 
     def trial(self) -> float:
@@ -373,10 +373,8 @@ def convolution_cdf(var1, var2):
 def main():
     fig = make_subplots(rows=2, cols=2)
     a = Exponential(2)
-    a.graph_pdf(0, 5).show()
-    a.graph_cdf(0, 5).show()
-    print(a.inverse_cdf(0.5))
-
+    b = Normal(3, 1)
+    two_var_3d(a, b).show()
 
 if __name__ == '__main__':
     main()
