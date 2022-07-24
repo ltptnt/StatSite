@@ -278,6 +278,8 @@ class Binomial(Variable):
         return sum([event.trial() for i in range(0, self.trials)])
 
     def pdf(self, x: int):
+        if not 0 <= x <= self.trials:
+            return 0
         a = math.log(math.comb(self.trials, x)) + x * math.log(self.prob) \
             + (self.trials - x) * math.log(1 - self.prob)
         return np.e ** a

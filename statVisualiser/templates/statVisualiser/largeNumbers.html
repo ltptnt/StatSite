@@ -1,7 +1,11 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-AU">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Statistics Simulator</title>
+    <link rel="stylesheet" href="{% static 'statVisualiser/styles.css' %}">
     <title>Title</title>
 </head>
     <body>
@@ -19,7 +23,8 @@
 
                 </ul>
             </div>
-<p>piss</p>
+    <
+    <p>A general blurb about what the law of large numbers is, normal to binomial</p>
         <div class = "picker">
             <form method="post">
                 {% csrf_token %}
@@ -28,12 +33,32 @@
                 <input class="centered" type="submit" value="Submit">
             </form>
         </div>
-        <div class="graph">
-            {% if graph %}
-                {{ graph|safe }}
+        <div class="normal_graph">
+            {% if normal_graph %}
+                {{ normal_graph|safe }}
             {% else %}
                 <div id="blank_graph">Please enter parameters to see a Graph!</div>
             {% endif %}
         </div>
+
+    <p>
+        Stuff about the poisson approximation
+    </p>
+    <div class = "picker">
+            <form method="post">
+                {% csrf_token %}
+                <h2 class="centered">Law of Rare Events</h2>
+                {{ poisson.as_p }}
+                <input class="centered" type="submit" value="Submit">
+            </form>
+        </div>
+        <div class="poi_graph">
+            {% if poi_graph %}
+                {{ poi_graph|safe }}
+            {% else %}
+                <div id="blank_graph">Please enter parameters to see a Graph!</div>
+            {% endif %}
+        </div>
+
 </body>
 </html>

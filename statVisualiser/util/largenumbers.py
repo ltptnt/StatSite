@@ -1,4 +1,6 @@
-from . import distributions as dt
+#Comment out the from .\ line if testing this package alone
+from .\
+    import distributions as dt
 import numpy as np
 from plotly.subplots import make_subplots
 
@@ -44,14 +46,15 @@ def binomial_normal(min_trials: int, max_trials: int, prob: float, steps=10):
 
 def binomial_poi_approx(min_trials: int, max_trials: int, mean: int, steps=10):
     fig = make_subplots()
-    for trials in range(min_trials, max_trials + 1, steps):
+    for trials in range(min_trials, max_trials+1, steps):
         prob = mean/trials
         binom = dt.Binomial(trials, prob)
         converge = dt.Poisson(mean)
-        minim, maxim = binom.get_region()
+        minim, maxim = converge.get_region()
         binom.graph_pdf(0, maxim, fig=fig)
+        converge.graph_pdf(0, maxim, fig=fig)
     fig.data[0].visible = True
-    fig.update_layout(xaxis_title="Probability X=x", title="Binomial approximation with a mean of " + str(mean))
+    fig.update_layout(xaxis_title="Probability X=x", title="Poisson approximation with a mean of " + str(mean))
     increment = []
     for i in range(0, len(fig.data), 2):
         step = dict(method="update",
@@ -80,7 +83,7 @@ def binomial_poi_approx(min_trials: int, max_trials: int, mean: int, steps=10):
 
 
 def main():
-    fig = binomial_poi_approx(10, 100, 5)
+    fig = binomial_poi_approx(10, 100, 7, steps=10)
     #fig = binomial_normal(10, 100,0.5)
     fig.show()
     # anim = approx_anim(fig)
