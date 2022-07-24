@@ -27,3 +27,15 @@ class DistributionSelect(forms.Form):
             data[variable] = self.cleaned_data.get(variable)
 
         return data
+
+class NormalApproximation(forms.Form):
+    min_trials = forms.IntegerField(initial=10)
+    max_trials = forms.IntegerField(initial=100)
+    step = forms.IntegerField(initial=10)
+    probability = forms.FloatField(initial=0.5, min_value=0, max_value=1)
+
+class PoissonApproximation(forms.Form):
+    min_trials = forms.IntegerField(initial=10)
+    max_trials = forms.IntegerField(initial=100)
+    step = forms.IntegerField(initial=10)
+    mean = forms.FloatField(initial=4)

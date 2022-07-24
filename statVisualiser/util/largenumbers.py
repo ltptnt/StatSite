@@ -1,13 +1,6 @@
-import distributions as dt
+from . import distributions as dt
 import numpy as np
 from plotly.subplots import make_subplots
-import matplotlib.pyplot as plt
-import plotly.express as px
-
-"""
-Used to generate a frame of the large numbers animation. var must be Binomial. converge can be Normal or Poisson
-"""
-
 
 def binomial_normal(min_trials: int, max_trials: int, prob: float, steps=10):
     fig = make_subplots()

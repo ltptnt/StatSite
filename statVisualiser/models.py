@@ -11,22 +11,3 @@ class Distribution(models.Model):
     def __str__(self) -> str:
         return self.name
 
-
-"""
-information required for large numbers:
-min, max trials
-step size, default is 5
-binomial information
-"""
-class NormalApproximation(models.Model):
-    min_trials = models.IntegerField(default=10)
-    max_trials = models.IntegerField(default=100)
-    step = models.IntegerField(default=10)
-    probability = models.FloatField(default=0.5)
-
-
-class PoissonApproximation(models.Model):
-    min_trials = models.IntegerField(default=10)
-    max_trials = models.IntegerField(default=100)
-    step = models.IntegerField(default=10)
-    mean = models.FloatField(default=4)
