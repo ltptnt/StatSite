@@ -3,6 +3,8 @@ body {
     margin: auto;
 }
 
+/* Text */
+
 h1, h2, h3, h4, h5, h6 {
     font-family:'Open Sans', sans-serif;
 }
@@ -31,11 +33,9 @@ h4 {
     padding-bottom:20px;
 }
 
-.graph {
-    margin: auto;
-    text-align: center;
-    width: fit-content;
-}
+
+/* Misc Divs  */
+
 
 .centered {
     text-align: center;
@@ -74,6 +74,8 @@ h4 {
 }
 
 
+/* Table */
+
 .styled-table {
     text-align: center;
     border-collapse: collapse;
@@ -109,6 +111,8 @@ h4 {
     border-bottom: 2px solid #000000;
 }
 
+/* Navigation Bar */
+
 .navbar ul {
     list-style-type: none;
     margin: 0;
@@ -133,33 +137,17 @@ h4 {
     text-decoration: none;
 }
 
-li a:hover {
+.navbar li a:hover {
     background-color: #191f23;;
     color: #ECF7FF;
 }
 
-li a.active {
+.navbar li a.active {
     background-color: #ECF7FF;
     color: #232A32;
 }
 
-.graph {
-    text-align: center;
-    margin-bottom: 100px;
-    margin-top: 100px;
-    width: 700px;
-    height: 500px;
-}
-
-#blank_graph {
-    line-height: 500px;
-    width: 700px;
-    height: 500px;
-    background-color: #ECF7FF;
-    text-align: center;
-    margin-bottom: 100px;
-    margin-top: 100px;
-}
+/* Form */
 
 input[type=number], select {
     border: 3px solid #83a2b7;
@@ -186,4 +174,22 @@ input[type=submit] {
      cursor: pointer;
 }
 
-errorlist
+/* Graph */
+
+.graph {
+    text-align: center;
+    margin-bottom: 100px;
+    margin-top: 100px;
+    width: 700px;
+    height: 500px;
+}
+
+#blank_graph {
+    line-height: 500px;
+    width: 700px;
+    height: 500px;
+    background-color: #ECF7FF;
+    text-align: center;
+    margin-bottom: 100px;
+    margin-top: 100px;
+}
