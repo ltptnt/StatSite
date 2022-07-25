@@ -7,7 +7,7 @@ h1, h2, h3, h4, h5, h6 {
     font-family:'Open Sans', sans-serif;
 }
 
-h1 {
+.title_bar h1 {
     line-height:50px;
     font-weight:900;
     font-size:40px;
@@ -24,6 +24,7 @@ h3 {
     line-height:30px;
     padding-bottom:20px;
 }
+
 h4 {
     padding-top:10px;
     line-height:40px;
@@ -108,7 +109,7 @@ h4 {
     border-bottom: 2px solid #000000;
 }
 
-ul {
+.navbar ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
@@ -119,11 +120,11 @@ ul {
     top: 0;
 }
 
-li {
+.navbar li {
     float: left;
 }
 
-li a {
+.navbar li a {
     display: block;
     color: #ECF7FF;
     text-align: center;
