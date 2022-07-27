@@ -217,7 +217,7 @@ class Poisson(Variable):
             val += 1
 
     def __str__(self):
-        return "Poi({0})".format(round(self.rate, DP))
+        return "Poi({0})".format(int(self.rate))
 
 
 class Bernoulli(Variable):
@@ -235,7 +235,13 @@ class Bernoulli(Variable):
         return 0
 
     def pdf(self, x: int):
-        return self.prob ** x * (1 - self.prob) ** (1 - x)
+        match x:
+            case 0:
+                return 1-self.prob
+            case 1:
+                return self.prob
+            case _:
+                return 0
 
     def cdf(self, x: int):
         return x if x in [0, 1] else 0
@@ -250,6 +256,10 @@ class Binomial(Variable):
     def __init__(self, trials: int, prob: float):
         self.prob = prob
         self.trials = trials
+        self.cache = {
+            "log_p":  math.log(self.prob),
+            "log_q": math.log(1 - self.prob)
+        }
 
     def get_region(self):
         return 0, self.trials
@@ -281,8 +291,8 @@ class Binomial(Variable):
     def pdf(self, x: int):
         if not 0 <= x <= self.trials:
             return 0
-        a = math.log(math.comb(self.trials, x)) + x * math.log(self.prob) \
-            + (self.trials - x) * math.log(1 - self.prob)
+        a = math.log(math.comb(self.trials, x)) + x * self.cache.get("log_p") \
+            + (self.trials - x) * self.cache.get("log_q")
         return np.e ** a
 
     def __str__(self):
@@ -325,7 +335,6 @@ def two_var_3d(var1, var2, fig=None, geom=None, type="product", **kwargs):
                                  yaxis_title=str(var2),
                                  zaxis_title=title_text + str(var1) + " and " + str(var2)))
     return fig
-
 
 def convolution_pdf(var1, var2):
     min1, max1 = var1.get_region()

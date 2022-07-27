@@ -1,9 +1,9 @@
 #Comment out the from .\ line if testing this package alone
-from .\
-    import distributions as dt
+#from .\
+import distributions as dt
 import numpy as np
 from plotly.subplots import make_subplots
-
+import time
 def binomial_normal(min_trials: int, max_trials: int, prob: float, steps=10):
     fig = make_subplots()
     titles = []
@@ -85,12 +85,12 @@ def binomial_poi_approx(min_trials: int, max_trials: int, mean: int, steps=10):
 
 
 def main():
-    fig = binomial_poi_approx(10, 1000, 7, steps=10)
+    start = time.time()
+    fig = binomial_normal(10, 100, 0.5, steps=10)
+    end=time.time()
+    print(end - start)
     #fig = binomial_normal(10, 100,0.5)
-    fig.show()
-    # anim = approx_anim(fig)
-    # writer = an.FFMpegWriter(fps=60)
-    # anim.save("bingo.mp4") #(r"C:\Users\61435\Desktop\Animations", writer=writer)
+    #fig.show()
 
 
 if __name__ == '__main__':
