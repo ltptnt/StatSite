@@ -8,6 +8,7 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('distributions', views.distributions, name='distributions'),
     path('largeNumbers', views.large_numbers, name='largeNumbers'),
+    path('wheelSpin', views.generating_samples, name="wheelSpin"),
 
 
     path('about', views.about, name='about')

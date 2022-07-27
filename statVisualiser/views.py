@@ -35,15 +35,15 @@ def distributions(request):
             #Form also requires for the pdf, cdf:
             #min, max values to plot over.
             #If they want to make more than one graph, requires a geometry argument
-            fig = make_subplots(rows=2, cols=2)
+
 
             a = dist_selector(pick_one)
             b = dist_selector(pick_two)
+            fig = make_subplots(rows=2, cols=2, subplot_titles=[str(a), str(b), str(a), str(b)])
             a.graph_pdf(0, 10, fig=fig, geom=(1, 2), titles=True)
             b.graph_pdf(0, 10, fig=fig, geom=(2, 1), titles=True)
             a.graph_cdf(0, 10, fig=fig, geom=(1, 1))
             b.graph_cdf(0, 10, fig=fig, geom=(2, 2))
-            fig.update_layout(subplot_titles=[str(a), str(b), str(a), str(b)])
             context['graph'] = fig.to_html(full_html=False, default_height=500, default_width=700)
 
     return HttpResponse(template.render(context, request))
@@ -98,9 +98,55 @@ def large_numbers(request):
 
     return HttpResponse(template.render(context, request))
 
+"""
+Plan for generating samples:
+lets users generate sample from a distribution they choose
+they can overlay the pdf with the sample histogram
+See an approximation of a product of random variables
+"""
+def generating_samples(request):
+    dist_one_select = DistributionSelect(auto_id=True, prefix='picker1')
+    dist_two_select = DistributionSelect(auto_id=True, prefix='picker2')
+    dist_table = Distribution.objects.all().values()
+    template = loader.get_template('statVisualiser/generatingSamples.html')
 
-def wheel_spin(request):
-    pass
+    context = {
+        'dist': dist_table,
+        'picker1': dist_one_select,
+        'picker2': dist_two_select,
+        'graph': None
+    }
+
+    #fig =
+    #Overlaying the distribution the sample is from.
+    #minim, maxim = a.get_region()
+    #a.graph_pdf(minim, maxim, fig=fig)
+
+
+
+    if request.method == "POST":
+        pick_one = DistributionSelect(request.POST, prefix='picker1', label_suffix='')
+        pick_two = DistributionSelect(request.POST, prefix='picker2', label_suffix='')
+
+        if pick_one.is_valid() and pick_two.is_valid():
+            # Figure form: choose whether pdf or cdf, with the choice append a title to a list.
+            # This list will be the subplot_titles argument in make_subplots
+            # Titles each plot dynamically
+            # Form also requires for the pdf, cdf:
+            # min, max values to plot over.
+            # If they want to make more than one graph, requires a geometry argument
+
+
+            a = dist_selector(pick_one)
+            b = dist_selector(pick_two)
+            fig = make_subplots(rows=2, cols=2, subplot_titles=[str(a), str(b), str(a), str(b)])
+            a.graph_pdf(0, 10, fig=fig, geom=(1, 2), titles=True)
+            b.graph_pdf(0, 10, fig=fig, geom=(2, 1), titles=True)
+            a.graph_cdf(0, 10, fig=fig, geom=(1, 1))
+            b.graph_cdf(0, 10, fig=fig, geom=(2, 2))
+            context['graph'] = fig.to_html(full_html=False, default_height=500, default_width=700)
+
+    return HttpResponse(template.render(context, request))
 
 
 

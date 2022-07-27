@@ -39,3 +39,13 @@ class PoissonApproximation(forms.Form):
     max_trials = forms.IntegerField(initial=100)
     step = forms.IntegerField(initial=10)
     mean = forms.FloatField(initial=4)
+
+class DatasetParams(forms.Form):
+    n_trials = forms.IntegerField()
+    graph = forms.MultipleChoiceField()
+
+
+
+
+class CustomData(forms.Form):
+    custom_data = forms.FileField(required=False)

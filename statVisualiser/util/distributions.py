@@ -109,6 +109,19 @@ class Variable(ABC):
 
         return fig
 
+    """
+    Standard error lets user choose the standard error in the sample size, it is disabled by default.
+    """
+    def generate_dataset(self, trials: int, std_error=0):
+        if std_error == 0:
+            data = [self.trial() for _ in range(trials)]
+        else:
+            error = Normal(0, std_error)
+            data = [self.trial() + error.trial() for _ in range(trials)]
+        return data
+
+
+
 
 class Exponential(Variable):
     continuous = True
@@ -298,15 +311,15 @@ class Binomial(Variable):
     def __str__(self):
         return "Bin({0}, {1})".format(self.trials, round(self.prob,DP))
 
-#This might be useless
-def graph_density_sum(var1, var2):
-    #Generating the supported region through inverse-transform processes
-    var1_trials = [var1.trial() for _ in range(10**5)]
-    var2_trials = [var2.trial() for _ in range(10**5)]
-    convolution_trials = [var1_trials[i]*var2_trials[i] for i in range(len(var1_trials))]
-    fig = px.density_heatmap(x=var1_trials, y=var2_trials, z=convolution_trials, histfunc="count",
-                             marginal_x="histogram", marginal_y="histogram",
-                             )
+"""
+Note this function is only applicable for independant variables collected in pairs i.e var1_i belongs to \n
+ the same event as var2_i."""
+def graph_density_product(var1, var2):
+    convolution_trials = [var1[i] * var2[i] for i in range(len(var1))]
+    fig = px.density_heatmap(x=var1, y=var2,
+                             histnorm="probability", marginal_x='histogram', marginal_y='histogram',
+                             title="Density heatmap of the product of input datasets")
+
     return fig
 
 
@@ -335,6 +348,7 @@ def two_var_3d(var1, var2, fig=None, geom=None, type="product", **kwargs):
                                  yaxis_title=str(var2),
                                  zaxis_title=title_text + str(var1) + " and " + str(var2)))
     return fig
+
 
 def convolution_pdf(var1, var2):
     min1, max1 = var1.get_region()
@@ -382,14 +396,17 @@ def convolution_cdf(var1, var2):
     return fig
     #fig = px.scatter_3d(x=var1_trials, y=var2_trials, z=convolution_trials)
 
-
 def main():
-    fig = make_subplots(rows=2, cols=2)
-    a = Exponential(2)
-    b = Normal(3, 1)
-    two_var_3d(a, b).show()
+    a = Binomial(10, 0.3)
+    b = Binomial(10, 0.5)
     convolution_pdf(a,b).show()
-    convolution_cdf(a,b).show()
+    #fig.show()
+    #b = Normal(3, 1)
+    #two_var_3d(a, b).show()
+    #convolution_pdf(a,b).show()
+    #convolution_cdf(a,b).show()
+
+
 
 if __name__ == '__main__':
     main()
