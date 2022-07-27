@@ -145,7 +145,7 @@ class Uniform(Variable):
     def pdf(self, x: float) -> float:
         return 1/(self.max-self.min) if self.min <= x <= self.max else 0
 
-    def cdf(self, x: float)-> float:
+    def cdf(self, x: float) -> float:
         return (x-self.min)/(self.max-self.min) if self.min <= x <= self.max else 0
 
     def inverse_cdf(self, x: float) -> float:
@@ -161,12 +161,13 @@ class Normal(Variable):
     def __init__(self, mean: float, deviation: float):
         self.mean = mean
         self.sd = deviation
+        self.cache = {"pdf_const": 1/(self.sd*np.sqrt(2*np.pi))}
 
     def get_region(self):
         return -4*self.sd+self.mean, 4*self.sd+self.mean
 
     def pdf(self, x: float) -> float:
-        return 1/(self.sd*np.sqrt(2*np.pi)) * math.e**(-1/2*((x-self.mean)/self.sd)**2)
+        return self.cache.get("pdf_const") * math.e**(-1/2*((x-self.mean)/self.sd)**2)
 
     def cdf(self, x: int):
         x = (x-self.mean)/self.sd
@@ -378,6 +379,8 @@ def main():
     a = Exponential(2)
     b = Normal(3, 1)
     two_var_3d(a, b).show()
+    convolution_pdf(a,b).show()
+    convolution_cdf(a,b).show()
 
 if __name__ == '__main__':
     main()

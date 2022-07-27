@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en-AU">
+< lang="en-AU">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -8,23 +8,28 @@
     <link rel="stylesheet" href="{% static 'statVisualiser/styles.css' %}">
     <title>Title</title>
 </head>
-    <body>
+    <>
     <div class="title_bar">
                 <h1>  Stats & Stuff</h1>
             </div>
             <div class="navbar">
                 <ul>
                     <li><a href="/statVisualiser">Home</a></li>
-                    <li><a class="active" href="/statVisualiser/distributions">Distributions</a></li>
-                    <li><a href="/statVisualiser/largeNumbers">Large Numbers</a></li>
+                    <li><a href="/statVisualiser/distributions">Distributions</a></li>
+                    <li><a class="active" href="/statVisualiser/largeNumbers">Large Numbers</a></li>
                     <li><a href="/statVisualiser/wheelSpin">Wheel Spin</a></li>
                     <li><a href="/statVisualiser/about">About</a></li>
                     <li><a href="https://github.com/ltptnt/StatSite">Github</a></li>
 
                 </ul>
             </div>
-    <
-    <p>A general blurb about what the law of large numbers is, normal to binomial</p>
+    <title> The Law of Large Numbers for the Binomial Distribution</title>
+    <p>An interesting aspect of statistics is the behaviour of distributions as their parameters approach infinity. Under certain conditions, some distributions will converge towards another known distribution.
+        The central limit theorem is an example of this, which states that for a given distribution:
+        as the number of events in a sample increases, the mean of the sample will approach the true mean of the distribution.
+        . This site has some simulations that demonstrate this convergent behaviour for the binomial theorem.
+    </p>
+    <p>normal to binomial</p>
         <div class = "picker">
             <form method="post">
                 {% csrf_token %}
@@ -43,6 +48,17 @@
 
     <p>
         Stuff about the poisson approximation
+        The law of rare events describes the conditions under which a binomial distribution can be approximated by a poisson distribution.
+        As the number of trials in a binomial distribution increases, the distribution converges to the poisson distribution with a corresponding mean equal to np.
+        Generally, the following conditions must be met to apply the approximation:
+        -n>20
+        These approximations based on the laws of large numbers are more accurate as n increases.
+        np<5, or n(1-p)<5
+        This threshold represents the success or failure event respectively as sufficiently rare
+        Uses:
+        computationally simple compared to calculating probability for binomial distributions with a large number of trials.
+
+        Fill out the information below to see the pdf of a binomial distribution and its corresponding poisson apprixmation.
     </p>
     <div class = "picker">
             <form method="post">
