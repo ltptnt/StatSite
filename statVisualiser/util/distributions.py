@@ -314,9 +314,9 @@ class Binomial(Variable):
 """
 Note this function is only applicable for independant variables collected in pairs i.e var1_i belongs to \n
  the same event as var2_i."""
-def graph_density_product(var1, var2):
-    convolution_trials = [var1[i] * var2[i] for i in range(len(var1))]
-    fig = px.density_heatmap(x=var1, y=var2,
+def graph_density_product(data1, data2):
+    convolution_trials = [data1[i] * data2[i] for i in range(len(data1))]
+    fig = px.density_heatmap(x=data1, y=data2,
                              histnorm="probability", marginal_x='histogram', marginal_y='histogram',
                              title="Density heatmap of the product of input datasets")
 

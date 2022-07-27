@@ -1,10 +1,145 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<html lang="en-AU">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Statistics Simulator</title>
+        <link rel="stylesheet" href="{% static 'statVisualiser/styles.css' %}">
 
-</body>
-</html>
+    </head>
+    <body>
+        <div class="title_bar">
+            <h1>  Stats & Stuff</h1>
+        </div>
+        <div class="navbar">
+            <ul>
+                <li><a href="/statVisualiser">Home</a></li>
+                <li><a class="active" href="/statVisualiser/distributions">Distributions</a></li>
+                <li><a href="/statVisualiser/largeNumbers">Large Numbers</a></li>
+                <li><a href="/statVisualiser/wheelSpin">Wheel Spin</a></li>
+                <li><a href="/statVisualiser/about">About</a></li>
+                <li><a href="https://github.com/ltptnt/StatSite">Github</a></li>
+
+            </ul>
+        </div>
+        <div class="database">
+            <h2 class="centered">Distributions</h2>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Continuous</th>
+                        <th>Variable Count</th>
+                        <th>Required Variables</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for x in dist %}
+                    <tr>
+                        <td>{{ x.name }}</td>
+                        <td>{{ x.continuous }}</td>
+                        <td>{{ x.required_variable_count }}</td>
+                        <td id="{{ x.name }}">{{ x.required_variable_names|stringformat:'a' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class = "picker">
+            <form method="post">
+                {% csrf_token %}
+                <h2 class="centered">Distribution 1</h2>
+                {{ picker1.as_p }}
+                <h2 class="centered">Distribution 2</h2>
+                {{ picker2.as_p }}
+                <input class="centered" type="submit" value="Submit">
+            </form>
+        </div>
+
+        <div class = "picker">
+            <form method="post">
+                {% csrf_token %}
+                <h2 class="centered">Distribution 1 dataset</h2>
+                {{ data1.as_p }}
+                <h2 class="centered">Distribution 2 dataset</h2>
+                {{ data2.as_p }}
+                <input class="centered" type="submit" value="Submit">
+            </form>
+        </div>
+
+        <div class="graph">
+            {% if graph1 %}
+                {{ graph1|safe }}
+            {% else %}
+                <div id="blank_graph">Please enter parameters to see a Graph!</div>
+            {% endif %}
+        </div>
+
+        <div class="graph">
+            {% if graph2 %}
+                {{ graph2|safe }}
+            {% else %}
+                <div id="blank_graph">Please enter parameters to see a Graph!</div>
+            {% endif %}
+        </div>
+
+        <div class="graph">
+            {% if graph3 %}
+                {{ graph3|safe }}
+            {% else %}
+                <div id="blank_graph">Please enter parameters to see a Graph!</div>
+            {% endif %}
+        </div>
+
+
+    <script type="text/javascript">
+        function Picker1() {
+            HideAll('1')
+            Hide('1')
+        }
+
+        function Picker2() {
+            HideAll('2')
+            Hide('2')
+        }
+        function HideAll(id) {
+            document.getElementById('picker'+id+'-Mean').style.display = 'none';
+            document.getElementById('picker'+id+'-Rate').style.display = 'none';
+            document.getElementById('picker'+id+'-Min').style.display = 'none';
+            document.getElementById('picker'+id+'-Max').style.display = 'none';
+            document.getElementById('picker'+id+'-Probability').style.display = 'none';
+            document.getElementById('picker'+id+'-Trials').style.display = 'none';
+            document.getElementById('picker'+id+'-Sd').style.display = 'none';
+
+            let labels = document.getElementsByTagName('label');
+            for(let i = 0; i < labels.length; i++ ) {
+                if (labels[i].htmlFor.includes('picker'+id) && !labels[i].htmlFor.includes('Type')) {
+                    labels[i].style.display = 'none'
+                }
+            }
+        }
+        function Hide(id) {
+            HideAll(id);
+            let name = document.getElementById('picker' + id + '-Type').options[document.getElementById('picker' + id + '-Type').selectedIndex].innerHTML
+            const list = JSON.parse(document.getElementById(name).innerHTML.replace(/'/g, '"'));
+            let labels = document.getElementsByTagName('label');
+
+            for (let i = 0; i < list.length; i++) {
+                for (let j = 0; j < labels.length; j++) {
+                    if (labels[j].htmlFor.includes('picker' + id + '-' +list[i])) {
+                        labels[j].style.display = ''
+                    }
+                }
+                document.getElementById('picker' + id + '-' + list[i]).style.display = '';
+            }
+        }
+
+            window.onload = function() {
+                HideAll("1")
+                HideAll("2")
+                document.getElementById('picker1-Type').onchange = Picker1;
+                document.getElementById('picker2-Type').onchange = Picker2;
+
+            };
