@@ -17,6 +17,11 @@ class Variable(ABC):
     def continuous(self):
         pass
 
+    @property
+    @abstractmethod
+    def cache(self) -> dict:
+        pass
+
     @abstractmethod
     def get_region(self):
         pass
@@ -26,11 +31,12 @@ class Variable(ABC):
         pass
 
     def cdf(self, x: float):
-        pmf = [self.pdf(i) for i in range(0, int(x))]
-        return sum(pmf)
+        if x not in self.cache.keys():
+            self.cache[x] = sum([self.pdf(i) for i in range(0, int(x))])
+        return self.cache.get(x)
 
     def prob_between(self, x: float, y: float):
-        return self.cdf(y)-self.cdf(x)
+        return np.abs(self.cdf(x)-self.cdf(y))
 
     """
     Param:
@@ -125,7 +131,7 @@ class Variable(ABC):
 
 class Exponential(Variable):
     continuous = True
-
+    cache = {}
     def __init__(self, rate: float):
         self.rate = rate
 
@@ -147,13 +153,13 @@ class Exponential(Variable):
 
 class Uniform(Variable):
     continuous = True
-
+    cache = {}
     def __init__(self, minim, maxim):
         self.max = maxim
         self.min = minim
 
     def get_region(self):
-        return self.min, self.max
+        return self.min-1, self.max+1
 
     def pdf(self, x: float) -> float:
         return 1/(self.max-self.min) if self.min <= x <= self.max else 0
@@ -162,7 +168,7 @@ class Uniform(Variable):
         return (x-self.min)/(self.max-self.min) if self.min <= x <= self.max else 0
 
     def inverse_cdf(self, x: float) -> float:
-        return x*(self.max-self.min) + self.min if self.min <= x <= self.max else 0
+        return x*(self.max-self.min) + self.min if 0 <= x <= 1 else 0
 
     def __str__(self):
         return "U[{}, {}]".format(self.min, self.max)
@@ -170,6 +176,7 @@ class Uniform(Variable):
 
 class Normal(Variable):
     continuous = True
+    cache = {}
 
     def __init__(self, mean: float, deviation: float):
         self.mean = mean
@@ -198,6 +205,7 @@ class Normal(Variable):
 
 class Poisson(Variable):
     continuous = False
+    cache = {}
 
     def __init__(self, rate: float):
         self.rate = rate
@@ -235,6 +243,7 @@ class Poisson(Variable):
 
 class Bernoulli(Variable):
     continuous = False
+    cache = {}
 
     def __init__(self, prob):
         self.prob = prob
@@ -265,7 +274,7 @@ class Bernoulli(Variable):
 
 class Binomial(Variable):
     continuous = False
-
+    cache = {}
     def __init__(self, trials: int, prob: float):
         self.prob = prob
         self.trials = trials
@@ -386,6 +395,7 @@ def convolution_cdf(var1, var2):
     var2_trials = [var2.trial() for i in range(10 ** 5)]
     convolution_trials = [var1_trials[i] * var2_trials[i] for i in range(len(var1_trials))]
     cdf_points = np.linspace(min(convolution_trials), max(convolution_trials), 1000)
+    continuous_offset = [i - (max(convolution_trials)-min(convolution_trials))/1000 for i in cdf_points]
     probability = []
     for point in cdf_points:
         probability.append(len([i for i in convolution_trials if i <= point])/10**5)
@@ -396,17 +406,33 @@ def convolution_cdf(var1, var2):
     return fig
     #fig = px.scatter_3d(x=var1_trials, y=var2_trials, z=convolution_trials)
 
+"""
+Takes an input variable and a dataset of 1 var.
+Returns a histogram of the data
+and a histogram of the probability density overlayed with the prob density of the sample 
+"""
+def dataset_plots(var: Variable, data: []) -> go.Figure:
+    minim2, maxim2 = var.get_region()
+    fig2 = make_subplots(rows=2, cols=1, subplot_titles=["Histogram of generated sample",
+                                                         "Probability Density of sample overlayed with the fitted distribution"])
+    fig2.add_trace(
+        go.Histogram(x=data, name="Sample data"),
+        row=1, col=1)
+    bins = int(maxim2 - minim2) * 10
+    if not var.continuous:
+        bins = max(data) + 1
+    fig2.add_trace(go.Histogram(x=data, histnorm='probability density',
+                                name="Probability density of the sample data"), row=2, col=1)
+    fig2.update_yaxes(title_text="Probability density of sample X", row=2, col=1)
+    fig2.update_yaxes(title_text="Number of X in each interval", row=1, col=1)
+    fig2.update_layout(title_text="Plots of the generated dataset")
+    var.graph_pdf(min(data), max(data), fig=fig2, geom=(2, 1))
+    return fig2
+
 def main():
-    a = Binomial(10, 0.3)
-    b = Binomial(10, 0.5)
-    convolution_pdf(a,b).show()
-    #fig.show()
-    #b = Normal(3, 1)
-    #two_var_3d(a, b).show()
-    #convolution_pdf(a,b).show()
-    #convolution_cdf(a,b).show()
-
-
+    a = Uniform(1,4)
+    d = a.generate_dataset(1000)
+    px.histogram(x=d).show()
 
 if __name__ == '__main__':
     main()

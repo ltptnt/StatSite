@@ -1,3 +1,4 @@
+import numpy as np
 from django.http import HttpResponse
 from django.template import loader
 from .forms import *
@@ -29,13 +30,12 @@ def distributions(request):
         pick_two = DistributionSelect(request.POST, prefix='picker2', label_suffix='')
 
         if pick_one.is_valid() and pick_two.is_valid():
-            #Figure form: choose whether pdf or cdf, with the choice append a title to a list.
-            #This list will be the subplot_titles argument in make_subplots
-            #Titles each plot dynamically
-            #Form also requires for the pdf, cdf:
-            #min, max values to plot over.
-            #If they want to make more than one graph, requires a geometry argument
-
+            # Figure form: choose whether pdf or cdf, with the choice append a title to a list.
+            # This list will be the subplot_titles argument in make_subplots
+            # Titles each plot dynamically
+            # Form also requires for the pdf, cdf:
+            # min, max values to plot over.
+            # If they want to make more than one graph, requires a geometry argument
 
             a = dist_selector(pick_one)
             b = dist_selector(pick_two)
@@ -98,12 +98,15 @@ def large_numbers(request):
 
     return HttpResponse(template.render(context, request))
 
+
 """
 Plan for generating samples:
 lets users generate sample from a distribution they choose
 they can overlay the pdf with the sample histogram
 See an approximation of a product of random variables
 """
+
+
 def generating_samples(request):
     dist_one_select = DistributionSelect(auto_id=True, prefix='picker1')
     dist_two_select = DistributionSelect(auto_id=True, prefix='picker2')
@@ -123,10 +126,10 @@ def generating_samples(request):
         'graph3': None
     }
 
-    #fig =
-    #Overlaying the distribution the sample is from.
-    #minim, maxim = a.get_region()
-    #a.graph_pdf(minim, maxim, fig=fig)
+    # fig =
+    # Overlaying the distribution the sample is from.
+    # minim, maxim = a.get_region()
+    # a.graph_pdf(minim, maxim, fig=fig)
 
     if request.method == "POST":
         print("posted")
@@ -135,37 +138,27 @@ def generating_samples(request):
         data1 = DatasetParams(request.POST, prefix='data1', label_suffix='')
         data2 = DatasetParams(request.POST, prefix='data2', label_suffix='')
 
+        # New plan: integrate over each interval to find the expected value for interval in the partition
         if pick_one.is_valid() and data1.is_valid():
-            print("var1 valid")
             var1 = dist_selector(pick_one)
             dataset1 = var1.generate_dataset(data1.cleaned_data.get("n_trials"), data1.cleaned_data.get("std_error"))
-            fig = px.histogram(x=dataset1, histnorm='probability')
-            if data1.cleaned_data.get("pdf_overlay"):
-                minim1, maxim1 = var1.get_region()
-                var1.graph_pdf(minim1, maxim1, fig=fig)
-            context['graph1'] = fig.to_html(full_html=False, default_height=500, default_width=700)
+            fig1 = dataset_plots(var1, dataset1)
+            context['graph1'] = fig1.to_html(full_html=False, default_height=700, default_width=700)
 
         if pick_two.is_valid() and data2.is_valid():
-            print("var2 valid")
-            # Figure form: choose whether pdf or cdf, with the choice append a title to a list.
-            # This list will be the subplot_titles argument in make_subplots
-            # Titles each plot dynamically
-            # Form also requires for the pdf, cdf:
-            # min, max values to plot over.
-            # If they want to make more than one graph, requires a geometry argument
             var2 = dist_selector(pick_two)
             dataset2 = var2.generate_dataset(data2.cleaned_data.get("n_trials"), data2.cleaned_data.get("std_error"))
-            fig = px.histogram(x=dataset2, histnorm='probability')
-            if data2.cleaned_data.get("pdf_overlay"):
-                minim2, maxim2 = var2.get_region()
-                var2.graph_pdf(minim2, maxim2, fig=fig)
-            context['graph2'] = fig.to_html(full_html=False, default_height=500, default_width=700)
+            fig2 = dataset_plots(var2, dataset2)
+            context['graph2'] = fig2.to_html(full_html=False, default_height=700, default_width=700)
 
-        if data1.cleaned_data.get("convolution") and data1.cleaned_data.get("convolution"):
+        if data1.cleaned_data.get("convolution") and data2.cleaned_data.get("convolution"):
+            print("yes")
             conv_fig = graph_density_product(dataset1, dataset2)
-            context['graph3'] = fig.to_html(full_html=False, default_height=500, default_width=700)
-
+            context['graph3'] = conv_fig.to_html(full_html=False, default_height=700, default_width=700)
+        else:
+            print(data1.data.get("convolution"), data2.data.get("convolution"))
     return HttpResponse(template.render(context, request))
+
 
 
 
@@ -173,4 +166,3 @@ def about(request):
     template = loader.get_template('statVisualiser/about.html')
     context = {}
     return HttpResponse(template.render(context, request))
-

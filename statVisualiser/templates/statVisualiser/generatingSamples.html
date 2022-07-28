@@ -52,19 +52,15 @@
                 {% csrf_token %}
                 <h2 class="centered">Distribution 1</h2>
                 {{ picker1.as_p }}
-                <h2 class="centered">Distribution 2</h2>
-                {{ picker2.as_p }}
-                <input class="centered" type="submit" value="Submit">
-            </form>
-        </div>
-
-        <div class = "picker">
-            <form method="post">
-                {% csrf_token %}
                 <h2 class="centered">Distribution 1 dataset</h2>
                 {{ data1.as_p }}
+                <input class="centered" type="submit" value="Submit">
+
+                {% csrf_token %}
                 <h2 class="centered">Distribution 2 dataset</h2>
                 {{ data2.as_p }}
+                <h2 class="centered">Distribution 2</h2>
+                {{ picker2.as_p }}
                 <input class="centered" type="submit" value="Submit">
             </form>
         </div>
