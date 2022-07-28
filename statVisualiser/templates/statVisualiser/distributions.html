@@ -16,8 +16,8 @@
             <ul>
                 <li><a href="/statVisualiser">Home</a></li>
                 <li><a class="active" href="/statVisualiser/distributions">Distributions</a></li>
-                <li><a href="/statVisualiser/largeNumbers">Large Numbers</a></li>
-                <li><a href="/statVisualiser/wheelSpin">Wheel Spin</a></li>
+                <li><a href="/statVisualiser/largeNumbers">The Law of Large Numbers</a></li>
+                <li><a href="/statVisualiser/generatingSamples">Create Samples</a></li>
                 <li><a href="/statVisualiser/about">About</a></li>
                 <li><a href="https://github.com/ltptnt/StatSite">Github</a></li>
 
@@ -47,13 +47,25 @@
             </table>
         </div>
 
+
+
         <div class = "picker">
             <form method="post">
                 {% csrf_token %}
-                <h2 class="centered">Distribution 1</h2>
+                <div class="row">
+                    <div class="column">
+                       <h2 class="centered">Distribution 1</h2>
                 {{ picker1.as_p }}
-                <h2 class="centered">Distribution 2</h2>
+
+                    </div>
+                    <div class="column">
+                    <h2 class="centered">Distribution 2</h2>
                 {{ picker2.as_p }}
+                    </div>
+
+                </div>
+
+
                 <input class="centered" type="submit" value="Submit">
             </form>
         </div>

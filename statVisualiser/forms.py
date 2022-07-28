@@ -45,8 +45,5 @@ class DatasetParams(forms.Form):
     std_error = forms.FloatField(label="Standard Error Term (optional)", initial=0, required=False)
     convolution = forms.BooleanField(label="Plot the Convolution?", initial=True)
 
-
-
-
 class CustomData(forms.Form):
     custom_data = forms.FileField(required=False)

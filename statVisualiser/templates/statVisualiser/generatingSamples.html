@@ -15,14 +15,20 @@
         <div class="navbar">
             <ul>
                 <li><a href="/statVisualiser">Home</a></li>
-                <li><a class="active" href="/statVisualiser/distributions">Distributions</a></li>
-                <li><a href="/statVisualiser/largeNumbers">Large Numbers</a></li>
-                <li><a href="/statVisualiser/wheelSpin">Wheel Spin</a></li>
+                <li><a href="/statVisualiser/distributions">Distributions</a></li>
+                <li><a href="/statVisualiser/largeNumbers">The Law of Large Numbers</a></li>
+                <li><a class="active" href="/statVisualiser/generatingSamples">Create Samples</a></li>
                 <li><a href="/statVisualiser/about">About</a></li>
                 <li><a href="https://github.com/ltptnt/StatSite">Github</a></li>
 
             </ul>
         </div>
+
+        <div class = "row">
+            <div class = "column">adsbdnsbandbsandbnsabdnsabd</div>
+            <div class = "column">2 212121212212121212121</div>
+        </div>
+
         <div class="database">
             <h2 class="centered">Distributions</h2>
             <table class="styled-table">
@@ -46,23 +52,28 @@
                 </tbody>
             </table>
         </div>
-
-        <div class = "picker">
-            <form method="post">
-                {% csrf_token %}
-                <h2 class="centered">Distribution 1</h2>
-                {{ picker1.as_p }}
-                <h2 class="centered">Distribution 1 dataset</h2>
-                {{ data1.as_p }}
-                <input class="centered" type="submit" value="Submit">
-
-                {% csrf_token %}
-                <h2 class="centered">Distribution 2 dataset</h2>
-                {{ data2.as_p }}
-                <h2 class="centered">Distribution 2</h2>
-                {{ picker2.as_p }}
-                <input class="centered" type="submit" value="Submit">
-            </form>
+        <div class = "flex-container">
+            <div class = "picker">
+                <form method="post">
+                    {% csrf_token %}
+                    <h2 class="centered">Distribution 1</h2>
+                    {{ picker1.as_p }}
+                    <h2 class="centered">Distribution 1 dataset</h2>
+                    {{ data1.as_p }}
+                    <input class="centered" type="submit" value="Submit">
+                </form>
+            </div>
+        </div>
+            <div class = "picker">
+                <form method="post">
+                    {% csrf_token %}
+                    <h2 class="centered">Distribution 2 dataset</h2>
+                    {{ data2.as_p }}
+                    <h2 class="centered">Distribution 2</h2>
+                    {{ picker2.as_p }}
+                    <input class="centered" type="submit" value="Submit">
+                </form>
+            </div>
         </div>
 
         <div class="graph">
