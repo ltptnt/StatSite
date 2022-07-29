@@ -32,7 +32,10 @@ class Variable(ABC):
 
     def cdf(self, x: float):
         if x not in self.cache.keys():
-            self.cache[x] = sum([self.pdf(i) for i in range(0, int(x))])
+            if x == 0:
+                self.cache[x] = self.pdf(x)
+            else:
+                self.cache[x] = self.pdf(x) + self.cdf(x-1)
         return self.cache.get(x)
 
     def prob_between(self, x: float, y: float):
