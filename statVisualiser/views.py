@@ -4,6 +4,7 @@ from django.template import loader
 from .forms import *
 from .util.distributions import *
 from .util import largenumbers as ln
+import csv
 
 
 def index(request):
@@ -137,7 +138,9 @@ def generating_samples(request):
         pick_two = DistributionSelect(request.POST, prefix='picker2', label_suffix='')
         data1 = DatasetParams(request.POST, prefix='data1', label_suffix='')
         data2 = DatasetParams(request.POST, prefix='data2', label_suffix='')
+        download_data = True
 
+        print(data1.is_valid(), data2.is_valid())
         # New plan: integrate over each interval to find the expected value for interval in the partition
         if pick_one.is_valid() and data1.is_valid():
             var1 = dist_selector(pick_one)
@@ -145,18 +148,32 @@ def generating_samples(request):
             fig1 = dataset_plots(var1, dataset1)
             context['graph1'] = fig1.to_html(full_html=False, default_height=700, default_width=700)
 
+            if download_data:
+                response = HttpResponse(content_type='text/csv')
+                download = csv.writer(response)
+                download.writerows([[i] for i in dataset1])
+                response['Content-Disposition'] = 'download; filename="file.csv"'
+                writer = csv.writer(response)
+                writer.writerow(dataset1)
+                return response
+
         if pick_two.is_valid() and data2.is_valid():
             var2 = dist_selector(pick_two)
             dataset2 = var2.generate_dataset(data2.cleaned_data.get("n_trials"), data2.cleaned_data.get("std_error"))
             fig2 = dataset_plots(var2, dataset2)
             context['graph2'] = fig2.to_html(full_html=False, default_height=700, default_width=700)
 
-        if data1.cleaned_data.get("convolution") and data2.cleaned_data.get("convolution"):
+        if data1.is_valid() and data2.is_valid() and data1.cleaned_data.get("convolution") and data2.cleaned_data.get("convolution"):
             print("yes")
             conv_fig = graph_density_product(dataset1, dataset2)
             context['graph3'] = conv_fig.to_html(full_html=False, default_height=700, default_width=700)
         else:
             print(data1.data.get("convolution"), data2.data.get("convolution"))
+
+        #Add the downloadable data
+
+
+
     return HttpResponse(template.render(context, request))
 
 

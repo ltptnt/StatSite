@@ -43,7 +43,7 @@ class PoissonApproximation(forms.Form):
 class DatasetParams(forms.Form):
     n_trials = forms.IntegerField(label="Number of Trials")
     std_error = forms.FloatField(label="Standard Error Term (optional)", initial=0, required=False)
-    convolution = forms.BooleanField(label="Plot the Convolution?", initial=True)
+    convolution = forms.BooleanField(label="Plot the Convolution?", initial=True, required=False)
 
 class CustomData(forms.Form):
     custom_data = forms.FileField(required=False)
