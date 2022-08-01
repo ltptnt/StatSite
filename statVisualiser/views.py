@@ -5,6 +5,7 @@ from .forms import *
 from .util.distributions import *
 from .util import largenumbers as ln
 import csv
+from statsite.settings import BASE_DIR
 
 
 def index(request):
@@ -18,7 +19,7 @@ def distributions(request):
     dist_two_select = DistributionSelect(auto_id=True, prefix='picker2')
     dist_table = Distribution.objects.all().values()
     template = loader.get_template('statVisualiser/distributions.html')
-
+    os.path
     context = {
         'dist': dist_table,
         'picker1': dist_one_select,
@@ -122,6 +123,7 @@ def generating_samples(request):
         'picker2': dist_two_select,
         'data1': d1,
         'data2': d2,
+        'download': None,
         'graph1': None,
         'graph2': None,
         'graph3': None
@@ -133,7 +135,7 @@ def generating_samples(request):
     # a.graph_pdf(minim, maxim, fig=fig)
 
     if request.method == "POST":
-        print("posted")
+        print(os.path.dirname("download1.csv"))
         pick_one = DistributionSelect(request.POST, prefix='picker1', label_suffix='')
         pick_two = DistributionSelect(request.POST, prefix='picker2', label_suffix='')
         data1 = DatasetParams(request.POST, prefix='data1', label_suffix='')
@@ -147,15 +149,20 @@ def generating_samples(request):
             dataset1 = var1.generate_dataset(data1.cleaned_data.get("n_trials"), data1.cleaned_data.get("std_error"))
             fig1 = dataset_plots(var1, dataset1)
             context['graph1'] = fig1.to_html(full_html=False, default_height=700, default_width=700)
+            print(' beforefile open')
+            f = open('Statsite\statVisualiser\static\download1.csv')
+            print('written')
+            download1 = csv.writer(f)
+            download1.writerows([[i] for i in dataset1])
+            f.close()
 
-            if download_data:
-                response = HttpResponse(content_type='text/csv')
-                download = csv.writer(response)
-                download.writerows([[i] for i in dataset1])
-                response['Content-Disposition'] = 'download; filename="file.csv"'
-                writer = csv.writer(response)
-                writer.writerow(dataset1)
-                return response
+  #      response = HttpResponse(content_type='text/csv')
+   #     download = csv.writer(response)
+    #    download.writerows([[i] for i in dataset1])
+     #   response['Content-Disposition'] = 'download; filename="file.csv"'
+      #  writer = csv.writer(response)
+       # context['download']
+        #return response
 
         if pick_two.is_valid() and data2.is_valid():
             var2 = dist_selector(pick_two)
@@ -167,12 +174,6 @@ def generating_samples(request):
             print("yes")
             conv_fig = graph_density_product(dataset1, dataset2)
             context['graph3'] = conv_fig.to_html(full_html=False, default_height=700, default_width=700)
-        else:
-            print(data1.data.get("convolution"), data2.data.get("convolution"))
-
-        #Add the downloadable data
-
-
 
     return HttpResponse(template.render(context, request))
 

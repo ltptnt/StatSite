@@ -52,30 +52,34 @@
                 </tbody>
             </table>
         </div>
-        <div class = "picker">
-            <form method="post">
-                {% csrf_token %}
-                <h2 class="centered">Distribution 1</h2>
-                {{ picker1.as_p }}
-                <h2 class="centered">Distribution 1 dataset</h2>
-                {{ data1.as_p }}
-                <input class="centered" type="submit" value="Submit">
-            </form>
+        <div class = "flex-container">
+            <div class = "picker">
+                <form method="post">
+                    {% csrf_token %}
+                    <h2 class="centered">Distribution 1</h2>
+                    {{ picker1.as_p }}
+                    <h2 class="centered">Distribution 1 dataset</h2>
+                    {{ data1.as_p }}
+                    <input class="centered" type="submit" value="Submit">
+                </form>
+            </div>
         </div>
-        <div class = "picker">
-            <form method="post">
-                {% csrf_token %}
-                <h2 class="centered">Distribution 2 dataset</h2>
-                {{ data2.as_p }}
-                <h2 class="centered">Distribution 2</h2>
-                {{ picker2.as_p }}
-                <input class="centered" type="submit" value="Submit">
-            </form>
-        </div>
+            <div class = "picker">
+                <form method="post">
+                    {% csrf_token %}
+                    <h2 class="centered">Distribution 2 dataset</h2>
+                    {{ data2.as_p }}
+                    <h2 class="centered">Distribution 2</h2>
+                    {{ picker2.as_p }}
+                    <input class="centered" type="submit" value="Submit">
+                </form>
+            </div>
+
 
         <div class="graph">
             {% if graph1 %}
                 {{ graph1|safe }}
+                <a href="{% static 'statVisualiser/download1.csv' %}" download> Download me cunt </a>
             {% else %}
                 <div id="blank_graph">Please enter parameters to see a Graph!</div>
             {% endif %}
@@ -84,6 +88,7 @@
         <div class="graph">
             {% if graph2 %}
                 {{ graph2|safe }}
+                <a href="{% static 'statVisualiser/download2.csv' %}" download> download me please</a>
             {% else %}
                 <div id="blank_graph">Please enter parameters to see a Graph!</div>
             {% endif %}
@@ -96,7 +101,9 @@
                 <div id="blank_graph">Please enter parameters to see a Graph!</div>
             {% endif %}
         </div>
-        <script type="text/javascript">
+
+
+    <script type="text/javascript">
         function Picker1() {
             HideAll('1')
             Hide('1')
@@ -147,4 +154,3 @@
             };
     </script>
     </body>
-</html>
