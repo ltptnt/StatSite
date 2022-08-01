@@ -3,8 +3,6 @@ body {
     margin: auto;
 }
 
-/* Text */
-
 h1, h2, h3, h4, h5, h6 {
     font-family:'Open Sans', sans-serif;
 }
@@ -18,59 +16,76 @@ h1, h2, h3, h4, h5, h6 {
     margin: auto;
 }
 
-h2 {
-    line-height:50px;
+/* Navigation Bar */
+
+.navbar ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #232a32;
+    position: -webkit-sticky; /* Safari */
+    position: sticky;
+    top: 0;
 }
 
-h3 {
-    line-height:30px;
-    padding-bottom:20px;
+.navbar li {
+    float: left;
 }
 
-h4 {
-    padding-top:10px;
-    line-height:40px;
-    padding-bottom:20px;
-}
-
-
-/* Misc Divs  */
-
-
-.centered {
+.navbar li a {
+    display: block;
+    color: #ECF7FF;
     text-align: center;
+    font-weight: 600;
+    padding: 14px 16px;
+    text-decoration: none;
 }
 
-.database {
+.navbar li a:hover {
+    background-color: #191f23;;
+    color: #ECF7FF;
+}
+
+.navbar li a.active {
+    background-color: #ECF7FF;
+    color: #232A32;
+}
+
+
+/* Page Title */
+
+.page_title {
+    width: 80%;
+    text-align: left;
     margin: auto;
-    background: #ffffff;
+    padding-top: 30px;
     padding-bottom: 30px;
 }
 
-.picker {
+.page_title h1 {
+    line-height: 0;
+}
+
+.page_title h2 {
+    line-height: 0;
+    font-weight: lighter;
+    color: #b5bdcb;
+    font-style: italic;
+    font-size: 15px;
+}
+
+/* Blurb */
+
+.blurb {
+    width: 70%;
+    text-align: left;
     margin: auto;
-    padding-top: 15px;
-    width: 10%;
-    text-align: center;
+    padding-bottom: 30px;
 }
 
-.title_bar {
-    background: #111518;
-    padding-top: 20px;
-    padding-bottom: 40px;
-    padding-left: 10px;
-    margin-bottom: -20px;
-}
-
-.navbar {
-    padding-bottom: 0;
-    top: 0;
-    position: sticky;
-    position: -webkit-sticky /* For silly safari */ ;
-}
-
-.text {
-    width: 200px;
+.page_title p {
+    line-height: 0;
 }
 
 
@@ -111,43 +126,23 @@ h4 {
     border-bottom: 2px solid #000000;
 }
 
-/* Navigation Bar */
-
-.navbar ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    background-color: #232a32;
-    position: -webkit-sticky; /* Safari */
-    position: sticky;
-    top: 0;
-}
-
-.navbar li {
-    float: left;
-}
-
-.navbar li a {
-    display: block;
-    color: #ECF7FF;
-    text-align: center;
-    font-weight: 600;
-    padding: 14px 16px;
-    text-decoration: none;
-}
-
-.navbar li a:hover {
-    background-color: #191f23;;
-    color: #ECF7FF;
-}
-
-.navbar li a.active {
-    background-color: #ECF7FF;
-    color: #232A32;
-}
 
 /* Form */
+
+.picker {
+    margin: auto;
+    padding-top: 15px;
+    text-align: left;
+    width: 50%;
+    display: table;
+}
+
+.picker label {
+    line-height:50px;
+    font-weight: bold;
+    font-size:15px;
+    margin: auto;
+}
 
 input[type=number], select {
     border: 3px solid #83a2b7;
@@ -169,7 +164,7 @@ input[type=submit] {
     border: none;
     color: #dcfdfd;
     padding: 16px 32px;
-     text-decoration: none;
+    text-decoration: none;
     margin: 4px 2px;
      cursor: pointer;
 }
@@ -178,10 +173,9 @@ input[type=submit] {
 
 .graph {
     text-align: center;
-    margin-bottom: 100px;
-    margin-top: 100px;
-    width: 700px;
+    width: fit-content;
     height: 500px;
+    margin: auto;
 }
 
 #blank_graph {
@@ -194,19 +188,35 @@ input[type=submit] {
     margin-top: 100px;
 }
 
-/* Making columns*/
-.flex-container {
-    display: flex;
-    flex-direction: row;
+
+/* Misc Divs  */
+
+.centered {
+    text-align: center;
 }
 
-.row:after {
-    display: table;
-    clear: both;
-    content:"";
+.database {
+    margin: auto;
+    background: #ffffff;
+    padding-bottom: 30px;
 }
 
-.column {
-    float: left;
-    flex: 50%;
+.title_bar {
+    background: #111518;
+    padding-top: 20px;
+    padding-bottom: 40px;
+    padding-left: 10px;
+    margin-bottom: -20px;
 }
+
+.navbar {
+    padding-bottom: 0;
+    top: 0;
+    position: sticky;
+    position: -webkit-sticky /* For silly safari */ ;
+}
+
+.text {
+    width: 200px;
+}
+
