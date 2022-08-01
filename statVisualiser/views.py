@@ -164,16 +164,16 @@ def large_numbers(request):
 
 
 """
-Plan for generating samples:
-lets users generate sample from a distribution they choose
-they can overlay the pdf with the sample histogram
-See an approximation of a product of random variables
+Stretch goal for samples:
+Implement a user input to add a custom dataset to be turned into a histogram, maybe with a desired proposal pdf?
+e.g. they can choose to have an exp(1) pdf layered over their data.
 """
 
 
 def generating_samples(request):
     dist_one_select = DistributionSelect(auto_id=True, prefix='picker1')
     dist_two_select = DistributionSelect(auto_id=True, prefix='picker2')
+    download = Download(auto_id=True, prefix='download')
     d1 = DatasetParams(auto_id=True, prefix='data1')
     d2 = DatasetParams(auto_id=True, prefix='data2')
     dist_table = Distribution.objects.all().values()
@@ -185,46 +185,31 @@ def generating_samples(request):
         'picker2': dist_two_select,
         'data1': d1,
         'data2': d2,
-        'download': None,
+        'download': download,
         'graph1': None,
         'graph2': None,
         'graph3': None
     }
 
-    # fig =
-    # Overlaying the distribution the sample is from.
-    # minim, maxim = a.get_region()
-    # a.graph_pdf(minim, maxim, fig=fig)
-
     if request.method == "POST":
-        print(os.path.dirname("download1.csv"))
         pick_one = DistributionSelect(request.POST, prefix='picker1', label_suffix='')
         pick_two = DistributionSelect(request.POST, prefix='picker2', label_suffix='')
         data1 = DatasetParams(request.POST, prefix='data1', label_suffix='')
         data2 = DatasetParams(request.POST, prefix='data2', label_suffix='')
-        download_data = True
+        download_data = Download(request.POST, prefix='download', label_suffix='')
 
+        print(pick_two.is_valid(), pick_one.is_valid())
         print(data1.is_valid(), data2.is_valid())
-        # New plan: integrate over each interval to find the expected value for interval in the partition
+        dataset1 = []
+        dataset2 = []
+        var1 = None
+        var2 = None
+
         if pick_one.is_valid() and data1.is_valid():
             var1 = dist_selector(pick_one)
             dataset1 = var1.generate_dataset(data1.cleaned_data.get("n_trials"), data1.cleaned_data.get("std_error"))
             fig1 = dataset_plots(var1, dataset1)
             context['graph1'] = fig1.to_html(full_html=False, default_height=700, default_width=700)
-            print(' beforefile open')
-            f = open('Statsite\statVisualiser\static\download1.csv')
-            print('written')
-            download1 = csv.writer(f)
-            download1.writerows([[i] for i in dataset1])
-            f.close()
-
-  #      response = HttpResponse(content_type='text/csv')
-   #     download = csv.writer(response)
-    #    download.writerows([[i] for i in dataset1])
-     #   response['Content-Disposition'] = 'download; filename="file.csv"'
-      #  writer = csv.writer(response)
-       # context['download']
-        #return response
 
         if pick_two.is_valid() and data2.is_valid():
             var2 = dist_selector(pick_two)
@@ -232,12 +217,34 @@ def generating_samples(request):
             fig2 = dataset_plots(var2, dataset2)
             context['graph2'] = fig2.to_html(full_html=False, default_height=700, default_width=700)
 
-        if data1.is_valid() and data2.is_valid() and data1.cleaned_data.get("convolution") and data2.cleaned_data.get("convolution"):
-            print("yes")
+        if download_data.is_valid() and download_data.cleaned_data.get("convolution"):
+            while len(dataset1) < len(dataset2):
+                dataset1.append([None])
+            while len(dataset1) > len(dataset2):
+                dataset2.append([None])
             conv_fig = graph_density_product(dataset1, dataset2)
             context['graph3'] = conv_fig.to_html(full_html=False, default_height=700, default_width=700)
 
+        if download_data.is_valid() and download_data.cleaned_data.get("download"):
+            response = HttpResponse(content_type='text/csv',
+                                    headers={'Content-Disposition': 'attachment; filename="sample_dataset.csv"'},)
+            title1 = str(var1) if var1 is not None else ""
+            title2 = str(var2) if var2 is not None else ""
+            title = [title1, title2]
+            while len(dataset1) < len(dataset2):
+                dataset1.append([None])
+            while len(dataset1) > len(dataset2):
+                dataset2.append([None])
+
+            big_data = list(zip(dataset1, dataset2))
+            download = csv.writer(response)
+            download.writerow(title)
+            download.writerows([trial[0], trial[1]] for trial in big_data)
+            print("download return ")
+            return response
+    print("render return")
     return HttpResponse(template.render(context, request))
+
 
 
 def about(request):

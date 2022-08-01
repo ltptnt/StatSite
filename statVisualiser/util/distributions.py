@@ -157,6 +157,7 @@ class Exponential(Variable):
 class Uniform(Variable):
     continuous = True
     cache = {}
+
     def __init__(self, minim, maxim):
         self.max = maxim
         self.min = minim
@@ -172,6 +173,9 @@ class Uniform(Variable):
 
     def inverse_cdf(self, x: float) -> float:
         return x*(self.max-self.min) + self.min if 0 <= x <= 1 else 0
+
+    def trial(self) -> float:
+        return rd.uniform(self.min, self.max)
 
     def __str__(self):
         return "U[{}, {}]".format(self.min, self.max)
@@ -232,7 +236,6 @@ class Poisson(Variable):
         if current <= x < self.cdf(val + 1):
             return val
         val += 1
-        "Loop depth here could be a problem"
         while not found:
             current = next
             next = self.cdf(val + 1)
