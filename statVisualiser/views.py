@@ -1,3 +1,4 @@
+import numpy as np
 from django.http import HttpResponse
 from django.template import loader
 from .forms import *
@@ -5,6 +6,7 @@ from .util.distributions import *
 from .util import largenumbers as ln
 from django.contrib import messages
 import csv
+from statsite.settings import BASE_DIR
 
 
 def index(request):
@@ -106,7 +108,7 @@ def distributions(request):
 
             # Figure form: choose whether pdf or cdf, with the choice append a title to a list.
             # This list will be the subplot_titles argument in make_subplots
-            # Titles each plot dynamicallyprin
+            # Titles each plot dynamically
             # Form also requires for the pdf, cdf:
             # min, max values to plot over.
             # If they want to make more than one graph, requires a geometry argument
@@ -183,6 +185,7 @@ def generating_samples(request):
         'picker2': dist_two_select,
         'data1': d1,
         'data2': d2,
+        'download': None,
         'graph1': None,
         'graph2': None,
         'graph3': None
@@ -194,7 +197,7 @@ def generating_samples(request):
     # a.graph_pdf(minim, maxim, fig=fig)
 
     if request.method == "POST":
-        print("posted")
+        print(os.path.dirname("download1.csv"))
         pick_one = DistributionSelect(request.POST, prefix='picker1', label_suffix='')
         pick_two = DistributionSelect(request.POST, prefix='picker2', label_suffix='')
         data1 = DatasetParams(request.POST, prefix='data1', label_suffix='')
@@ -208,15 +211,20 @@ def generating_samples(request):
             dataset1 = var1.generate_dataset(data1.cleaned_data.get("n_trials"), data1.cleaned_data.get("std_error"))
             fig1 = dataset_plots(var1, dataset1)
             context['graph1'] = fig1.to_html(full_html=False, default_height=700, default_width=700)
+            print(' beforefile open')
+            f = open('Statsite\statVisualiser\static\download1.csv')
+            print('written')
+            download1 = csv.writer(f)
+            download1.writerows([[i] for i in dataset1])
+            f.close()
 
-            if download_data:
-                response = HttpResponse(content_type='text/csv')
-                download = csv.writer(response)
-                download.writerows([[i] for i in dataset1])
-                response['Content-Disposition'] = 'download; filename="file.csv"'
-                writer = csv.writer(response)
-                writer.writerow(dataset1)
-                return response
+  #      response = HttpResponse(content_type='text/csv')
+   #     download = csv.writer(response)
+    #    download.writerows([[i] for i in dataset1])
+     #   response['Content-Disposition'] = 'download; filename="file.csv"'
+      #  writer = csv.writer(response)
+       # context['download']
+        #return response
 
         if pick_two.is_valid() and data2.is_valid():
             var2 = dist_selector(pick_two)
@@ -224,15 +232,10 @@ def generating_samples(request):
             fig2 = dataset_plots(var2, dataset2)
             context['graph2'] = fig2.to_html(full_html=False, default_height=700, default_width=700)
 
-        if data1.is_valid() and data2.is_valid() and data1.cleaned_data.get("convolution") and data2.cleaned_data.get(
-                "convolution"):
+        if data1.is_valid() and data2.is_valid() and data1.cleaned_data.get("convolution") and data2.cleaned_data.get("convolution"):
             print("yes")
             conv_fig = graph_density_product(dataset1, dataset2)
             context['graph3'] = conv_fig.to_html(full_html=False, default_height=700, default_width=700)
-        else:
-            print(data1.data.get("convolution"), data2.data.get("convolution"))
-
-        # Add the downloadable data
 
     return HttpResponse(template.render(context, request))
 
