@@ -1,9 +1,9 @@
-import numpy as np
 from django.http import HttpResponse
 from django.template import loader
 from .forms import *
 from .util.distributions import *
 from .util import largenumbers as ln
+from django.contrib import messages
 import csv
 
 
@@ -14,8 +14,8 @@ def index(request):
 
 
 def distributions(request):
-    dist_one_select = DistributionSelect(auto_id=True, prefix='picker1')
-    dist_two_select = DistributionSelect(auto_id=True, prefix='picker2')
+    dist_one_select = DistributionSelect(auto_id=True, prefix='picker1', label_suffix='')
+    dist_two_select = DistributionSelect(auto_id=True, prefix='picker2', label_suffix='')
     dist_table = Distribution.objects.all().values()
     template = loader.get_template('statVisualiser/distributions.html')
 
@@ -26,34 +26,95 @@ def distributions(request):
         'graph': None
     }
 
-    if request.method == "POST":
-        pick_one = DistributionSelect(request.POST, prefix='picker1', label_suffix='')
-        pick_two = DistributionSelect(request.POST, prefix='picker2', label_suffix='')
+    if request.method == "POST" and 'submit' in request.POST:
+        dist_one_select = DistributionSelect(request.POST, auto_id=True, prefix='picker1', label_suffix='')
+        dist_two_select = DistributionSelect(request.POST, auto_id=True, prefix='picker2', label_suffix='')
+        context['picker1'] = dist_one_select
+        context['picker2'] = dist_two_select
 
-        if pick_one.is_valid() and pick_two.is_valid():
+        if dist_one_select.is_valid() and dist_two_select.is_valid():
+            messages_text = []
+
+            data1 = dist_one_select.get_data()
+            data2 = dist_two_select.get_data()
+
+            if data1 is None:
+                messages_text.append("ERROR: Please select a distribution!")
+            else:
+                for key, value in data1.items():
+                    if value == '':
+                        messages_text.append("ERROR: No Value for {key_name} in Distribution 1!".format(key_name=key))
+
+                if len(dist_two_select.cleaned_data.get('Output')) == 0:
+                    messages.warning(request, "WARN: You did not select a PDF or CDF for distribution 1.",
+                                     extra_tags='alert')
+
+                if data2 is not None:
+                    for key, value in data2.items():
+                        if value == '':
+                            messages_text.append(
+                                "ERROR: No Value for {key_name} in Distribution 2!".format(key_name=key))
+
+                    if len(dist_two_select.cleaned_data.get('Output')) == 0:
+                        messages.warning(request, "WARN: You did not select a PDF or CDF for distribution 2.",
+                                         extra_tags='alert')
+
+            if len(messages_text) == 0:
+                a = dist_selector(dist_one_select)
+                b = dist_selector(dist_two_select)
+                graph_count = len(dist_one_select.cleaned_data.get('Output')) + len(
+                    dist_two_select.cleaned_data.get('Output'))
+
+                if graph_count == 1:
+                    fig = make_subplots(rows=1, cols=1, subplot_titles= '')
+                else:
+                    fig = make_subplots(rows=round((graph_count + 1) / 2), cols=2, subplot_titles=[' ', ' ', ' ', ' '])
+                count = 1
+                titles = []
+                for value in dist_one_select.cleaned_data.get('Output'):
+                    if str(value) == 'pdf':
+                        print("1")
+                        a.graph_pdf(0, 10, fig=fig, geom=(int((count + 1) / 2), 2 - (count % 2)), titles=True)
+                        titles.append("PDF of " + str(a))
+                    elif str(value) == 'cdf':
+                        print("2")
+                        a.graph_cdf(0, 10, fig=fig, geom=(int((count + 1) / 2), 2 - (count % 2)), titles=True)
+                        titles.append("CDF of " + str(a))
+                    count += 1
+
+
+                for values in dist_two_select.cleaned_data.get('Output'):
+                    if str(values) == 'pdf':
+                        b.graph_pdf(0, 10, fig=fig, geom=(round((count + 1) / 2), 2 - (count % 2)), titles=True)
+                        titles.append("PDF of " + str(b))
+                    elif str(values) == 'cdf':
+                        b.graph_cdf(0, 10, fig=fig, geom=(round((count + 1) / 2), 2 - (count % 2)), titles=True)
+                        titles.append("CDF of " + str(b))
+                    count += 1
+
+                count = 0
+                for label in titles:
+                    fig.layout.annotations[count].update(text=str(label))
+                    count += 1
+
+                context['graph'] = fig.to_html(full_html=False, default_height=750, default_width=1000,
+                                               div_id='graph')
+
+            else:
+                for text in messages_text:
+                    messages.error(request, text, extra_tags='alert')
+
             # Figure form: choose whether pdf or cdf, with the choice append a title to a list.
             # This list will be the subplot_titles argument in make_subplots
-            # Titles each plot dynamically
+            # Titles each plot dynamicallyprin
             # Form also requires for the pdf, cdf:
             # min, max values to plot over.
             # If they want to make more than one graph, requires a geometry argument
-
-            a = dist_selector(pick_one)
-            b = dist_selector(pick_two)
-            fig = make_subplots(rows=2, cols=2, subplot_titles=[str(a), str(b), str(a), str(b)])
-            a.graph_pdf(0, 10, fig=fig, geom=(1, 2), titles=True)
-            b.graph_pdf(0, 10, fig=fig, geom=(2, 1), titles=True)
-            a.graph_cdf(0, 10, fig=fig, geom=(1, 1))
-            b.graph_cdf(0, 10, fig=fig, geom=(2, 2))
-            context['graph'] = fig.to_html(full_html=False, default_height=500, default_width=700)
-
     return HttpResponse(template.render(context, request))
 
 
 def dist_selector(picker: DistributionSelect) -> Variable | None:
     data = picker.get_data()
-    print(type(data))
-    print(data)
     match str(picker.cleaned_data.get('Type')):
         case 'Exponential':
             return Exponential(data.get('Rate', 0))
@@ -163,20 +224,17 @@ def generating_samples(request):
             fig2 = dataset_plots(var2, dataset2)
             context['graph2'] = fig2.to_html(full_html=False, default_height=700, default_width=700)
 
-        if data1.is_valid() and data2.is_valid() and data1.cleaned_data.get("convolution") and data2.cleaned_data.get("convolution"):
+        if data1.is_valid() and data2.is_valid() and data1.cleaned_data.get("convolution") and data2.cleaned_data.get(
+                "convolution"):
             print("yes")
             conv_fig = graph_density_product(dataset1, dataset2)
             context['graph3'] = conv_fig.to_html(full_html=False, default_height=700, default_width=700)
         else:
             print(data1.data.get("convolution"), data2.data.get("convolution"))
 
-        #Add the downloadable data
-
-
+        # Add the downloadable data
 
     return HttpResponse(template.render(context, request))
-
-
 
 
 def about(request):

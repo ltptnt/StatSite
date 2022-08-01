@@ -1,11 +1,18 @@
 from django import forms
+
+import statVisualiser.models
 from .models import Distribution
 import json
-from django.core.exceptions import ValidationError
 
 
 class DistributionSelect(forms.Form):
-    Type = forms.ModelChoiceField(label='Distribution', queryset=Distribution.objects.all(), required=True, blank=False, empty_label='')
+    Outputs = (
+        ("pdf", "Probability density function"),
+        ("cdf", "cumulative distribution function"),
+    )
+
+    Type = forms.ModelChoiceField(label='Distribution', queryset=Distribution.objects.all(), required=False,
+                                  empty_label='')
     Rate = forms.FloatField(label='Rate', required=False)
     Min = forms.FloatField(label='Minimum Value', required=False)
     Max = forms.FloatField(label='Maximum Value', required=False)
@@ -13,20 +20,27 @@ class DistributionSelect(forms.Form):
     Sd = forms.FloatField(label='Standard Deviation', required=False)
     Probability = forms.FloatField(label='Probability', min_value=0, max_value=1, required=False)
     Trials = forms.IntegerField(label='Trials', min_value=0, required=False)
+    Output = forms.MultipleChoiceField(label='', widget=forms.CheckboxSelectMultiple,
+                                       choices=Outputs, required=False)
 
-
-    def get_data(self) -> dict[str, float] | dict[str, int]:
+    def get_data(self) -> dict[str, float] | dict[str, int] | None:
         data = dict()
-        dist = self.cleaned_data.get("Type")
-        stored_info = Distribution.objects.get(name=dist)
+        try:
+            dist = self.cleaned_data.get("Type")
+            stored_info = Distribution.objects.get(name=dist)
+        except statVisualiser.models.Distribution.DoesNotExist:
+            return None
+
         required_variables = json.loads(json.dumps(stored_info.required_variable_names))
 
         for variable in required_variables:
-            if self.cleaned_data.get(variable) == None:
-                raise ValidationError('Please input a value for ' + variable)
-            data[variable] = self.cleaned_data.get(variable)
+            if self.cleaned_data.get(variable) is None:
+                data[variable] = ''
+            else:
+                data[variable] = self.cleaned_data.get(variable)
 
         return data
+
 
 class NormalApproximation(forms.Form):
     min_trials = forms.IntegerField(initial=10)
@@ -34,16 +48,19 @@ class NormalApproximation(forms.Form):
     step = forms.IntegerField(initial=10)
     probability = forms.FloatField(initial=0.5, min_value=0, max_value=1)
 
+
 class PoissonApproximation(forms.Form):
     min_trials = forms.IntegerField(initial=10)
     max_trials = forms.IntegerField(initial=100)
     step = forms.IntegerField(initial=10)
     mean = forms.FloatField(initial=4)
 
+
 class DatasetParams(forms.Form):
     n_trials = forms.IntegerField(label="Number of Trials")
     std_error = forms.FloatField(label="Standard Error Term (optional)", initial=0, required=False)
     convolution = forms.BooleanField(label="Plot the Convolution?", initial=True, required=False)
+
 
 class CustomData(forms.Form):
     custom_data = forms.FileField(required=False)

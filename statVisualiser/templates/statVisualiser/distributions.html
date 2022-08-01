@@ -6,9 +6,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <title>Statistics Simulator</title>
         <link rel="stylesheet" href="{% static 'statVisualiser/styles.css' %}">
-a
     </head>
-    <body>
+    <div>
         <div class="title_bar">
             <h1>  Stats & Stuff</h1>
         </div>
@@ -18,10 +17,27 @@ a
                 <li><a class="active" href="/statVisualiser/distributions">Distributions</a></li>
                 <li><a href="/statVisualiser/largeNumbers">The Law of Large Numbers</a></li>
                 <li><a href="/statVisualiser/generatingSamples">Create Samples</a></li>
-                <li><a href="/statVisualiser/about">About</a></li>
                 <li><a href="https://github.com/ltptnt/StatSite">Github</a></li>
 
             </ul>
+        </div>
+        <div class="messages">
+            {% for message in messages %}
+                <div class="{{ message.tags }}">
+                    <span class="alert_close">&times;</span>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+        <div class="page_title">
+            <h1>Distributions</h1>
+            <h2>A Distribution Visualiser</h2>
+        </div>
+        <div class="blurb">
+            <p>
+                This statistics visualiser allows you to generate graphical representation of one or two distributions
+                probability distribution function and/or cumulative distribution function.
+            </p>
         </div>
         <div class="database">
             <h2 class="centered">Distributions</h2>
@@ -47,28 +63,6 @@ a
             </table>
         </div>
 
-
-
-        <div class = "picker">
-            <form method="post">
-                {% csrf_token %}
-                <div class="row">
-                    <div class="column">
-                       <h2 class="centered">Distribution 1</h2>
-                {{ picker1.as_p }}
-
-                    </div>
-                    <div class="column">
-                    <h2 class="centered">Distribution 2</h2>
-                {{ picker2.as_p }}
-                    </div>
-
-                </div>
-
-
-                <input class="centered" type="submit" value="Submit">
-            </form>
-        </div>
         <div class="graph">
             {% if graph %}
                 {{ graph|safe }}
@@ -77,7 +71,19 @@ a
             {% endif %}
         </div>
 
-    <script type="text/javascript">
+        <div class = "picker">
+            <form method="post">
+                {% csrf_token %}
+                <h2 class="centered">Distribution 1</h2>
+                {{ picker1.as_p }}
+                <h2 class="centered">Distribution 2</h2>
+                {{ picker2.as_p }}
+                <input class="centered" type="submit" name="submit" value="Submit">
+                <input class="centered" type="submit" name="clear" value="Clear">
+            </form>
+        </div>
+
+        <script type="text/javascript">
         function Picker1() {
             HideAll('1')
             Hide('1')
@@ -95,10 +101,11 @@ a
             document.getElementById('picker'+id+'-Probability').style.display = 'none';
             document.getElementById('picker'+id+'-Trials').style.display = 'none';
             document.getElementById('picker'+id+'-Sd').style.display = 'none';
+            document.getElementById('picker'+id+'-Output').style.display = 'none';
 
             let labels = document.getElementsByTagName('label');
             for(let i = 0; i < labels.length; i++ ) {
-                if (labels[i].htmlFor.includes('picker'+id) && !labels[i].htmlFor.includes('Type')) {
+                if (labels[i].htmlFor.includes('picker'+id) && !(labels[i].htmlFor.includes('Type'))) {
                     labels[i].style.display = 'none'
                 }
             }
@@ -106,27 +113,38 @@ a
         function Hide(id) {
             HideAll(id);
             let name = document.getElementById('picker' + id + '-Type').options[document.getElementById('picker' + id + '-Type').selectedIndex].innerHTML
-            const list = JSON.parse(document.getElementById(name).innerHTML.replace(/'/g, '"'));
-            let labels = document.getElementsByTagName('label');
+            if (name !== '') {
+                const list = JSON.parse(document.getElementById(name).innerHTML.replace(/'/g, '"'));
+                let labels = document.getElementsByTagName('label');
 
-            for (let i = 0; i < list.length; i++) {
-                for (let j = 0; j < labels.length; j++) {
-                    if (labels[j].htmlFor.includes('picker' + id + '-' +list[i])) {
-                        labels[j].style.display = ''
+                for (let i = 0; i < list.length; i++) {
+                    for (let j = 0; j < labels.length; j++) {
+                        if (labels[j].htmlFor.includes('picker' + id + '-' + list[i]) || labels[j].htmlFor.includes('Output'))  {
+                            labels[j].style.display = ''
+                        }
                     }
+                    document.getElementById('picker' + id + '-' + list[i]).style.display = '';
                 }
-                document.getElementById('picker' + id + '-' + list[i]).style.display = '';
+                document.getElementById('picker' + id + '-Output').style.display = '';
             }
         }
 
             window.onload = function() {
-                HideAll("1")
-                HideAll("2")
+                Picker1()
+                Picker2()
                 document.getElementById('picker1-Type').onchange = Picker1;
                 document.getElementById('picker2-Type').onchange = Picker2;
 
+                let close = document.getElementsByClassName("alert_close");
+                for (let i = 0; i < close.length; i++) {
+                    close[i].onclick = function(){
+                        let div = this.parentElement;
+                        div.style.opacity = "0";
+                        setTimeout(function(){ div.style.display = "none"; }, 600);
+                    }
+                    setTimeout(function(){close[i].click()}, 10000)
+                 }
             };
-
-</script>
+        </script>
     </body>
 </html>
