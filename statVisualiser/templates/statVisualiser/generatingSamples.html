@@ -24,19 +24,16 @@
             </ul>
         </div>
 
-        <p>
-            On this page, you can generate a random sample of your own desired size from a distribution of your choice.
-            Fill out the forms below
-            The standard error parameter lets you add more "noise" to a sample, however there will still be randomness
-            if it's left blank. Note: this feature is in beta and may be problematic around values of 0.
-
-
-        </p>
-
-        <div class = "row">
-            <div class = "column">adsbdnsbandbsandbnsabdnsabd</div>
-            <div class = "column">2 212121212212121212121</div>
+        <div class="blurb">
+            <p>
+                On this page, you can generate your own sample dataset of 1 or 2 independent random variables from the table below.
+                Fill out the forms below to generate your dataset.
+            </p>
+            <p>
+                The standard error parameter lets you add more "noise" to a sample. This random error term is a standard normal with an input standard deviation. Note: this feature is in beta and may be problematic around values of 0.
+            </p>
         </div>
+
 
         <div class="database">
             <h2 class="centered">Distributions</h2>
@@ -67,13 +64,24 @@
                     {% csrf_token %}
                     <h2 class="centered">Distribution 1</h2>
                     {{ picker1.as_p }}
-                    <h2 class="centered">Distribution 1 dataset</h2>
+                    <h2 class="centered">Dataset Parameters</h2>
                     {{ data1.as_p }}
                     <h2 class="centered">Distribution 2</h2>
                     {{ picker2.as_p }}
-                     <h2 class="centered">Distribution 2 dataset</h2>
+                     <h2 class="centered">Dataset Parameters</h2>
                     {{ data2.as_p }}
-                    <h2 class="'centred">Extra params: If you would like to download the data, the graphs will not show</h2>
+                    <h2 class="'centred">Optional Operations </h2>
+                    <div class="blurb">
+                        <p>
+                            Enabling the convolution will plot a density heatmap of the product of your two chosen variables.
+                            This feature works better with the same number of trials for each variable.
+                        </p>
+                        <p>
+                            If you would like to download your own data, check the download box.
+                            Note: this will leave the graphs blank, so re-enter it without the download to see a standard sample.
+                        </p>
+                    </div>
+
                     {{ download.as_p }}
                     <input class="centered" type="submit" value="Submit">
                 </form>

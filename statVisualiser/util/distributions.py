@@ -7,6 +7,7 @@ import plotly.graph_objs as go
 import plotly.express as px
 import numpy as np
 import scipy.stats as st
+import time
 DP = 3
 """
 Abstract class representing the basic methods a distribution needs
@@ -229,19 +230,21 @@ class Poisson(Variable):
 
     def inverse_cdf(self, x: float):
         val = 0
-        found = False
-        next = self.cdf(val + 1)
         current = self.cdf(val)
-
-        if current <= x < self.cdf(val + 1):
-            return val
+        next = self.cdf(val+1)
+        if self.cdf(val) <= x < next:
+            return val + 1
         val += 1
-        while not found:
-            current = next
+        while True:
             next = self.cdf(val + 1)
-            if current <= x < next:
-                return val
+            if np.abs(next - 1) < 0.001:
+                next = 1.01
+            if x < next:
+                return val+1
             val += 1
+
+            if val > 10**5:
+                break
 
     def __str__(self):
         return "Poi({0})".format(int(self.rate))
@@ -309,6 +312,7 @@ class Binomial(Variable):
             current = next
             next = self.cdf(val + 1)
             if current <= x < next:
+
                 return val
             val += 1
 
@@ -436,9 +440,11 @@ def dataset_plots(var: Variable, data: []) -> go.Figure:
     return fig2
 
 def main():
-    a = Uniform(1,4)
-    d = a.generate_dataset(1000)
-    px.histogram(x=d).show()
+    a = Poisson(4)
+    dataset_plots(a, a.generate_dataset(10000)).show()
+
+#1000 trials null
+#100 trials
 
 if __name__ == '__main__':
     main()
