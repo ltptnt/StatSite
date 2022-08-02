@@ -230,8 +230,11 @@ class Poisson(Variable):
 
     def inverse_cdf(self, x: float):
         val = 0
-        current = self.cdf(val)
         next = self.cdf(val+1)
+
+        if x < self.cdf(val):
+            return val
+
         if self.cdf(val) <= x < next:
             return val + 1
         val += 1
@@ -299,22 +302,25 @@ class Binomial(Variable):
         if x == 1:
             return self.trials
         val = 0
-        found = False
-        next = self.cdf(val + 1)
-        current = self.cdf(val)
-        print(current, next)
-        if current <= x < self.cdf(val + 1):
-            print("prankt")
+
+        if x < self.cdf(0):
             return val
+
+        if self.cdf(0) <= x < self.cdf(val + 1):
+            print("prankt")
+            return val + 1
         val += 1
         "Loop depth here could be a problem"
-        while not found:
-            current = next
-            next = self.cdf(val + 1)
-            if current <= x < next:
+        while True:
+            if val+1 == self.trials:
+                return self.trials
 
-                return val
+            next = self.cdf(val + 1)
+
+            if x < next:
+                return val + 1
             val += 1
+            print(val)
 
     def trial(self):
         event = Bernoulli(self.prob)
@@ -440,8 +446,15 @@ def dataset_plots(var: Variable, data: []) -> go.Figure:
     return fig2
 
 def main():
-    a = Poisson(4)
-    dataset_plots(a, a.generate_dataset(10000)).show()
+    a = Binomial(100, 0.5)
+    b=[]
+
+    for i in range(1000):
+        b.append(a.inverse_cdf(rd.random()))
+    fig = go.Figure(go.Histogram(x=b, histnorm="probability"))
+    a.graph_pdf(0,100, fig=fig).show()
+
+    #dataset_plots(a, a.generate_dataset(10000)).show()
 
 #1000 trials null
 #100 trials
