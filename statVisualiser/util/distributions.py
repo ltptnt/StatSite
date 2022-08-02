@@ -320,7 +320,6 @@ class Binomial(Variable):
             if x < next:
                 return val + 1
             val += 1
-            print(val)
 
     def trial(self):
         event = Bernoulli(self.prob)
@@ -449,7 +448,7 @@ def main():
     a = Binomial(100, 0.5)
     b=[]
 
-    for i in range(1000):
+    for i in range(10000):
         b.append(a.inverse_cdf(rd.random()))
     fig = go.Figure(go.Histogram(x=b, histnorm="probability"))
     a.graph_pdf(0,100, fig=fig).show()
