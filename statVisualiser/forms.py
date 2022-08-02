@@ -9,6 +9,7 @@ class DistributionSelect(forms.Form):
     Outputs = (
         ("pdf", "Probability Density Function"),
         ("cdf", "Cumulative Distribution Function"),
+        ("con", "Convolution"),
     )
 
     Type = forms.ModelChoiceField(label='Distribution', queryset=Distribution.objects.all(), required=False,

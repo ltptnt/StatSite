@@ -98,8 +98,6 @@ def distributions(request) -> HttpResponse:
                 else:
                     G_Max2 = 10;
 
-
-
                 count = 1
                 titles = []
                 for value in dist_one_select.cleaned_data.get('Output'):
@@ -195,7 +193,6 @@ Implement a user input to add a custom dataset to be turned into a histogram, ma
 e.g. they can choose to have an exp(1) pdf layered over their data.
 """
 
-
 def generating_samples(request):
     dist_one_select = DistributionSelect(auto_id=True, prefix='picker1')
     dist_two_select = DistributionSelect(auto_id=True, prefix='picker2')
@@ -271,9 +268,3 @@ def generating_samples(request):
     print("render return")
     return HttpResponse(template.render(context, request))
 
-
-
-def about(request):
-    template = loader.get_template('statVisualiser/about.html')
-    context = {}
-    return HttpResponse(template.render(context, request))
