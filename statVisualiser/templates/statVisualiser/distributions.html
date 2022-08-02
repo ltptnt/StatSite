@@ -7,7 +7,7 @@
         <title>Statistics Simulator</title>
         <link rel="stylesheet" href="{% static 'statVisualiser/styles.css' %}">
     </head>
-    <div>
+    <body>
         <div class="title_bar">
             <h1>  Stats & Stuff</h1>
         </div>
@@ -40,14 +40,15 @@
             </p>
         </div>
         <div class="database">
-            <h2 class="centered">Distributions</h2>
+            <h1 class="centered">Distributions</h1>
             <table class="styled-table">
                 <thead>
                     <tr>
                         <th>Name</th>
                         <th>Continuous</th>
+                        <th>Supported Region</th>
                         <th>Variable Count</th>
-                        <th>Required Variables</th>
+                        <th>Variables</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -55,6 +56,7 @@
                     <tr>
                         <td>{{ x.name }}</td>
                         <td>{{ x.continuous }}</td>
+                        <td>{{ x.supported_region }}</td>
                         <td>{{ x.required_variable_count }}</td>
                         <td id="{{ x.name }}">{{ x.required_variable_names|stringformat:'a' }}</td>
                     </tr>
@@ -63,7 +65,7 @@
             </table>
         </div>
 
-        <div class="graph">
+        <div class="graph right">
             {% if graph %}
                 {{ graph|safe }}
             {% else %}
@@ -74,9 +76,10 @@
         <div class = "picker">
             <form method="post">
                 {% csrf_token %}
-                <h2 class="centered">Distribution 1</h2>
+                <h2 class="centered Dist"></h2>
+                <h2 class="centered ">Distribution 1</h2>
                 {{ picker1.as_p }}
-                <h2 class="centered">Distribution 2</h2>
+                <h2 class="centered">Distribution 2 (Optional)</h2>
                 {{ picker2.as_p }}
                 <input class="centered" type="submit" name="submit" value="Submit">
                 <input class="centered" type="submit" name="clear" value="Clear">
@@ -102,6 +105,8 @@
             document.getElementById('picker'+id+'-Trials').style.display = 'none';
             document.getElementById('picker'+id+'-Sd').style.display = 'none';
             document.getElementById('picker'+id+'-Output').style.display = 'none';
+            document.getElementById('picker'+id+'-G_Min').style.display = 'none';
+            document.getElementById('picker'+id+'-G_Max').style.display = 'none';
 
             let labels = document.getElementsByTagName('label');
             for(let i = 0; i < labels.length; i++ ) {
@@ -119,13 +124,18 @@
 
                 for (let i = 0; i < list.length; i++) {
                     for (let j = 0; j < labels.length; j++) {
-                        if (labels[j].htmlFor.includes('picker' + id + '-' + list[i]) || labels[j].htmlFor.includes('Output'))  {
+                        if (labels[j].htmlFor.includes('picker' + id + '-' + list[i]) ||
+                            labels[j].htmlFor.includes('Output') ||
+                            labels[j].htmlFor.includes('G_Min') ||
+                            labels[j].htmlFor.includes('G_Max'))  {
                             labels[j].style.display = ''
                         }
                     }
                     document.getElementById('picker' + id + '-' + list[i]).style.display = '';
                 }
                 document.getElementById('picker' + id + '-Output').style.display = '';
+                document.getElementById('picker'+id+'-G_Min').style.display = '';
+                document.getElementById('picker'+id+'-G_Max').style.display = '';
             }
         }
 

@@ -15,12 +15,12 @@ def index(request):
     return HttpResponse(template.render(context, request))
 
 
-def distributions(request):
+def distributions(request) -> HttpResponse:
+    # Setup context for html file
     dist_one_select = DistributionSelect(auto_id=True, prefix='picker1', label_suffix='')
     dist_two_select = DistributionSelect(auto_id=True, prefix='picker2', label_suffix='')
     dist_table = Distribution.objects.all().values()
     template = loader.get_template('statVisualiser/distributions.html')
-
     context = {
         'dist': dist_table,
         'picker1': dist_one_select,
@@ -29,28 +29,33 @@ def distributions(request):
     }
 
     if request.method == "POST" and 'submit' in request.POST:
+        # get results of forms if POST from server
         dist_one_select = DistributionSelect(request.POST, auto_id=True, prefix='picker1', label_suffix='')
         dist_two_select = DistributionSelect(request.POST, auto_id=True, prefix='picker2', label_suffix='')
-        context['picker1'] = dist_one_select
-        context['picker2'] = dist_two_select
+        context['picker1'] = dist_one_select  # sets the context to these values. This prevents the data from being lost
+        context['picker2'] = dist_two_select  # after refreshing the page
+        messages_text = []  # Array of messages that are sent to the user
 
+        # if both distributions have valid inputs. This should almost always be true.
         if dist_one_select.is_valid() and dist_two_select.is_valid():
-            messages_text = []
-
             data1 = dist_one_select.get_data()
             data2 = dist_two_select.get_data()
 
+            # if there is no data in form 1
             if data1 is None:
                 messages_text.append("ERROR: Please select a distribution!")
             else:
+                # add messages to the end for all the values that are not present but should be
                 for key, value in data1.items():
                     if value == '':
                         messages_text.append("ERROR: No Value for {key_name} in Distribution 1!".format(key_name=key))
 
-                if len(dist_two_select.cleaned_data.get('Output')) == 0:
-                    messages.warning(request, "WARN: You did not select a PDF or CDF for distribution 1.",
-                                     extra_tags='alert')
+                # if a distribution has not been selected warn the user
+                # the program will stil return a graph but it will most likely be empty
+                if len(dist_one_select.cleaned_data.get('Output')) == 0:
+                    messages_text.append("ERROR: You did not select a PDF or CDF for distribution 1.")
 
+                # the second form is allowed to be none
                 if data2 is not None:
                     for key, value in data2.items():
                         if value == '':
@@ -64,33 +69,54 @@ def distributions(request):
             if len(messages_text) == 0:
                 a = dist_selector(dist_one_select)
                 b = dist_selector(dist_two_select)
+
                 graph_count = len(dist_one_select.cleaned_data.get('Output')) + len(
                     dist_two_select.cleaned_data.get('Output'))
 
                 if graph_count == 1:
-                    fig = make_subplots(rows=1, cols=1, subplot_titles= '')
+                    fig = make_subplots(rows=1, cols=1, subplot_titles=[' '])
                 else:
-                    fig = make_subplots(rows=round((graph_count + 1) / 2), cols=2, subplot_titles=[' ', ' ', ' ', ' '])
+                    fig = make_subplots(rows=int((graph_count + 1) / 2), cols=2, subplot_titles=[' ', ' ', ' ', ' '])
+
+                if dist_one_select.cleaned_data.get('G_Min') is not None:
+                    G_Min1 = dist_one_select.cleaned_data.get('G_Min')
+                else:
+                    G_Min1 = 0;
+
+                if dist_one_select.cleaned_data.get('G_Max') is not None:
+                    G_Max1 = dist_one_select.cleaned_data.get('G_Max')
+                else:
+                    G_Max1 = 10;
+
+                if dist_two_select.cleaned_data.get('G_Min') is not None:
+                    G_Min2 = dist_two_select.cleaned_data.get('G_Min')
+                else:
+                    G_Min2 = 0;
+
+                if dist_two_select.cleaned_data.get('G_Max') is not None:
+                    G_Max2 = dist_two_select.cleaned_data.get('G_Max')
+                else:
+                    G_Max2 = 10;
+
+
+
                 count = 1
                 titles = []
                 for value in dist_one_select.cleaned_data.get('Output'):
                     if str(value) == 'pdf':
-                        print("1")
-                        a.graph_pdf(0, 10, fig=fig, geom=(int((count + 1) / 2), 2 - (count % 2)), titles=True)
+                        a.graph_pdf(G_Min1, G_Max1, fig=fig, geom=(int((count + 1) / 2), 2 - (count % 2)))
                         titles.append("PDF of " + str(a))
                     elif str(value) == 'cdf':
-                        print("2")
-                        a.graph_cdf(0, 10, fig=fig, geom=(int((count + 1) / 2), 2 - (count % 2)), titles=True)
+                        a.graph_cdf(G_Min1, G_Max1, fig=fig, geom=(int((count + 1) / 2), 2 - (count % 2)))
                         titles.append("CDF of " + str(a))
                     count += 1
 
-
                 for values in dist_two_select.cleaned_data.get('Output'):
                     if str(values) == 'pdf':
-                        b.graph_pdf(0, 10, fig=fig, geom=(round((count + 1) / 2), 2 - (count % 2)), titles=True)
+                        b.graph_pdf(G_Min2, G_Max2, fig=fig, geom=(int((count + 1) / 2), 2 - (count % 2)))
                         titles.append("PDF of " + str(b))
                     elif str(values) == 'cdf':
-                        b.graph_cdf(0, 10, fig=fig, geom=(round((count + 1) / 2), 2 - (count % 2)), titles=True)
+                        b.graph_cdf(G_Min2, G_Max2, fig=fig, geom=(int((count + 1) / 2), 2 - (count % 2)))
                         titles.append("CDF of " + str(b))
                     count += 1
 
@@ -99,7 +125,7 @@ def distributions(request):
                     fig.layout.annotations[count].update(text=str(label))
                     count += 1
 
-                context['graph'] = fig.to_html(full_html=False, default_height=750, default_width=1000,
+                context['graph'] = fig.to_html(full_html=False, default_height=1000, default_width=1200,
                                                div_id='graph')
 
             else:

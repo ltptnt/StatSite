@@ -7,8 +7,8 @@ import json
 
 class DistributionSelect(forms.Form):
     Outputs = (
-        ("pdf", "Probability density function"),
-        ("cdf", "cumulative distribution function"),
+        ("pdf", "Probability Density Function"),
+        ("cdf", "Cumulative Distribution Function"),
     )
 
     Type = forms.ModelChoiceField(label='Distribution', queryset=Distribution.objects.all(), required=False,
@@ -20,6 +20,8 @@ class DistributionSelect(forms.Form):
     Sd = forms.FloatField(label='Standard Deviation', required=False)
     Probability = forms.FloatField(label='Probability', min_value=0, max_value=1, required=False)
     Trials = forms.IntegerField(label='Trials', min_value=0, required=False)
+    G_Min = forms.FloatField(label='Domain Minimum (Optional)', required=False)
+    G_Max = forms.FloatField(label='Domain Maximum (Optional)', required=False)
     Output = forms.MultipleChoiceField(label='', widget=forms.CheckboxSelectMultiple,
                                        choices=Outputs, required=False)
 

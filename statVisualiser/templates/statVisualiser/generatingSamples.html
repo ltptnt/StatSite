@@ -18,7 +18,6 @@
                 <li><a href="/statVisualiser/distributions">Distributions</a></li>
                 <li><a href="/statVisualiser/largeNumbers">The Law of Large Numbers</a></li>
                 <li><a class="active" href="/statVisualiser/generatingSamples">Create Samples</a></li>
-                <li><a href="/statVisualiser/about">About</a></li>
                 <li><a href="https://github.com/ltptnt/StatSite">Github</a></li>
 
             </ul>
@@ -58,35 +57,33 @@
                 </tbody>
             </table>
         </div>
-        <div class = "flex-container">
-            <div class = "picker">
-                <form method="post">
-                    {% csrf_token %}
-                    <h2 class="centered">Distribution 1</h2>
-                    {{ picker1.as_p }}
-                    <h2 class="centered">Dataset Parameters</h2>
-                    {{ data1.as_p }}
-                    <h2 class="centered">Distribution 2</h2>
-                    {{ picker2.as_p }}
-                     <h2 class="centered">Dataset Parameters</h2>
-                    {{ data2.as_p }}
-                    <h2 class="'centred">Optional Operations </h2>
-                    <div class="blurb">
-                        <p>
-                            Enabling the convolution will plot a density heatmap of the product of your two chosen variables.
-                            This feature works better with the same number of trials for each variable.
-                        </p>
-                        <p>
-                            If you would like to download your own data, check the download box.
-                            Note: this will leave the graphs blank, so re-enter it without the download to see a standard sample.
-                        </p>
-                    </div>
+        <div class = "picker">
+            <form method="post">
+                {% csrf_token %}
+                <h2 class="centered">Distribution 1</h2>
+                {{ picker1.as_p }}
+                <h2 class="centered">Dataset Parameters</h2>
+                {{ data1.as_p }}
+                <h2 class="centered">Distribution 2</h2>
+                {{ picker2.as_p }}
+                 <h2 class="centered">Dataset Parameters</h2>
+                {{ data2.as_p }}
+                <h2 class="'centred">Optional Operations </h2>
+                <div class="blurb">
+                    <p>
+                        Enabling the convolution will plot a density heatmap of the product of your two chosen variables.
+                        This feature works better with the same number of trials for each variable.
+                    </p>
+                    <p>
+                        If you would like to download your own data, check the download box.
+                        Note: this will leave the graphs blank, so re-enter it without the download to see a standard sample.
+                    </p>
+                </div>
 
-                    {{ download.as_p }}
-                    <input class="centered" type="submit" value="Submit">
-                </form>
-            </div>
-
+                {{ download.as_p }}
+                <input class="centered" type="submit" value="Submit">
+            </form>
+        </div>
 
         <div class="graph">
             {% if graph1 %}
@@ -118,54 +115,55 @@
         </div>
 
 
-    <script type="text/javascript">
-        function Picker1() {
-            HideAll('1')
-            Hide('1')
-        }
-
-        function Picker2() {
-            HideAll('2')
-            Hide('2')
-        }
-        function HideAll(id) {
-            document.getElementById('picker'+id+'-Mean').style.display = 'none';
-            document.getElementById('picker'+id+'-Rate').style.display = 'none';
-            document.getElementById('picker'+id+'-Min').style.display = 'none';
-            document.getElementById('picker'+id+'-Max').style.display = 'none';
-            document.getElementById('picker'+id+'-Probability').style.display = 'none';
-            document.getElementById('picker'+id+'-Trials').style.display = 'none';
-            document.getElementById('picker'+id+'-Sd').style.display = 'none';
-
-            let labels = document.getElementsByTagName('label');
-            for(let i = 0; i < labels.length; i++ ) {
-                if (labels[i].htmlFor.includes('picker'+id) && !labels[i].htmlFor.includes('Type')) {
-                    labels[i].style.display = 'none'
-                }
+        <script type="text/javascript">
+            function Picker1() {
+                HideAll('1')
+                Hide('1')
             }
-        }
-        function Hide(id) {
-            HideAll(id);
-            let name = document.getElementById('picker' + id + '-Type').options[document.getElementById('picker' + id + '-Type').selectedIndex].innerHTML
-            const list = JSON.parse(document.getElementById(name).innerHTML.replace(/'/g, '"'));
-            let labels = document.getElementsByTagName('label');
 
-            for (let i = 0; i < list.length; i++) {
-                for (let j = 0; j < labels.length; j++) {
-                    if (labels[j].htmlFor.includes('picker' + id + '-' +list[i])) {
-                        labels[j].style.display = ''
+            function Picker2() {
+                HideAll('2')
+                Hide('2')
+            }
+            function HideAll(id) {
+                document.getElementById('picker'+id+'-Mean').style.display = 'none';
+                document.getElementById('picker'+id+'-Rate').style.display = 'none';
+                document.getElementById('picker'+id+'-Min').style.display = 'none';
+                document.getElementById('picker'+id+'-Max').style.display = 'none';
+                document.getElementById('picker'+id+'-Probability').style.display = 'none';
+                document.getElementById('picker'+id+'-Trials').style.display = 'none';
+                document.getElementById('picker'+id+'-Sd').style.display = 'none';
+
+                let labels = document.getElementsByTagName('label');
+                for(let i = 0; i < labels.length; i++ ) {
+                    if (labels[i].htmlFor.includes('picker'+id) && !labels[i].htmlFor.includes('Type')) {
+                        labels[i].style.display = 'none'
                     }
                 }
-                document.getElementById('picker' + id + '-' + list[i]).style.display = '';
             }
-        }
+            function Hide(id) {
+                HideAll(id);
+                let name = document.getElementById('picker' + id + '-Type').options[document.getElementById('picker' + id + '-Type').selectedIndex].innerHTML
+                const list = JSON.parse(document.getElementById(name).innerHTML.replace(/'/g, '"'));
+                let labels = document.getElementsByTagName('label');
 
-            window.onload = function() {
-                HideAll("1")
-                HideAll("2")
-                document.getElementById('picker1-Type').onchange = Picker1;
-                document.getElementById('picker2-Type').onchange = Picker2;
+                for (let i = 0; i < list.length; i++) {
+                    for (let j = 0; j < labels.length; j++) {
+                        if (labels[j].htmlFor.includes('picker' + id + '-' +list[i])) {
+                            labels[j].style.display = ''
+                        }
+                    }
+                    document.getElementById('picker' + id + '-' + list[i]).style.display = '';
+                }
+            }
 
-            };
-    </script>
+                window.onload = function() {
+                    HideAll("1")
+                    HideAll("2")
+                    document.getElementById('picker1-Type').onchange = Picker1;
+                    document.getElementById('picker2-Type').onchange = Picker2;
+
+                };
+        </script>
     </body>
+</html>

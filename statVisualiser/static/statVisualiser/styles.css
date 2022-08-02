@@ -16,6 +16,10 @@ h1, h2, h3, h4, h5, h6 {
     margin: auto;
 }
 
+p {
+    font-size: 20px;
+}
+
 /* Navigation Bar */
 
 .navbar ul {
@@ -65,14 +69,15 @@ h1, h2, h3, h4, h5, h6 {
 
 .page_title h1 {
     line-height: 0;
+    font-size: 40px;
 }
 
 .page_title h2 {
     line-height: 0;
     font-weight: lighter;
-    color: #b5bdcb;
+    color: #a6adb9;
     font-style: italic;
-    font-size: 15px;
+    font-size: 17px;
 }
 
 /* Blurb */
@@ -131,29 +136,44 @@ h1, h2, h3, h4, h5, h6 {
 
 .picker {
     margin: auto;
-    padding-top: 15px;
-    padding-bottom: 15px;
     text-align: left;
-    width: 50%;
+    width: 600px;
     display: table;
+    padding: 5px 5px;
 }
 
 .picker label {
-    line-height:50px;
+    padding-top: 5px;
+    line-height: 40px;
     font-weight: bold;
-    font-size:15px;
+    font-size: 17px;
     margin: auto;
+
+}
+
+.picker h2 {
+    font-size: 30px;
 }
 
 input[type=number], select {
     border: 3px solid #83a2b7;
     width: 100%;
-    padding: 12px 20px;
-    margin: 8px 0;
+    padding: 6px 2px;
+    margin: 0;
     box-sizing: border-box;
     -webkit-transition: 0.25s;
     transition: 0.25s;
     outline: none;
+    font-size: 15px;
+}
+
+.picker p {
+    font-size: 0;
+    line-height: 0;
+}
+
+.Dist {
+    padding-bottom:40px;
 }
 
 input[type=number]:focus, select:focus {
@@ -166,30 +186,28 @@ input[type=submit] {
     color: #dcfdfd;
     padding: 16px 32px;
     text-decoration: none;
-    margin: 4px 2px;
+    margin: 10px 2px;
      cursor: pointer;
 }
+
+
 
 /* Graph */
 
 .graph {
     text-align: center;
-    width: fit-content;
+    width: auto;
     height: fit-content;
     margin: auto;
 }
 
-#graph {
-    z-index: -1;
-}
-
 #blank_graph {
-    line-height: 500px;
-    width: 1000px;
-    height: 750px;
+    line-height: 1000px;
+    width: 1100px;
+    height: 1000px;
     background-color: #ECF7FF;
     text-align: center;
-    margin: 100px auto;
+    margin: 50px;
 }
 
 
@@ -197,6 +215,14 @@ input[type=submit] {
 
 .centered {
     text-align: center;
+}
+
+.left {
+    float: left;
+}
+
+.right {
+    float: right;
 }
 
 .database {
@@ -223,8 +249,8 @@ input[type=submit] {
 }
 
 /* Messages */
+
 .messages {
-    top: 46px;
     position: -webkit-sticky; /* Safari */
     position: sticky;
     overflow: hidden;
@@ -234,6 +260,7 @@ input[type=submit] {
     text-align: center;
     place-content: center;
     padding-bottom: 50px;
+    top:0;
 }
 
 .alert {

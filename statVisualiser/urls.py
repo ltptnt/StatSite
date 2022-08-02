@@ -9,7 +9,4 @@ urlpatterns = [
     path('distributions', views.distributions, name='distributions'),
     path('largeNumbers', views.large_numbers, name='largeNumbers'),
     path('generatingSamples', views.generating_samples, name="generatingSamples"),
-
-
-    path('about', views.about, name='about')
 ]
