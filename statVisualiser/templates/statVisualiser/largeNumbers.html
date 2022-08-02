@@ -1,14 +1,14 @@
 {% load static %}
 <!DOCTYPE html>
-< lang="en-AU">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Statistics Simulator</title>
-    <link rel="stylesheet" href="{% static 'statVisualiser/styles.css' %}">
-    <title>Title</title>
-</head>
-    <>
+<html lang="en-AU">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Statistics Simulator</title>
+        <link rel="stylesheet" href="{% static 'statVisualiser/styles.css' %}">
+        <title>Law of Large Numbers</title>
+    </head>
+    <body>
     <div class="title_bar">
                 <h1>  Stats & Stuff</h1>
             </div>
@@ -19,16 +19,20 @@
                             <li><a class="active" href="/statVisualiser/largeNumbers">The Law of Large Numbers</a></li>
                             <li><a href="/statVisualiser/generatingSamples">Create Samples</a></li>
                             <li><a href="https://github.com/ltptnt/StatSite">Github</a></li>
-
                         </ul>
             </div>
-    <title> The Law of Large Numbers for the Binomial Distribution</title>
+    <div class="page_title">
+        <h1>The Law of Large Numbers for the Binomial Distribution</h1>
+            <h2>A Distribution Visualiser</h2>
+    </div>
+    <div class="blurb">
     <p>An interesting aspect of statistics is the behaviour of distributions as their parameters approach infinity. Under certain conditions, some distributions will converge towards another known distribution.
         The central limit theorem is an example of this, which states that for a given distribution:
         as the number of events in a sample increases, the mean of the sample will approach the true mean of the distribution.
         . This site has some simulations that demonstrate this convergent behaviour for the binomial theorem.
     </p>
     <p>normal to binomial</p>
+    </div>
         <div class = "picker">
             <form method="post">
                 {% csrf_token %}
@@ -74,6 +78,5 @@
                 <div id="blank_graph">Please enter parameters to see a Graph!</div>
             {% endif %}
         </div>
-
-</body>
+    </body>
 </html>

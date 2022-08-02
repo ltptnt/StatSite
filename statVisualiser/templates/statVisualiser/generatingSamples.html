@@ -22,7 +22,10 @@
 
             </ul>
         </div>
-
+        <div class="page_title">
+            <h1>Create Samples</h1>
+            <h2>Generate sample datasets</h2>
+        </div>
         <div class="blurb">
             <p>
                 On this page, you can generate your own sample dataset of 1 or 2 independent random variables from the table below.
@@ -42,6 +45,7 @@
                         <th>Name</th>
                         <th>Continuous</th>
                         <th>Variable Count</th>
+                        <th>Supported Region</th>
                         <th>Required Variables</th>
                     </tr>
                 </thead>
@@ -50,12 +54,38 @@
                     <tr>
                         <td>{{ x.name }}</td>
                         <td>{{ x.continuous }}</td>
+                        <td>{{ x.supported_region }}</td>
                         <td>{{ x.required_variable_count }}</td>
                         <td id="{{ x.name }}">{{ x.required_variable_names|stringformat:'a' }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
+        </div>
+        <div class="graph right">
+            <div class="graph">
+                {% if graph1 %}
+                    {{ graph1|safe }}
+                {% else %}
+                    <div id="blank_graph" style="display: none">Please enter parameters to see a Graph!</div>
+                {% endif %}
+            </div>
+
+            <div class="graph">
+                {% if graph2 %}
+                    {{ graph2|safe }}
+                {% else %}
+                    <div id="blank_graph" style="display: none">Please enter parameters to see a Graph!</div>
+                {% endif %}
+            </div>
+
+            <div class="graph">
+                {% if graph3 %}
+                    {{ graph3|safe }}
+                {% else %}
+                    <div id="blank_graph" style="display: none">Please enter parameters to see a Graph!</div>
+                {% endif %}
+            </div>
         </div>
         <div class = "picker">
             <form method="post">
@@ -69,6 +99,7 @@
                  <h2 class="centered">Dataset Parameters</h2>
                 {{ data2.as_p }}
                 <h2 class="'centred">Optional Operations </h2>
+
                 <div class="blurb">
                     <p>
                         Enabling the convolution will plot a density heatmap of the product of your two chosen variables.
@@ -84,86 +115,6 @@
                 <input class="centered" type="submit" value="Submit">
             </form>
         </div>
-
-        <div class="graph">
-            {% if graph1 %}
-                {{ graph1|safe }}
-                <form method="post">
-                {% csrf_token %}
-
-                <input class="centred" type="submit" value ="Submit">
-                </form>
-            {% else %}
-                <div id="blank_graph">Please enter parameters to see a Graph!</div>
-            {% endif %}
-        </div>
-
-        <div class="graph">
-            {% if graph2 %}
-                {{ graph2|safe }}
-            {% else %}
-                <div id="blank_graph">Please enter parameters to see a Graph!</div>
-            {% endif %}
-        </div>
-
-        <div class="graph">
-            {% if graph3 %}
-                {{ graph3|safe }}
-            {% else %}
-                <div id="blank_graph">Please enter parameters to see a Graph!</div>
-            {% endif %}
-        </div>
-
-
-        <script type="text/javascript">
-            function Picker1() {
-                HideAll('1')
-                Hide('1')
-            }
-
-            function Picker2() {
-                HideAll('2')
-                Hide('2')
-            }
-            function HideAll(id) {
-                document.getElementById('picker'+id+'-Mean').style.display = 'none';
-                document.getElementById('picker'+id+'-Rate').style.display = 'none';
-                document.getElementById('picker'+id+'-Min').style.display = 'none';
-                document.getElementById('picker'+id+'-Max').style.display = 'none';
-                document.getElementById('picker'+id+'-Probability').style.display = 'none';
-                document.getElementById('picker'+id+'-Trials').style.display = 'none';
-                document.getElementById('picker'+id+'-Sd').style.display = 'none';
-
-                let labels = document.getElementsByTagName('label');
-                for(let i = 0; i < labels.length; i++ ) {
-                    if (labels[i].htmlFor.includes('picker'+id) && !labels[i].htmlFor.includes('Type')) {
-                        labels[i].style.display = 'none'
-                    }
-                }
-            }
-            function Hide(id) {
-                HideAll(id);
-                let name = document.getElementById('picker' + id + '-Type').options[document.getElementById('picker' + id + '-Type').selectedIndex].innerHTML
-                const list = JSON.parse(document.getElementById(name).innerHTML.replace(/'/g, '"'));
-                let labels = document.getElementsByTagName('label');
-
-                for (let i = 0; i < list.length; i++) {
-                    for (let j = 0; j < labels.length; j++) {
-                        if (labels[j].htmlFor.includes('picker' + id + '-' +list[i])) {
-                            labels[j].style.display = ''
-                        }
-                    }
-                    document.getElementById('picker' + id + '-' + list[i]).style.display = '';
-                }
-            }
-
-                window.onload = function() {
-                    HideAll("1")
-                    HideAll("2")
-                    document.getElementById('picker1-Type').onchange = Picker1;
-                    document.getElementById('picker2-Type').onchange = Picker2;
-
-                };
-        </script>
+        <script type="text/javascript" src={% static 'statVisualiser/javascript.js' %}></script>
     </body>
 </html>
