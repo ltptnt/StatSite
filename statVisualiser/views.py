@@ -17,29 +17,33 @@ def index(request):
 
 def distributions(request) -> HttpResponse:
     # Setup context for html file
-    dist_one_select = DistributionSelect(auto_id=True, prefix='picker1', label_suffix='')
-    dist_two_select = DistributionSelect(auto_id=True, prefix='picker2', label_suffix='')
+    dist1s = DistributionSelect(auto_id=True, prefix='picker1', label_suffix='')
+    dist2s = DistributionSelect(auto_id=True, prefix='picker2', label_suffix='')
     dist_table = Distribution.objects.all().values()
+    convolution = ConvolutionOptions(auto_id=True, prefix="convol", label_suffix="")
     template = loader.get_template('statVisualiser/distributions.html')
     context = {
         'dist': dist_table,
-        'picker1': dist_one_select,
-        'picker2': dist_two_select,
-        'graph': None
+        'picker1': dist1s,
+        'picker2': dist2s,
+        'convol': convolution,
+        'graph': None,
+        'conv_graph': None,
     }
 
     if request.method == "POST" and 'submit' in request.POST:
         # get results of forms if POST from server
-        dist_one_select = DistributionSelect(request.POST, auto_id=True, prefix='picker1', label_suffix='')
-        dist_two_select = DistributionSelect(request.POST, auto_id=True, prefix='picker2', label_suffix='')
-        context['picker1'] = dist_one_select  # sets the context to these values. This prevents the data from being lost
-        context['picker2'] = dist_two_select  # after refreshing the page
+        dist1s = DistributionSelect(request.POST, auto_id=True, prefix='picker1', label_suffix='')
+        dist2s = DistributionSelect(request.POST, auto_id=True, prefix='picker2', label_suffix='')
+        convolution = ConvolutionOptions(request.POST, auto_id=True, prefix="convol", label_suffix="")
+        context['picker1'] = dist1s  # sets the context to these values. This prevents the data from being lost
+        context['picker2'] = dist2s  # after refreshing the page
         messages_text = []  # Array of messages that are sent to the user
 
         # if both distributions have valid inputs. This should almost always be true.
-        if dist_one_select.is_valid() and dist_two_select.is_valid():
-            data1 = dist_one_select.get_data()
-            data2 = dist_two_select.get_data()
+        if dist1s.is_valid() and dist2s.is_valid():
+            data1 = dist1s.get_data()
+            data2 = dist2s.get_data()
 
             # if there is no data in form 1
             if data1 is None:
@@ -52,7 +56,7 @@ def distributions(request) -> HttpResponse:
 
                 # if a distribution has not been selected warn the user
                 # the program will stil return a graph but it will most likely be empty
-                if len(dist_one_select.cleaned_data.get('Output')) == 0:
+                if len(dist1s.cleaned_data.get('Output')) == 0:
                     messages_text.append("ERROR: You did not select a PDF or CDF for distribution 1.")
 
                 # the second form is allowed to be none
@@ -62,59 +66,48 @@ def distributions(request) -> HttpResponse:
                             messages_text.append(
                                 "ERROR: No Value for {key_name} in Distribution 2!".format(key_name=key))
 
-                    if len(dist_two_select.cleaned_data.get('Output')) == 0:
+                    if len(dist2s.cleaned_data.get('Output')) == 0:
                         messages.warning(request, "WARN: You did not select a PDF or CDF for distribution 2.",
                                          extra_tags='alert')
 
             if len(messages_text) == 0:
-                a = dist_selector(dist_one_select)
-                b = dist_selector(dist_two_select)
+                a = dist_selector(dist1s)
+                b = dist_selector(dist2s)
 
-                graph_count = len(dist_one_select.cleaned_data.get('Output')) + len(
-                    dist_two_select.cleaned_data.get('Output'))
+                graph_count = len(dist1s.cleaned_data.get('Output')) + len(
+                    dist2s.cleaned_data.get('Output'))
 
                 if graph_count == 1:
                     fig = make_subplots(rows=1, cols=1, subplot_titles=[' '])
                 else:
                     fig = make_subplots(rows=int((graph_count + 1) / 2), cols=2, subplot_titles=[' ', ' ', ' ', ' '])
 
-                if dist_one_select.cleaned_data.get('G_Min') is not None:
-                    G_Min1 = dist_one_select.cleaned_data.get('G_Min')
-                else:
-                    G_Min1 = 0;
-
-                if dist_one_select.cleaned_data.get('G_Max') is not None:
-                    G_Max1 = dist_one_select.cleaned_data.get('G_Max')
-                else:
-                    G_Max1 = 10;
-
-                if dist_two_select.cleaned_data.get('G_Min') is not None:
-                    G_Min2 = dist_two_select.cleaned_data.get('G_Min')
-                else:
-                    G_Min2 = 0;
-
-                if dist_two_select.cleaned_data.get('G_Max') is not None:
-                    G_Max2 = dist_two_select.cleaned_data.get('G_Max')
-                else:
-                    G_Max2 = 10;
+                g_min1  = dist1s.cleaned_data.get('G_Min') if \
+                    dist1s.cleaned_data.get('G_Min') is not None else a.get_region()[0]
+                g_max1 = dist1s.cleaned_data.get('G_Max') if \
+                    dist1s.cleaned_data.get('G_Min') is not None else a.get_region()[1]
+                g_min2 = dist2s.cleaned_data.get('G_Min') if \
+                    dist2s.cleaned_data.get('G_Min') is not None else b.get_region()[0]
+                g_max2 = dist2s.cleaned_data.get('G_Max') if \
+                    dist2s.cleaned_data.get('G_Max') is not None else b.get_region()[1]
 
                 count = 1
                 titles = []
-                for value in dist_one_select.cleaned_data.get('Output'):
+                for value in dist1s.cleaned_data.get('Output'):
                     if str(value) == 'pdf':
-                        a.graph_pdf(G_Min1, G_Max1, fig=fig, geom=(int((count + 1) / 2), 2 - (count % 2)))
+                        a.graph_pdf(g_min1, g_max1, fig=fig, geom=(int((count + 1) / 2), 2 - (count % 2)))
                         titles.append("PDF of " + str(a))
                     elif str(value) == 'cdf':
-                        a.graph_cdf(G_Min1, G_Max1, fig=fig, geom=(int((count + 1) / 2), 2 - (count % 2)))
+                        a.graph_cdf(g_min1, g_max1, fig=fig, geom=(int((count + 1) / 2), 2 - (count % 2)))
                         titles.append("CDF of " + str(a))
                     count += 1
 
-                for values in dist_two_select.cleaned_data.get('Output'):
+                for values in dist2s.cleaned_data.get('Output'):
                     if str(values) == 'pdf':
-                        b.graph_pdf(G_Min2, G_Max2, fig=fig, geom=(int((count + 1) / 2), 2 - (count % 2)))
+                        b.graph_pdf(g_min2, g_max2, fig=fig, geom=(int((count + 1) / 2), 2 - (count % 2)))
                         titles.append("PDF of " + str(b))
                     elif str(values) == 'cdf':
-                        b.graph_cdf(G_Min2, G_Max2, fig=fig, geom=(int((count + 1) / 2), 2 - (count % 2)))
+                        b.graph_cdf(g_min2, g_max2, fig=fig, geom=(int((count + 1) / 2), 2 - (count % 2)))
                         titles.append("CDF of " + str(b))
                     count += 1
 
@@ -136,10 +129,22 @@ def distributions(request) -> HttpResponse:
             # Form also requires for the pdf, cdf:
             # min, max values to plot over.
             # If they want to make more than one graph, requires a geometry argument
+            if convolution.is_valid():
+                fig2 = None
+                if convolution.cleaned_data.get("pdf"):
+                    pass
+
+                if convolution.cleaned_data.get("cdf"):
+                    pass
+
+                if fig2 is not None:
+                    context['convol_graph'] = fig2.to_html(full_html=False, default_height=1000, default_width=1200,
+                                               div_id='convol_graph')
+
     return HttpResponse(template.render(context, request))
 
 
-def dist_selector(picker: DistributionSelect) -> Variable | None:
+def dist_selector(picker: DistributionSelect | SampleDist) -> Variable | None:
     data = picker.get_data()
     match str(picker.cleaned_data.get('Type')):
         case 'Exponential':
@@ -194,8 +199,8 @@ e.g. they can choose to have an exp(1) pdf layered over their data.
 """
 
 def generating_samples(request):
-    dist_one_select = DistributionSelect(auto_id=True, prefix='picker1')
-    dist_two_select = DistributionSelect(auto_id=True, prefix='picker2')
+    dist_one_select = SampleDist(auto_id=True, prefix='picker1')
+    dist_two_select = SampleDist(auto_id=True, prefix='picker2')
     download = Download(auto_id=True, prefix='download')
     d1 = DatasetParams(auto_id=True, prefix='data1')
     d2 = DatasetParams(auto_id=True, prefix='data2')
@@ -215,8 +220,8 @@ def generating_samples(request):
     }
 
     if request.method == "POST":
-        pick_one = DistributionSelect(request.POST, prefix='picker1', label_suffix='')
-        pick_two = DistributionSelect(request.POST, prefix='picker2', label_suffix='')
+        pick_one = SampleDist(request.POST, prefix='picker1', label_suffix='')
+        pick_two = SampleDist(request.POST, prefix='picker2', label_suffix='')
         data1 = DatasetParams(request.POST, prefix='data1', label_suffix='')
         data2 = DatasetParams(request.POST, prefix='data2', label_suffix='')
         download_data = Download(request.POST, prefix='download', label_suffix='')
@@ -263,8 +268,6 @@ def generating_samples(request):
             download = csv.writer(response)
             download.writerow(title)
             download.writerows([trial[0], trial[1]] for trial in big_data)
-            print("download return ")
             return response
-    print("render return")
     return HttpResponse(template.render(context, request))
 

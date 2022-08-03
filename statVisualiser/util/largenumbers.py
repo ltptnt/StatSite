@@ -10,7 +10,7 @@ def binomial_normal(min_trials: int, max_trials: int, prob: float, steps=10):
     for trials in range(min_trials, max_trials+1, steps):
         binom = dt.Binomial(trials, prob)
         converge = dt.Normal(binom.trials * binom.prob, np.sqrt(binom.trials * binom.prob * (1 - binom.prob)))
-        minim, maxim = converge.get_region()
+        minim, maxim = binom.get_region()
         binom.graph_pdf(int(minim), maxim, fig=fig)
         converge.graph_pdf(minim, maxim, fig=fig)
         titles.append("Normal Approximation to " + str(binom))

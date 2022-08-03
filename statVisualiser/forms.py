@@ -21,8 +21,8 @@ class DistributionSelect(forms.Form):
     Sd = forms.FloatField(label='Standard Deviation', required=False)
     Probability = forms.FloatField(label='Probability', min_value=0, max_value=1, required=False)
     Trials = forms.IntegerField(label='Trials', min_value=0, required=False)
-    G_Min = forms.FloatField(label='Domain Minimum (Optional)', required=False)
-    G_Max = forms.FloatField(label='Domain Maximum (Optional)', required=False)
+    G_Min = forms.FloatField(label='Domain Minimum (Optional)', initial=None,  required=False)
+    G_Max = forms.FloatField(label='Domain Maximum (Optional)', initial=None , required=False)
     Output = forms.MultipleChoiceField(label='', widget=forms.CheckboxSelectMultiple,
                                        choices=Outputs, required=False)
 
@@ -68,5 +68,22 @@ class Download(forms.Form):
     download = forms.BooleanField(label="Download dataset", initial=False, required=False)
     convolution = forms.BooleanField(label="Plot the Convolution?", initial=True, required=False)
 
-class CustomData(forms.Form):
-    custom_data = forms.FileField(required=False)
+class SampleDist(forms.Form):
+    Type = forms.ModelChoiceField(label='Distribution', queryset=Distribution.objects.all(), required=False,
+                                  empty_label='')
+    Rate = forms.FloatField(label='Rate', required=False)
+    Min = forms.FloatField(label='Minimum Value', required=False)
+    Max = forms.FloatField(label='Maximum Value', required=False)
+    Mean = forms.FloatField(label='Mean', required=False)
+    Sd = forms.FloatField(label='Standard Deviation', required=False)
+    Probability = forms.FloatField(label='Probability', min_value=0, max_value=1, required=False)
+    Trials = forms.IntegerField(label='Trials', min_value=0, required=False)
+
+
+class ConvolutionOptions(forms.Form):
+    choices = (
+        ("pdf", "Probability Density Function"),
+        ("cdf", "Cumulative Density Function")
+    )
+    Output = forms.MultipleChoiceField(label='', widget=forms.CheckboxSelectMultiple,
+                                       choices=choices, required=False)
