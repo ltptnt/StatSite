@@ -307,7 +307,6 @@ class Binomial(Variable):
             return val
 
         if self.cdf(0) <= x < self.cdf(val + 1):
-            print("prankt")
             return val + 1
         val += 1
         "Loop depth here could be a problem"
@@ -347,9 +346,9 @@ def graph_density_product(data1, data2):
     return fig
 
 
-def two_var_3d(var1, var2, fig=None, geom=None, type="product", **kwargs):
-    var1_trials = [var1.trial() for i in range(10 ** 5)]
-    var2_trials = [var2.trial() for i in range(10 ** 5)]
+def two_var_3d(var1, var2, type="product"):
+    var1_trials = [var1.trial() for _ in range(10 ** 5)]
+    var2_trials = [var2.trial() for _ in range(10 ** 5)]
     match type:
         case "product":
             title_text = "Product of "
@@ -359,22 +358,15 @@ def two_var_3d(var1, var2, fig=None, geom=None, type="product", **kwargs):
             convolution_trials = [var1_trials[i] + var2_trials[i] for i in range(len(var1_trials))]
         case _:
             raise TypeError("Only product and sum are supported")
-    if fig is None:
-        fig = px.scatter_3d(x=var1_trials, y=var2_trials, z=convolution_trials)
-    else:
-        trace = px.scatter_3d(x=var1_trials, y=var2_trials, z=convolution_trials)
-        if geom is None:
-            fig.add_trace(trace)
-        else:
-            fig.add_trace(trace, row=geom[0], col=geom[1])
-    fig.update_layout(title="Simulated supported region of the convolution, ",
+    fig = px.scatter_3d(x=var1_trials, y=var2_trials, z=convolution_trials)
+    fig.update_layout(title="Simulated supported region of the convolution of " + str(var1) +" and " + str(var2),
                       scene=dict(xaxis_title=str(var1),
-                                 yaxis_title=str(var2),
-                                 zaxis_title=title_text + str(var1) + " and " + str(var2)))
+                      yaxis_title=str(var2),
+                      zaxis_title=title_text + str(var1) + " and " + str(var2)))
     return fig
 
 
-def convolution_pdf(var1, var2):
+def convolution_pdf(var1, var2, fig=None, geom=None):
     min1, max1 = var1.get_region()
     min2, max2 = var2.get_region()
     if var1.continuous:
@@ -393,34 +385,64 @@ def convolution_pdf(var1, var2):
     for i in range(len(var1_region)):
         for y in var2_pdf:
             conv_pdf[i].append(var1_pdf[i]*y)
-    fig = go.Figure(data=go.Surface(y=var1_region, x=var2_region, z=conv_pdf))
-    fig.update_layout(
-        title="PDF of the convolution of " + str(var1) + " and " + str(var2),
-        coloraxis_colorbar=dict(title="Density"),
-        scene=dict(
-            xaxis_title="X ~ " + str(var2),
-            yaxis_title="Y ~ " + str(var1),
-            zaxis_title="Probability density of X*Y"),
-    )
+
+    trace = go.Surface(y=var1_region, x=var2_region, z=conv_pdf)
+    if fig is None:
+        fig = go.Figure()
+        fig.add_trace(trace)
+        fig.update_layout(dict(title="PDF of the convolution of " + str(var1) + " and " + str(var2),
+            coloraxis_colorbar=dict(title="Density"),
+            scene=dict(
+                xaxis_title="X ~ " + str(var2),
+                yaxis_title="Y ~ " + str(var1),
+                zaxis_title="Probability density of X*Y")))
+    else:
+        if geom is None:
+            fig.add_trace(trace)
+        else:
+            row, col = geom
+            fig.add_trace(trace, row=row, col=col)
+            fig.update_xaxes(title_text="X ~ " + str(var2), row=row, col=col)
+            fig.update_yaxes(title_text="Y ~ " + str(var1), row=row, col=col)
+
     return fig
 
+"""
 
-def convolution_cdf(var1, var2):
+"""
+def convolution_cdf(var1, var2, type="product", fig=None, geom=None):
     var1_trials = [var1.trial() for i in range(10 ** 5)]
     var2_trials = [var2.trial() for i in range(10 ** 5)]
-    convolution_trials = [var1_trials[i] * var2_trials[i] for i in range(len(var1_trials))]
+    match type:
+        case "product":
+            convolution_trials = [var1_trials[i] * var2_trials[i] for i in range(len(var1_trials))]
+        case "sum":
+            convolution_trials = [var1_trials[i] + var2_trials[i] for i in range(len(var1_trials))]
+        case _:
+            raise ValueError("sum or product only champ")
+
     cdf_points = np.linspace(min(convolution_trials), max(convolution_trials), 1000)
-    continuous_offset = [i - (max(convolution_trials)-min(convolution_trials))/1000 for i in cdf_points]
+    #continuous_offset = [i - (max(convolution_trials)-min(convolution_trials))/1000 for i in cdf_points]
     probability = []
     for point in cdf_points:
         probability.append(len([i for i in convolution_trials if i <= point])/10**5)
-    fig = px.scatter(x=cdf_points, y=probability)
-    fig.update_layout(title="CDF of the convolution of " + str(var1) + " and " + str(var2),
+
+    if fig is None:
+        fig = px.scatter(x=cdf_points, y=probability)
+        fig.update_layout(title="CDF of the convolution of " + str(var1) + " and " + str(var2),
                       xaxis_title="x",
                       yaxis_title="Probability X=x")
-    return fig
-    #fig = px.scatter_3d(x=var1_trials, y=var2_trials, z=convolution_trials)
+    else:
 
+        trace = go.Scatter(x=cdf_points, y=probability)
+        #title =
+
+        if geom is None:
+            geom = 1,1
+        row, col = geom
+        fig.add_trace(trace, row=row, col=col)
+        fig.update_yaxes(title_text="Probability X=x", row=row, col=col)
+    return fig
 """
 Takes an input variable and a dataset of 1 var.
 Returns a histogram of the data
@@ -446,12 +468,11 @@ def dataset_plots(var: Variable, data: []) -> go.Figure:
 
 def main():
     a = Binomial(100, 0.5)
-    b=[]
+    b = Poisson(4)
+    fig = make_subplots(rows=1, cols=2, specs=[[{'type':'surface'}, {'type':'xy'}]], subplot_titles=["",""])
+    #convolution_pdf(a,b, fig=fig, geom=(1,1))
+    convolution_cdf(a,b,fig=fig, geom=(1,2)).show()
 
-    for i in range(10000):
-        b.append(a.inverse_cdf(rd.random()))
-    fig = go.Figure(go.Histogram(x=b, histnorm="probability"))
-    a.graph_pdf(0,100, fig=fig).show()
 
     #dataset_plots(a, a.generate_dataset(10000)).show()
 

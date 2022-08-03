@@ -9,7 +9,6 @@ class DistributionSelect(forms.Form):
     Outputs = (
         ("pdf", "Probability Density Function"),
         ("cdf", "Cumulative Distribution Function"),
-        ("con", "Convolution"),
     )
 
     Type = forms.ModelChoiceField(label='Distribution', queryset=Distribution.objects.all(), required=False,
@@ -82,8 +81,15 @@ class SampleDist(forms.Form):
 
 class ConvolutionOptions(forms.Form):
     choices = (
-        ("pdf", "Probability Density Function"),
-        ("cdf", "Cumulative Density Function")
+        ("prob", "Probability Functions"),
     )
-    Output = forms.MultipleChoiceField(label='', widget=forms.CheckboxSelectMultiple,
-                                       choices=choices, required=False)
+
+    type = (
+        ("sum", "Sum"),
+        ("product", "Product"),
+
+    )
+
+    Output = forms.BooleanField(label='Plot Convolution?',
+                                initial=False, required=False)
+    Type = forms.ChoiceField(choices=type)

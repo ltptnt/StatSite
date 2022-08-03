@@ -29,6 +29,7 @@ def distributions(request) -> HttpResponse:
         'convol': convolution,
         'graph': None,
         'conv_graph': None,
+        'supported': None,
     }
 
     if request.method == "POST" and 'submit' in request.POST:
@@ -131,15 +132,26 @@ def distributions(request) -> HttpResponse:
             # If they want to make more than one graph, requires a geometry argument
             if convolution.is_valid():
                 fig2 = None
-                if convolution.cleaned_data.get("pdf"):
-                    pass
+                fig3 = None
+                if convolution.cleaned_data["Output"]:
+                    fig2 = make_subplots(rows=1, cols=2, specs=[[{'type':'xy'}, {'type':'surface'}]],
+                                         subplot_titles=["CDF of Convolution", "PDF of Convolution"])
+                    convolution_pdf(a, b, fig=fig2, geom=(1, 2))
+                    convolution_cdf(a, b, fig=fig2, geom=(1, 1))
 
-                if convolution.cleaned_data.get("cdf"):
-                    pass
+                match convolution.cleaned_data["Type"]:
+                    case "sum":
+                        fig3 = two_var_3d(a, b, type="sum")
+                    case "product":
+                        fig3 = two_var_3d(a, b)
 
                 if fig2 is not None:
-                    context['convol_graph'] = fig2.to_html(full_html=False, default_height=1000, default_width=1200,
-                                               div_id='convol_graph')
+                    context['conv_graph'] = fig2.to_html(full_html=False, default_height=1000, default_width=1200,
+                                                           div_id='conv_graph')
+
+                if fig3 is not None:
+                    context['supported'] = fig3.to_html(full_html=False, default_height=1000, default_width=1200,
+                                                        div_id='supported')
 
     return HttpResponse(template.render(context, request))
 
@@ -226,8 +238,6 @@ def generating_samples(request):
         data2 = DatasetParams(request.POST, prefix='data2', label_suffix='')
         download_data = Download(request.POST, prefix='download', label_suffix='')
 
-        print(pick_two.is_valid(), pick_one.is_valid())
-        print(data1.is_valid(), data2.is_valid())
         dataset1 = []
         dataset2 = []
         var1 = None

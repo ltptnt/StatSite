@@ -81,9 +81,32 @@
                 {{ picker1.as_p }}
                 <h2 class="centered">Distribution 2 (Optional)</h2>
                 {{ picker2.as_p }}
+                <h2 class="centered">Convolution Options (Optional)</h2>
+                <div class ="blurb">
+                    Choose which convolution graphs you would like to see.
+                    Note: this requires two variables to be input
+                </div>
+                {{ convol.as_p }}
                 <input class="centered" type="submit" name="submit" value="Submit">
                 <input class="centered" type="submit" name="clear" value="Clear">
             </form>
+
+        <div class = "graph">
+            {% if conv_graph %}
+                {{ conv_graph|safe }}
+            {% else %}
+                <div id="blank_graph">Please enter parameters to see a Graph!</div>
+            {% endif %}
+        </div>
+
+        <div class = "graph">
+            {% if supported %}
+                {{ supported |safe }}
+            {% else %}
+                <div id="blank_graph">Please enter parameters to see a Graph!</div>
+            {% endif %}
+        </div>
+
         </div>
         <script type="text/javascript" src={% static 'statVisualiser/javascript.js' %}></script>
     </body>
