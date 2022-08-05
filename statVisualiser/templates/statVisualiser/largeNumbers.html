@@ -1,26 +1,17 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en-AU">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <title>Statistics Simulator</title>
-        <link rel="stylesheet" href="{% static 'statVisualiser/styles.css' %}">
-        <title>Law of Large Numbers</title>
-    </head>
-    <body>
-    <div class="title_bar">
-                <h1>  Stats & Stuff</h1>
-            </div>
-            <div class="navbar">
-                        <ul>
-                            <li><a href="/statVisualiser">Home</a></li>
-                            <li><a href="/statVisualiser/distributions">Distributions</a></li>
-                            <li><a class="active" href="/statVisualiser/largeNumbers">The Law of Large Numbers</a></li>
-                            <li><a href="/statVisualiser/generatingSamples">Create Samples</a></li>
-                            <li><a href="https://github.com/ltptnt/StatSite">Github</a></li>
-                        </ul>
-            </div>
+{% extends "statVisualiser/base.html" %}
+
+{% block title %}large Numbers{% endblock title %}
+
+{% block content %}
+    <div class="navbar">
+        <ul>
+            <li><a href="/statVisualiser">Home</a></li>
+            <li><a href="/statVisualiser/distributions">Distributions</a></li>
+            <li><a class="active" href="/statVisualiser/largeNumbers">The Law of Large Numbers</a></li>
+            <li><a href="/statVisualiser/generatingSamples">Create Samples</a></li>
+            <li><a href="https://github.com/ltptnt/StatSite">Github</a></li>
+        </ul>
+    </div>
     <div class="page_title">
         <h1>The Law of Large Numbers for the Binomial Distribution</h1>
             <h2>A Distribution Visualiser</h2>
@@ -61,22 +52,21 @@
         Uses:
         computationally simple compared to calculating probability for binomial distributions with a large number of trials.
 
-        Fill out the information below to see the pdf of a binomial distribution and its corresponding poisson apprixmation.
+        Fill out the information below to see the pdf of a binomial distribution and its corresponding poisson approximation.
     </p>
     <div class = "picker">
-            <form method="post">
-                {% csrf_token %}
-                <h2 class="centered">Law of Rare Events</h2>
-                {{ poisson.as_p }}
-                <input class="centered" type="submit" value="Submit">
-            </form>
-        </div>
-        <div class="poi_graph">
-            {% if poi_graph %}
-                {{ poi_graph|safe }}
-            {% else %}
-                <div id="blank_graph">Please enter parameters to see a Graph!</div>
-            {% endif %}
-        </div>
-    </body>
-</html>
+        <form method="post">
+            {% csrf_token %}
+            <h2 class="centered">Law of Rare Events</h2>
+            {{ poisson.as_p }}
+            <input class="centered" type="submit" value="Submit">
+        </form>
+    </div>
+    <div class="poi_graph">
+        {% if poi_graph %}
+            {{ poi_graph|safe }}
+        {% else %}
+            <div id="blank_graph">Please enter parameters to see a Graph!</div>
+        {% endif %}
+    </div>
+{% endblock content %}

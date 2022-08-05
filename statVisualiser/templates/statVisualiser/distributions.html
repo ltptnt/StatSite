@@ -1,113 +1,102 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en-AU">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <title>Statistics Simulator</title>
-        <link rel="stylesheet" href="{% static 'statVisualiser/styles.css' %}">
-    </head>
-    <body>
-        <div class="title_bar">
-            <h1>  Stats & Stuff</h1>
-        </div>
-        <div class="navbar">
-            <ul>
-                <li><a href="/statVisualiser">Home</a></li>
-                <li><a class="active" href="/statVisualiser/distributions">Distributions</a></li>
-                <li><a href="/statVisualiser/largeNumbers">The Law of Large Numbers</a></li>
-                <li><a href="/statVisualiser/generatingSamples">Create Samples</a></li>
-                <li><a href="https://github.com/ltptnt/StatSite">Github</a></li>
+{% extends "statVisualiser/base.html" %}
 
-            </ul>
-        </div>
-        <div class="messages">
-            {% for message in messages %}
-                <div class="{{ message.tags }}">
-                    <span class="alert_close">&times;</span>
-                    {{ message }}
-                </div>
-            {% endfor %}
-        </div>
-        <div class="page_title">
-            <h1>Distributions</h1>
-            <h2>A Distribution Visualiser</h2>
-        </div>
-        <div class="blurb">
-            <p>
-                This statistics visualiser allows you to generate graphical representation of one or two distributions
-                probability distribution function and/or cumulative distribution function.
-            </p>
-        </div>
-        <div class="database">
-            <h1 class="centered">Distributions</h1>
-            <table class="styled-table">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Continuous</th>
-                        <th>Supported Region</th>
-                        <th>Variable Count</th>
-                        <th>Variables</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for x in dist %}
-                    <tr>
-                        <td>{{ x.name }}</td>
-                        <td>{{ x.continuous }}</td>
-                        <td>{{ x.supported_region }}</td>
-                        <td>{{ x.required_variable_count }}</td>
-                        <td id="{{ x.name }}">{{ x.required_variable_names|stringformat:'a' }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+{% block title %}Distributions{% endblock title %}
 
-        <div class="graph right">
-            {% if graph %}
-                {{ graph|safe }}
-            {% else %}
-                <div id="blank_graph">Please enter parameters to see a Graph!</div>
-            {% endif %}
-        </div>
+{% block content %}
+    <div class="navbar">
+        <ul>
+            <li><a href="/statVisualiser">Home</a></li>
+            <li><a class="active" href="/statVisualiser/distributions">Distributions</a></li>
+            <li><a href="/statVisualiser/largeNumbers">The Law of Large Numbers</a></li>
+            <li><a href="/statVisualiser/generatingSamples">Create Samples</a></li>
+            <li><a href="https://github.com/ltptnt/StatSite">Github</a></li>
+        </ul>
+    </div>
+    <div class="messages">
+        {% for message in messages %}
+            <div class="{{ message.tags }}">
+                <span class="alert_close">&times;</span>
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    <div class="page_title">
+        <h1>Distributions</h1>
+        <h2>A Distribution Visualiser</h2>
+    </div>
+    <div class="blurb">
+        <p>
+            This statistics visualiser allows you to generate graphical representation of one or two distributions
+            probability distribution function and/or cumulative distribution function.
+        </p>
+    </div>
+    <div class="database">
+        <h1 class="centered">Distributions</h1>
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Continuous</th>
+                    <th>Supported Region</th>
+                    <th>Variable Count</th>
+                    <th>Variables</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for x in dist %}
+                <tr>
+                    <td>{{ x.name }}</td>
+                    <td>{{ x.continuous }}</td>
+                    <td>{{ x.supported_region }}</td>
+                    <td>{{ x.required_variable_count }}</td>
+                    <td id="{{ x.name }}">{{ x.required_variable_names|stringformat:'a' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
-        <div class = "picker">
-            <form method="post">
-                {% csrf_token %}
-                <h2 class="centered Dist"></h2>
-                <h2 class="centered ">Distribution 1</h2>
-                {{ picker1.as_p }}
-                <h2 class="centered">Distribution 2 (Optional)</h2>
-                {{ picker2.as_p }}
-                <h2 class="centered">Convolution Options (Optional)</h2>
-                <div class ="blurb">
-                    Choose which convolution graphs you would like to see.
-                    Note: this requires two variables to be input
-                </div>
-                {{ convol.as_p }}
-                <input class="centered" type="submit" name="submit" value="Submit">
-                <input class="centered" type="submit" name="clear" value="Clear">
-            </form>
+    <div class="graph right">
+        {% if graph %}
+            {{ graph|safe }}
+        {% else %}
+            <div id="blank_graph">Please enter parameters to see a Graph!</div>
+        {% endif %}
+    </div>
 
-        <div class = "graph">
-            {% if conv_graph %}
-                {{ conv_graph|safe }}
-            {% else %}
-                <div id="blank_graph">Please enter parameters to see a Graph!</div>
-            {% endif %}
-        </div>
+    <div class = "picker">
+        <form method="post">
+            {% csrf_token %}
+            <h2 class="centered Dist"></h2>
+            <h2 class="centered ">Distribution 1</h2>
+            {{ picker1.as_p }}
+            <h2 class="centered">Distribution 2 (Optional)</h2>
+            {{ picker2.as_p }}
+            <h2 class="centered">Convolution Options (Optional)</h2>
+            <div class ="blurb">
+                Choose which convolution graphs you would like to see.
+                Note: this requires two variables to be input
+            </div>
+            {{ convol.as_p }}
+            <input class="centered" type="submit" name="submit" value="Submit">
+            <input class="centered" type="submit" name="clear" value="Clear">
+        </form>
+    </div>
 
-        <div class = "graph">
-            {% if supported %}
-                {{ supported |safe }}
-            {% else %}
-                <div id="blank_graph">Please enter parameters to see a Graph!</div>
-            {% endif %}
-        </div>
+    <div class = "graph">
+        {% if conv_graph %}
+            {{ conv_graph|safe }}
+        {% else %}
+            <div id="blank_graph">Please enter parameters to see a Graph!</div>
+        {% endif %}
+    </div>
 
-        </div>
-        <script type="text/javascript" src={% static 'statVisualiser/javascript.js' %}></script>
-    </body>
-</html>
+    <div class = "graph">
+        {% if supported %}
+            {{ supported |safe }}
+        {% else %}
+            <div id="blank_graph">Please enter parameters to see a Graph!</div>
+        {% endif %}
+    </div>
+
+{% endblock content %}

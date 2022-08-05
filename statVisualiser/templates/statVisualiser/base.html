@@ -1,0 +1,29 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{% block title %}{% endblock title %}</title>
+    <link rel="stylesheet" href="{% static 'statVisualiser/styles.css' %}">
+    {% block style %}
+    {% endblock style %}
+</head>
+
+<body>
+    <div class="title_bar">
+        <h1>  Stats & Stuff</h1>
+    </div>
+    {% block content %}
+    {% endblock content %}
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src={% static 'statVisualiser/javascript.js' %}></script>
+    {% block javascript %}
+    {% endblock javascript %}
+</body>
+
+</html>
