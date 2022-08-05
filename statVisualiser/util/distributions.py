@@ -369,6 +369,8 @@ def two_var_3d(var1, var2, type="product"):
 def convolution_pdf(var1, var2, fig=None, geom=None):
     min1, max1 = var1.get_region()
     min2, max2 = var2.get_region()
+    pdf_pmf, dens = ("PMF", "Mass") if not var1.continuous and not var2.continuous else ("PDF", "Density")
+
     if var1.continuous:
         var1_region = np.linspace(max(min1, -100), min(max1, 100), 10**3)
     else:
@@ -385,17 +387,18 @@ def convolution_pdf(var1, var2, fig=None, geom=None):
     for i in range(len(var1_region)):
         for y in var2_pdf:
             conv_pdf[i].append(var1_pdf[i]*y)
-
+    print(conv_pdf)
     trace = go.Surface(y=var1_region, x=var2_region, z=conv_pdf)
     if fig is None:
         fig = go.Figure()
         fig.add_trace(trace)
-        fig.update_layout(dict(title="PDF of the convolution of " + str(var1) + " and " + str(var2),
-            coloraxis_colorbar=dict(title="Density"),
+        fig.update_layout(dict(title=pdf_pmf + " of the convolution of " + str(var1) + " and " + str(var2),
+            coloraxis_colorbar=dict(title="Probability" + dens),
             scene=dict(
                 xaxis_title="X ~ " + str(var2),
                 yaxis_title="Y ~ " + str(var1),
-                zaxis_title="Probability density of X*Y")))
+                zaxis_title="Probability " + dens +" of X*Y")),)
+
     else:
         if geom is None:
             fig.add_trace(trace)
@@ -467,12 +470,9 @@ def dataset_plots(var: Variable, data: []) -> go.Figure:
     return fig2
 
 def main():
-    a = Binomial(100, 0.5)
-    b = Poisson(4)
-    fig = make_subplots(rows=1, cols=2, specs=[[{'type':'surface'}, {'type':'xy'}]], subplot_titles=["",""])
-    #convolution_pdf(a,b, fig=fig, geom=(1,1))
-    convolution_cdf(a,b,fig=fig, geom=(1,2)).show()
-
+    a = Binomial(5, 0.5)
+    b = Poisson(1)
+    convolution_pdf(a,b).show()
 
     #dataset_plots(a, a.generate_dataset(10000)).show()
 
