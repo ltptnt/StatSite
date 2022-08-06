@@ -26,8 +26,10 @@
     </div>
     <div class="blurb">
         <p>
-            This statistics visualiser allows you to generate graphical representation of one or two distributions
-            probability distribution function and/or cumulative distribution function.
+            On this page you can generate up to two distributions, where you have the following visualisation options:
+            Plot the PDF/PMF depending on the variable.
+            Plot the CDF of each variable.
+            Plot the convolution of the two variables, either as a sum or a product
         </p>
     </div>
     <div class="database">
@@ -74,7 +76,7 @@
             {{ picker2.as_p }}
             <h2 class="centered">Convolution Options (Optional)</h2>
             <div class ="blurb">
-                Choose which convolution graphs you would like to see.
+                Choose whether the convolution is a product or a sum
                 Note: this requires two variables to be input
             </div>
             {{ convol.as_p }}
