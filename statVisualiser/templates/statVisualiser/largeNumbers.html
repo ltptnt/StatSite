@@ -12,64 +12,86 @@
             <li><a href="https://github.com/ltptnt/StatSite">Github</a></li>
         </ul>
     </div>
+    <div class="messages">
+        {% for message in messages %}
+            <div class="{{ message.tags }}">
+                <span class="alert_close">&times;</span>
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
     <div class="page_title">
         <h1>The Law of Large Numbers for the Binomial Distribution</h1>
             <h2>A Distribution Visualiser</h2>
     </div>
     <div class="blurb">
-    <p>An interesting aspect of statistics is the behaviour of distributions as their parameters approach infinity. Under certain conditions, some distributions will converge towards another known distributions.
-        The central limit theorem is an example of this, which states that for a given distribution:
-        As the number of events in a sample increases, the mean of the sample will approach the true mean of the distribution.
-        This site has some simulations that demonstrate this convergent behaviour for the binomial theorem.
-    </p>
-    <p>normal to binomial</p>
+        <hr>
+        <p>An interesting aspect of statistics is the behaviour of distributions as their parameters approach infinity. Under certain conditions, some distributions will converge towards another known distributions.
+            The central limit theorem is an example of this, which states that for a given distribution:
+            As the number of events in a sample increases, the mean of the sample will approach the true mean of the distribution.
+            This site has some simulations that demonstrate this convergent behaviour for the binomial theorem.
+        </p>
+        <p>normal to binomial</p>
+        <hr>
     </div>
-    <div>
-        <div class = "lnpicker left">
-            <form method="post">
-                {% csrf_token %}
-                <h2 class="centered">Normal Approximation to a Binomial distribution</h2>
-                {{ normal.as_p }}
+
+    <form method="post">
+        <div class="spacer">
+            <div class="lnpicker" style="flex: 50%">
+
+                    {% csrf_token %}
+                    <h2 class="centered">Normal Approximation to a Binomial distribution</h2>
+                    {{ normal.as_p }}
+                    <input class="centered" type="submit" value="Submit">
+
+            </div>
+            <div class="graph" style="flex: 50%">
+            <div id="g1_plot">
+                {% if normal_graph %}
+                    {{ normal_graph|safe }}
+                {% else %}
+                    <div class="blank_graph">Please enter parameters to see a Graph!</div>
+                {% endif %}
+            </div>
+            <button class="open_graph centered" onclick="openGraph('g1_plot')">Open in new tab</button>
+            </div>
+        </div>
+
+        <div class="blurb">
+            <hr>
+            <p>
+            Stuff about the poisson approximation
+            The law of rare events describes the conditions under which a binomial distribution converges to a poisson distribution.
+            As the number of trials in a binomial distribution increases, the distribution converges to the poisson distribution with a corresponding mean equal to np.
+            To use this approximation in an applied context, the following conditions must be met to apply the approximation:
+            -n>20
+            These approximations based on the laws of large numbers are more accurate as n increases.
+            np<5, or n(1-p)<5
+            This threshold represents the success or failure event respectively as sufficiently rare
+            Uses:
+            computationally simple compared to calculating probability for binomial distributions with a large number of trials.
+
+            Fill out the information below to see the pdf of a binomial distribution and its corresponding poisson approximation.
+            </p>
+            <hr>
+        </div>
+        <div class="spacer">
+            <div style="flex: 50%" class = "lnpicker">
+                <h2 class="centered">Law of Rare Events</h2>
+                {{ poisson.as_p }}
                 <input class="centered" type="submit" value="Submit">
-            </form>
-        </div>
-        <div class="lngraph right">
-            {% if normal_graph %}
-                {{ normal_graph|safe }}
-            {% else %}
-                <div id="lnblank_graph">Please enter parameters to see a Graph!</div>
-            {% endif %}
-        </div>
-    </div>
+            </div>
+            <div style="flex: 50%" class="graph">
+                    <div id="g2_plot">
+                    {% if poi_graph %}
+                        {{ poi_graph|safe }}
+                    {% else %}
+                        <div class="blank_graph">Please enter parameters to see a Graph!</div>
+                    {% endif %}
+                    </div>
+            <button class="open_graph centered" onclick="openGraph('g2_plot')">Open in new tab</button>
+            </div>
+    </form>
 
-    <p class="blurb">
-        Stuff about the poisson approximation
-        The law of rare events describes the conditions under which a binomial distribution converges to a poisson distribution.
-        As the number of trials in a binomial distribution increases, the distribution converges to the poisson distribution with a corresponding mean equal to np.
-        To use this approximation in an applied context, the following conditions must be met to apply the approximation:
-        -n>20
-        These approximations based on the laws of large numbers are more accurate as n increases.
-        np<5, or n(1-p)<5
-        This threshold represents the success or failure event respectively as sufficiently rare
-        Uses:
-        computationally simple compared to calculating probability for binomial distributions with a large number of trials.
-
-        Fill out the information below to see the pdf of a binomial distribution and its corresponding poisson approximation.
-    </p>
-    <div class = "lnpicker left">
-        <form method="post">
-            {% csrf_token %}
-            <h2 class="centered">Law of Rare Events</h2>
-            {{ poisson.as_p }}
-            <input class="centered" type="submit" value="Submit">
-        </form>
-    </div>
-    <div class="lngraph right">
-        {% if poi_graph %}
-            {{ poi_graph|safe }}
-        {% else %}
-            <div id="lnblank_graph">Please enter parameters to see a Graph!</div>
-        {% endif %}
-    </div>
     <br>
 {% endblock content %}
