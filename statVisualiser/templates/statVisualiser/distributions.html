@@ -25,23 +25,24 @@
         <h2>A Distribution Visualiser</h2>
     </div>
     <div class="blurb">
+        <hr>
         <p>
             On this page you can generate up to two distributions, where you have the following visualisation options:
             Plot the PDF/PMF depending on the variable.
             Plot the CDF of each variable.
             Plot the convolution of the two variables, either as a sum or a product
         </p>
+        <hr>
     </div>
+
     <div class="database">
-        <h1 class="centered">Distributions</h1>
+        <h2 class="centered">Distributions</h2>
         <table class="styled-table">
             <thead>
                 <tr>
                     <th>Name</th>
                     <th>Continuous</th>
                     <th>Supported Region</th>
-                    <th>Variable Count</th>
-                    <th>Variables</th>
                 </tr>
             </thead>
             <tbody>
@@ -50,65 +51,88 @@
                     <td>{{ x.name }}</td>
                     <td>{{ x.continuous }}</td>
                     <td>{{ x.supported_region }}</td>
-                    <td>{{ x.required_variable_count }}</td>
-                    <td id="{{ x.name }}">{{ x.required_variable_names|stringformat:'a' }}</td>
+                    <td id="{{ x.name }}" style="display: none">{{ x.required_variable_names|stringformat:'a' }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
+        <hr>
     </div>
-
-
-
-<div class="spacer">
-    <div class = "gspicker col">
+    <div class="spacer">
+    <div style="flex: 50%">
         <form method="post">
-            {% csrf_token %}
-            <h2 class="centered ">Distribution 1</h2>
-            {{ picker1.as_p }}
+        <div class="spacer">
+            <div class="picker" style="flex: 50%">
+                <h2 class="centered">Distribution 1</h2>
+                <hr>
+                    {% csrf_token %}
+                    {{ picker1.as_p }}
+            </div>
+            <div class="picker" style="flex: 50%">
+                <h2 class="centered">Distribution 2 <i style="color: #cccccc">(Optional)</i></h2>
+                <hr>
+                    {{ picker2.as_p }}
+            </div>
+        </div>
+    <div class="spacer">
+        <div style="flex: 100%">
+            <hr>
+            <h2 class="centered">Convolution <i style="color: #cccccc">(Optional)</i></h2>
+            <hr>
+            <div class ="blurb">
+                Choose whether the convolution is a product or a sum
+                Note: this requires two variables to be input
+            </div>
+            <hr>
+            {{ convol.as_p }}
+        </div>
+    </div>
+    <div style="width: 90%; margin: auto">
+    <hr>
+        <input class="centered" type="submit" name="submit" value="Submit">
+        <input class="centered" type="submit" name="clear" value="Clear">
+    </div>
         </form>
     </div>
-    <div class="gspicker col">
-        <form method="post">
-            <h2 class="centered">Distribution 2 (Optional)</h2>
-            {{ picker2.as_p }}
-        </form>
-    </div>
-</div>
-<div class=distpicker2">
-    <form method="post">
-        <h2 class="centered">Convolution Options (Optional)</h2>
-                <div class ="blurb">
-                    Choose whether the convolution is a product or a sum
-                    Note: this requires two variables to be input
-                </div>
-                {{ convol.as_p }}
-                <input class="centered" type="submit" name="submit" value="Submit">
-                <input class="centered" type="submit" name="clear" value="Clear">
-    </form>
-</div>
-    <div class="graph ">
-        {% if graph %}
-            {{ graph|safe }}
-        {% else %}
-            <div id="blank_graph">Please enter parameters to see a Graph!</div>
-        {% endif %}
-    </div>
+    <div style="flex: 50%">
+        <div class="tab_bar">
+            <button id='g1_tab' class="tab_button" onclick="changeTab('g1')">Graph 1</button>
+            <button id='g2_tab' class="tab_button" onclick="changeTab('g2')">Graph 2</button>
+            <button id='g3_tab' class="tab_button" onclick="changeTab('g3')">Graph 3</button>
+        </div>
 
-    <div class = "graph">
-        {% if conv_graph %}
-            {{ conv_graph|safe }}
-        {% else %}
-            <div id="blank_graph">Please enter parameters to see a Graph!</div>
-        {% endif %}
-    </div>
+        <div id="g1" class="tab">
+            <div id="g1_plot" class="graph">
+                {% if graph %}
+                    {{ graph|safe }}
+                {% else %}
+                    <div class="blank_graph">Please enter parameters to see a Graph!</div>
+                {% endif %}
+            </div>
+            <button class="open_graph centered" onclick="openGraph('g1_plot')">Open in new tab</button>
+        </div>
 
-    <div class = "graph">
-        {% if supported %}
-            {{ supported |safe }}
-        {% else %}
-            <div id="blank_graph">Please enter parameters to see a Graph!</div>
-        {% endif %}
-    </div>
+        <div id="g2" class="tab">
+            <div id="g2_plot" class = "graph">
+                {% if conv_graph %}
+                    {{ conv_graph|safe }}
+                {% else %}
+                    <div class="blank_graph">Please enter parameters to see a Graph!</div>
+                {% endif %}
+            </div>
+        <button class="open_graph centered" onclick="openGraph('g2_plot')">Open in new tab</button>
+        </div>
 
+        <div id="g3" class="tab">
+             <div id="g3_plot" class = "graph">
+                {% if supported %}
+                    {{ supported |safe }}
+                {% else %}
+                    <div class="blank_graph">Please enter parameters to see a Graph!</div>
+                {% endif %}
+            </div>
+        <button class="open_graph centered" onclick="openGraph('g3_plot')">Open in new tab</button>
+        </div>
+    </div>
+    </div>
 {% endblock content %}
