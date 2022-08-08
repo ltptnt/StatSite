@@ -3,11 +3,12 @@ function Picker1() {
             Hide('1')
         }
 
-        function Picker2() {
+function Picker2() {
             HideAll('2')
             Hide('2')
         }
-        function HideAll(id) {
+
+function HideAll(id) {
             document.getElementById('picker'+id+'-Mean').style.display = 'none';
             document.getElementById('picker'+id+'-Rate').style.display = 'none';
             document.getElementById('picker'+id+'-Min').style.display = 'none';
@@ -15,9 +16,12 @@ function Picker1() {
             document.getElementById('picker'+id+'-Probability').style.display = 'none';
             document.getElementById('picker'+id+'-Trials').style.display = 'none';
             document.getElementById('picker'+id+'-Sd').style.display = 'none';
-            document.getElementById('picker'+id+'-Output').style.display = 'none';
-            document.getElementById('picker'+id+'-G_Min').style.display = 'none';
-            document.getElementById('picker'+id+'-G_Max').style.display = 'none';
+            if (document.getElementById('picker'+id+'-Output') != null) {
+                document.getElementById('picker'+id+'-Output').style.display = 'none';
+                document.getElementById('picker'+id+'-G_Min').style.display = 'none';
+                document.getElementById('picker'+id+'-G_Max').style.display = 'none';
+            }
+
 
             let labels = document.getElementsByTagName('label');
             for(let i = 0; i < labels.length; i++ ) {
@@ -26,7 +30,8 @@ function Picker1() {
                 }
             }
         }
-        function Hide(id) {
+
+function Hide(id) {
             HideAll(id);
             let name = document.getElementById('picker' + id + '-Type').options[document.getElementById('picker' + id + '-Type').selectedIndex].innerHTML
             if (name !== '') {
@@ -44,13 +49,42 @@ function Picker1() {
                     }
                     document.getElementById('picker' + id + '-' + list[i]).style.display = '';
                 }
-                document.getElementById('picker' + id + '-Output').style.display = '';
-                document.getElementById('picker'+id+'-G_Min').style.display = '';
-                document.getElementById('picker'+id+'-G_Max').style.display = '';
+                if (document.getElementById('picker'+id+'-Output') != null) {
+                    document.getElementById('picker' + id + '-Output').style.display = '';
+                    document.getElementById('picker' + id + '-G_Min').style.display = '';
+                    document.getElementById('picker' + id + '-G_Max').style.display = '';
+                }
             }
         }
 
-            window.onload = function() {
+function changeTab(tab_name) {
+    let i, x, tab_buttons;
+    x = document.getElementsByClassName("tab");
+    for (i = 0; i < x.length; i++) {
+        x[i].style.display = "none";
+    }
+    tab_buttons = document.getElementsByClassName("tab_button");
+    for (i = 0; i < x.length; i++) {
+        tab_buttons[i].className = tab_buttons[i].className.replace(" active", "");
+    }
+    document.getElementById(tab_name).style.display = "block";
+    document.getElementById(tab_name + "_tab").classList.add("active");
+}
+
+function openGraph(graph) {
+    let newWindowContent = document.getElementById(graph).innerHTML;
+    let newWindow = window.open("", "", "width=1000,height=1000");
+    newWindow.document.write(newWindowContent);
+}
+
+if (document.getElementById("g1_tab") != null) {
+    document.getElementById("g1_tab").click();
+}
+
+
+
+
+window.onload = function() {
 
                 Picker1()
                 Picker2()
