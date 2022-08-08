@@ -1,23 +1,37 @@
 body {
-    font-family:'Open Sans', sans-serif;
+    font-family:Helvetica, sans-serif;
+    margin: auto;
+}
+
+.content {
+    max-width: 90%;
     margin: auto;
 }
 
 h1, h2, h3, h4, h5, h6 {
-    font-family:'Open Sans', sans-serif;
+    font-family: Helvetica, sans-serif;
 }
 
 .title_bar h1 {
-    line-height:50px;
+    line-height:30px;
     font-weight:900;
-    font-size:40px;
+    font-size:30px;
     text-transform:uppercase;
     color: #DCFDFDFF;
     margin: auto;
 }
 
 p {
-    font-size: 20px;
+    font-size: 17px;
+}
+
+hr {
+    border-top: 1px solid #d2d2d2;
+    margin: 20px auto;
+}
+
+.inline {
+    float: left;
 }
 
 /* Navigation Bar */
@@ -42,7 +56,7 @@ p {
     color: #ECF7FF;
     text-align: center;
     font-weight: 600;
-    padding: 14px 16px;
+    padding: 10px 14px;
     text-decoration: none;
 }
 
@@ -51,7 +65,7 @@ p {
     color: #ECF7FF;
 }
 
-.navbar li a.active {
+.navbar li a.active, .tab_button.active, .tab_button.active:hover {
     background-color: #ECF7FF;
     color: #232A32;
 }
@@ -60,16 +74,15 @@ p {
 /* Page Title */
 
 .page_title {
-    width: 80%;
+    width: 90%;
     text-align: left;
     margin: auto;
-    padding-top: 30px;
-    padding-bottom: 30px;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 .page_title h1 {
-    line-height: 0;
-    font-size: 40px;
+    font-size: 30px;
 }
 
 .page_title h2 {
@@ -77,24 +90,22 @@ p {
     font-weight: lighter;
     color: #a6adb9;
     font-style: italic;
-    font-size: 17px;
+    font-size: 15px;
 }
 
 /* Blurb */
 
 .blurb {
-    width: 70%;
-    text-align: left;
     margin: auto;
-    padding-bottom: 30px;
+    text-align: left;
+    align-content: center;
+    max-width:90%;
 }
 #blurb::before{
-    content: \a;
     white-space: pre;
 }
 
 #blurb::after{
-    content: \a;
     white-space: pre;
 }
 
@@ -105,18 +116,23 @@ p {
 
 /* Table */
 
+.database {
+    margin: auto;
+    background: #ffffff;
+    padding: 0 5%;
+}
+
 .styled-table {
+    min-width: 500px;
     text-align: center;
     border-collapse: collapse;
-    margin-left:auto;
-    margin-right:auto;
-    min-width: 300px;
+    margin: auto;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
     background: #ffffff;
 }
 
 .styled-table thead tr th {
-    padding: 10px 10px;
+    padding: 6px 6px;
 }
 
 .styled-table thead tr {
@@ -129,7 +145,7 @@ p {
 }
 
 .styled-table tbody tr td {
-    padding: 5px 10px;
+    padding: 4px 8px;
 }
 
 .styled-table tbody tr:nth-of-type(even) {
@@ -143,34 +159,33 @@ p {
 
 /* Form */
 
-.spacer {
-    display: flex
+form {
+    width: 100%;
 }
+
+.spacer {
+    display: flex;
+    width: 90%;
+    margin: auto;
+}
+
 #spacer::after {
     white-space: pre;
-
 }
-
-.col {
-    flex: 50%;
-}
-
 
 #spacer::before {
     white-space: pre;
 }
 
-.picker label {
-    padding-top: 5px;
+.picker label, .lnpicker label {
     line-height: 40px;
     font-weight: bold;
     font-size: 17px;
     margin: auto;
-
 }
 
-.picker h2 {
-    font-size: 30px;
+.picker h2, .lnpicker h2 {
+    font-size: 20px;
 }
 
 input[type=number], select {
@@ -185,7 +200,7 @@ input[type=number], select {
     font-size: 15px;
 }
 
-.picker p {
+.picker p, .lnpicker p {
     font-size: 0;
     line-height: 0;
 }
@@ -205,7 +220,9 @@ input[type=submit] {
     padding: 16px 32px;
     text-decoration: none;
     margin: 10px 2px;
-     cursor: pointer;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 17px;
 }
 
 
@@ -219,13 +236,13 @@ input[type=submit] {
     margin: auto;
 }
 
-#blank_graph {
+.blank_graph {
     line-height: 500px;
-    width: 500px;
-    height: 500px;
+    width: 700px;
+    height: 450px;
     background-color: #ECF7FF;
     text-align: center;
-    margin: 50px;
+    margin: auto;
 }
 
 
@@ -237,16 +254,14 @@ input[type=submit] {
 
 .left {
     float: left;
+    max-width: 50%;
+    margin: auto;
 }
 
 .right {
     float: right;
-}
-
-.database {
-    margin: auto;
-    background: #ffffff;
-    padding-bottom: 30px;
+    margin:auto;
+    max-width: 50%;
 }
 
 .title_bar {
@@ -308,63 +323,61 @@ input[type=submit] {
 }
 
 .alert_close {
-  margin-left: 15px;
-  color: white;
-  font-weight: bold;
-  float: right;
-  font-size: 22px;
-  line-height: 20px;
-  cursor: pointer;
-  transition: 0.3s;
+    margin-left: 15px;
+    color: white;
+    font-weight: bold;
+    float: right;
+    font-size: 22px;
+    line-height: 20px;
+    cursor: pointer;
+    transition: 0.3s;
 }
 
-/* Classes for large numbers (ln) */
-.lngraph {
-    text-align: center;
-    width: 900px;
-    height: 600px;
-    margin: 50px;
+
+
+.picker, .lnpicker {
+    display: table;
+    padding: 0 10px;
 }
 
-#lnblank_graph {
-    line-height: 500px;
-    width: 900px;
-    height: 600px;
-    background-color: #ECF7FF;
+
+/* Style the buttons inside the tab */
+.tab_button, .open_graph {
+    background-color: #232A32;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 17px;
+    display: block;
+    color: #ECF7FF;
     text-align: center;
-    margin: 50px;
+    font-weight: 600;
+    padding: 10px 14px;
+    text-decoration: none;
+    margin:auto;
 }
 
-.lnpicker {
-    margin: auto;
-    text-align: center;
-    width: 400px;
-    height: 600px;
-    display: table;
-    padding: 50px 50px;
+.tab_button {
+    float: left;
 }
 
-.gspicker {
-    margin: 50px;
-    text-align: center;
-    width: 400px;
-    height: auto;
-    display: table;
-    padding: 50px 50px;
+/* Change background color of buttons on hover */
+.tab_button:hover, .open_graph:hover {
+    background-color: #191f23;;
+    color: #ECF7FF;
 }
-.gspicker2 {
-    margin: 0px;
-    text-align: center;
-    width: auto;
-    height: auto;
-    display: table;
-    padding: 50px 50px;
+
+
+/* Style the tab content */
+.tab {
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
 }
-.distpicker2 {
-    margin: auto;
-    text-align: center;
-    width: auto;
-    height: auto;
-    display: table;
-    padding: 50px 50px;
+
+.tab_bar {
+    background-color: #232A32;
+    overflow: hidden;
+
 }
