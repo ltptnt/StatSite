@@ -45,17 +45,18 @@ class DistributionSelect(forms.Form):
 
 
 class NormalApproximation(forms.Form):
-    min_trials = forms.IntegerField(initial=10)
-    max_trials = forms.IntegerField(initial=100)
-    step = forms.IntegerField(initial=10)
-    probability = forms.FloatField(initial=0.5, min_value=0, max_value=1)
+    min_trials = forms.IntegerField(initial=10, required=False, label="Minimum Trials (Default: 10)")
+    max_trials = forms.IntegerField(initial=100, required=False, label="Maximum Trials (Default: 100)")
+    step = forms.IntegerField(initial=10, required=False, label="Step (Default: 10)")
+    probability = forms.FloatField(initial=0.5, min_value=0, max_value=1, required=False,
+                                   label="Probability (Default: 0.5)")
 
 
 class PoissonApproximation(forms.Form):
-    min_trials = forms.IntegerField(initial=10)
-    max_trials = forms.IntegerField(initial=100)
-    step = forms.IntegerField(initial=10)
-    mean = forms.FloatField(initial=4)
+    min_trials = forms.IntegerField(initial=10, required=False, label="Minimum Trials (Default: 10)")
+    max_trials = forms.IntegerField(initial=100, required=False, label="Maximum Trials (Default: 100)")
+    step = forms.IntegerField(initial=10, required=False, label="Step (Default: 10)")
+    mean = forms.FloatField(initial=4, required=False, label="Mean (Default: 4)")
 
 
 class DatasetParams(forms.Form):

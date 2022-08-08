@@ -88,6 +88,15 @@ p {
     margin: auto;
     padding-bottom: 30px;
 }
+#blurb::before{
+    content: \a;
+    white-space: pre;
+}
+
+#blurb::after{
+    content: \a;
+    white-space: pre;
+}
 
 .page_title p {
     line-height: 0;
@@ -139,7 +148,7 @@ p {
     text-align: left;
     width: 600px;
     display: table;
-    padding: 5px 5px;
+    padding: 20px 5px;
 }
 
 .picker label {
@@ -202,9 +211,9 @@ input[type=submit] {
 }
 
 #blank_graph {
-    line-height: 1000px;
-    width: 1100px;
-    height: 1000px;
+    line-height: 500px;
+    width: 500px;
+    height: 500px;
     background-color: #ECF7FF;
     text-align: center;
     margin: 50px;
@@ -300,3 +309,28 @@ input[type=submit] {
   transition: 0.3s;
 }
 
+/* Classes for large numbers (ln) */
+.lngraph {
+    text-align: center;
+    width: 900px;
+    height: 600px;
+    margin: 50px;
+}
+
+#lnblank_graph {
+    line-height: 500px;
+    width: 900px;
+    height: 600px;
+    background-color: #ECF7FF;
+    text-align: center;
+    margin: 50px;
+}
+
+.lnpicker {
+    margin: auto;
+    text-align: center;
+    width: 400px;
+    height: 600px;
+    display: table;
+    padding: 50px 50px;
+}

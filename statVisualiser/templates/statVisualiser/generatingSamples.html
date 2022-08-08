@@ -53,7 +53,7 @@
             </tbody>
         </table>
     </div>
-    <div class="graph right">
+    <div class="graph">
         <div class="graph">
             {% if graph1 %}
                 {{ graph1|safe }}
@@ -78,18 +78,23 @@
             {% endif %}
         </div>
     </div>
-    <div class = "picker">
-        <form method="post">
+    <div class = "picker left">
+        < method="post">
             {% csrf_token %}
             <h2 class="centered">Distribution 1</h2>
             {{ picker1.as_p }}
             <h2 class="centered">Dataset Parameters</h2>
             {{ data1.as_p }}
+    </div>
+    <div class = "picker right">
             <h2 class="centered">Distribution 2</h2>
             {{ picker2.as_p }}
              <h2 class="centered">Dataset Parameters</h2>
             {{ data2.as_p }}
+    </div>
+    <div class="picker">
             <h2 class="'centred">Optional Operations </h2>
+    </div>
             <div class="blurb">
                 <p>
                     Enabling the convolution will plot a density heatmap of the product of your two chosen variables.

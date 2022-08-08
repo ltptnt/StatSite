@@ -41,6 +41,7 @@ def binomial_normal(min_trials: int, max_trials: int, prob: float, steps=10):
         i.visible = False
     fig.data[0].visible = True
     fig.data[1].visible = True
+    fig.update_layout(title=titles[0])
     return fig
 
 

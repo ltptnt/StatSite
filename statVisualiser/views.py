@@ -83,7 +83,7 @@ def distributions(request) -> HttpResponse:
                 else:
                     fig = make_subplots(rows=int((graph_count + 1) / 2), cols=2, subplot_titles=[' ', ' ', ' ', ' '])
 
-                g_min1  = dist1s.cleaned_data.get('G_Min') if \
+                g_min1 = dist1s.cleaned_data.get('G_Min') if \
                     dist1s.cleaned_data.get('G_Min') is not None else a.get_region()[0]
                 g_max1 = dist1s.cleaned_data.get('G_Max') if \
                     dist1s.cleaned_data.get('G_Min') is not None else a.get_region()[1]
@@ -134,7 +134,7 @@ def distributions(request) -> HttpResponse:
                 fig2 = None
                 fig3 = None
                 if convolution.cleaned_data["Output"]:
-                    fig2 = make_subplots(rows=1, cols=2, specs=[[{'type':'xy'}, {'type':'surface'}]],
+                    fig2 = make_subplots(rows=1, cols=2, specs=[[{'type': 'xy'}, {'type': 'surface'}]],
                                          subplot_titles=["CDF of Convolution", "PDF of Convolution"])
                     convolution_pdf(a, b, fig=fig2, geom=(1, 2))
                     convolution_cdf(a, b, fig=fig2, geom=(1, 1))
@@ -147,7 +147,7 @@ def distributions(request) -> HttpResponse:
 
                 if fig2 is not None:
                     context['conv_graph'] = fig2.to_html(full_html=False, default_height=1000, default_width=1200,
-                                                           div_id='conv_graph')
+                                                         div_id='conv_graph')
 
                 if fig3 is not None:
                     context['supported'] = fig3.to_html(full_html=False, default_height=1000, default_width=1200,
@@ -176,30 +176,41 @@ def dist_selector(picker: DistributionSelect | SampleDist) -> Variable | None:
 
 
 def large_numbers(request):
-    normal_approx = NormalApproximation(request.POST, prefix='normal')
-    poi_approx = PoissonApproximation(request.POST, prefix='poisson')
+    n_approx = NormalApproximation(request.POST, prefix='normal')
+    p_approx = PoissonApproximation(request.POST, prefix='poisson')
     template = loader.get_template("statVisualiser/largeNumbers.html")
     context = {
-        'normal': normal_approx,
+        'normal': n_approx,
         'normal_graph': None,
-        'poisson': poi_approx,
+        'poisson': p_approx,
         'poi_graph': None
     }
-    if poi_approx.is_valid():
-        p_mean = poi_approx.cleaned_data.get('mean')
-        p_min = poi_approx.cleaned_data.get('min_trials')
-        p_max = poi_approx.cleaned_data.get('max_trials')
-        p_step = poi_approx.cleaned_data.get('step')
-        poi_graph = ln.binomial_poi_approx(p_min, p_max, p_mean, steps=p_step)
-        context['poi_graph'] = poi_graph.to_html(full_html=False, default_height=500, default_width=700)
 
-    if normal_approx.is_valid():
-        b_min = normal_approx.cleaned_data.get('min_trials')
-        b_max = normal_approx.cleaned_data.get('max_trials')
-        b_step = normal_approx.cleaned_data.get('step')
-        b_prob = normal_approx.cleaned_data.get('probability')
-        norm_graph = ln.binomial_normal(b_min, b_max, b_prob, steps=b_step)
-        context['normal_graph'] = norm_graph.to_html(full_html=False, default_height=500, default_width=700)
+    if request.method == "POST":
+        if p_approx.is_valid():
+            p_mean = p_approx.cleaned_data.get('mean') if \
+                p_approx.cleaned_data.get('mean') is not None else 4
+            p_min = p_approx.cleaned_data.get('min_trials') if \
+                p_approx.cleaned_data.get('min_trials') is not None else 10
+            p_max = p_approx.cleaned_data.get('max_trials') if \
+                p_approx.cleaned_data.get('max_trials') is not None else 10
+            p_step = p_approx.cleaned_data.get('step') if \
+                p_approx.cleaned_data.get('step') is not None else 10
+            poi_graph = ln.binomial_poi_approx(p_min, p_max, p_mean, steps=p_step)
+            context['poi_graph'] = poi_graph.to_html(full_html=False, default_height=600, default_width=900)
+
+        if n_approx.is_valid():
+            print(n_approx.cleaned_data)
+            b_min = n_approx.cleaned_data.get('min_trials') if \
+                n_approx.cleaned_data.get('min_trials') is not None else 10
+            b_max = n_approx.cleaned_data.get('max_trials') if \
+                n_approx.cleaned_data.get('max_trials') is not None else 100
+            b_step = n_approx.cleaned_data.get('step') if \
+                n_approx.cleaned_data.get('step') is not None else 10
+            b_prob = n_approx.cleaned_data.get('probability') if \
+                n_approx.cleaned_data.get('probability') is not None else 0.5
+            norm_graph = ln.binomial_normal(b_min, b_max, b_prob, steps=b_step)
+            context['normal_graph'] = norm_graph.to_html(full_html=False, default_height=600, default_width=900)
 
     return HttpResponse(template.render(context, request))
 
@@ -209,6 +220,7 @@ Stretch goal for samples:
 Implement a user input to add a custom dataset to be turned into a histogram, maybe with a desired proposal pdf?
 e.g. they can choose to have an exp(1) pdf layered over their data.
 """
+
 
 def generating_samples(request):
     dist_one_select = SampleDist(auto_id=True, prefix='picker1')
@@ -265,7 +277,7 @@ def generating_samples(request):
 
         if download_data.is_valid() and download_data.cleaned_data.get("download"):
             response = HttpResponse(content_type='text/csv',
-                                    headers={'Content-Disposition': 'attachment; filename="sample_dataset.csv"'},)
+                                    headers={'Content-Disposition': 'attachment; filename="sample_dataset.csv"'}, )
             title1 = str(var1) if var1 is not None else ""
             title2 = str(var2) if var2 is not None else ""
             title = [title1, title2]
@@ -280,4 +292,3 @@ def generating_samples(request):
             download.writerows([trial[0], trial[1]] for trial in big_data)
             return response
     return HttpResponse(template.render(context, request))
-

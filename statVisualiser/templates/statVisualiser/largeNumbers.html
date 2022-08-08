@@ -24,7 +24,8 @@
     </p>
     <p>normal to binomial</p>
     </div>
-        <div class = "picker">
+    <div>
+        <div class = "lnpicker left">
             <form method="post">
                 {% csrf_token %}
                 <h2 class="centered">Normal Approximation to a Binomial distribution</h2>
@@ -32,15 +33,16 @@
                 <input class="centered" type="submit" value="Submit">
             </form>
         </div>
-        <div class="normal_graph">
+        <div class="lngraph right">
             {% if normal_graph %}
                 {{ normal_graph|safe }}
             {% else %}
-                <div id="blank_graph">Please enter parameters to see a Graph!</div>
+                <div id="lnblank_graph">Please enter parameters to see a Graph!</div>
             {% endif %}
         </div>
+    </div>
 
-    <p>
+    <p class="blurb">
         Stuff about the poisson approximation
         The law of rare events describes the conditions under which a binomial distribution converges to a poisson distribution.
         As the number of trials in a binomial distribution increases, the distribution converges to the poisson distribution with a corresponding mean equal to np.
@@ -54,7 +56,7 @@
 
         Fill out the information below to see the pdf of a binomial distribution and its corresponding poisson approximation.
     </p>
-    <div class = "picker">
+    <div class = "lnpicker left">
         <form method="post">
             {% csrf_token %}
             <h2 class="centered">Law of Rare Events</h2>
@@ -62,11 +64,12 @@
             <input class="centered" type="submit" value="Submit">
         </form>
     </div>
-    <div class="poi_graph">
+    <div class="lngraph right">
         {% if poi_graph %}
             {{ poi_graph|safe }}
         {% else %}
-            <div id="blank_graph">Please enter parameters to see a Graph!</div>
+            <div id="lnblank_graph">Please enter parameters to see a Graph!</div>
         {% endif %}
     </div>
+    <br>
 {% endblock content %}
