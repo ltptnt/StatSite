@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure-mh19zq#q^q$i4go079svfwm&igq_e@g&so#sbdm!m&+2^-l4_6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['statsite.uqcloud.net', '127.0.0.1', 'localhost']
 
 # Application definition
 
