@@ -117,7 +117,7 @@ def distributions(request) -> HttpResponse:
                     fig.layout.annotations[count].update(text=str(label))
                     count += 1
 
-                context['graph'] = fig.to_html(full_html=False, default_height=1000, default_width=1200,
+                context['graph'] = fig.to_html(full_html=False,
                                                div_id='graph')
 
             else:
@@ -146,12 +146,10 @@ def distributions(request) -> HttpResponse:
                         fig3 = two_var_3d(a, b)
 
                 if fig2 is not None:
-                    context['conv_graph'] = fig2.to_html(full_html=False, default_height=1000, default_width=1200,
-                                                         div_id='conv_graph')
+                    context['conv_graph'] = fig2.to_html(full_html=False, div_id='conv_graph')
 
                 if fig3 is not None:
-                    context['supported'] = fig3.to_html(full_html=False, default_height=1000, default_width=1200,
-                                                        div_id='supported')
+                    context['supported'] = fig3.to_html(full_html=False, div_id='supported')
 
     return HttpResponse(template.render(context, request))
 
@@ -197,7 +195,7 @@ def large_numbers(request):
             p_step = p_approx.cleaned_data.get('step') if \
                 p_approx.cleaned_data.get('step') is not None else 10
             poi_graph = ln.binomial_poi_approx(p_min, p_max, p_mean, steps=p_step)
-            context['poi_graph'] = poi_graph.to_html(full_html=False, default_height=600, default_width=900)
+            context['poi_graph'] = poi_graph.to_html(full_html=False)
 
         if n_approx.is_valid():
             print(n_approx.cleaned_data)
@@ -210,7 +208,7 @@ def large_numbers(request):
             b_prob = n_approx.cleaned_data.get('probability') if \
                 n_approx.cleaned_data.get('probability') is not None else 0.5
             norm_graph = ln.binomial_normal(b_min, b_max, b_prob, steps=b_step)
-            context['normal_graph'] = norm_graph.to_html(full_html=False, default_height=600, default_width=900)
+            context['normal_graph'] = norm_graph.to_html(full_html=False)
 
     return HttpResponse(template.render(context, request))
 
