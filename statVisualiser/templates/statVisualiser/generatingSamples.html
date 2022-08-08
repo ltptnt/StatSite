@@ -78,23 +78,28 @@
             {% endif %}
         </div>
     </div>
-    <div class = "picker left">
-        < method="post">
-            {% csrf_token %}
-            <h2 class="centered">Distribution 1</h2>
-            {{ picker1.as_p }}
-            <h2 class="centered">Dataset Parameters</h2>
-            {{ data1.as_p }}
+    <div class="spacer">
+        <div class = "gspicker col">
+            <form method="post">
+                {% csrf_token %}
+                <h2 class="centered">Distribution 1</h2>
+                {{ picker1.as_p }}
+                <h2 class="centered">Dataset 1 Parameters</h2>
+                {{ data1.as_p }}
+            </form>
+        </div>
+        <div class = "gspicker col">
+            <form method="post">
+                <h2 class="centered">Distribution 2</h2>
+                {{ picker2.as_p }}
+                 <h2 class="centered">Dataset 2 Parameters</h2>
+                {{ data2.as_p }}
+            </form>
+        </div>
     </div>
-    <div class = "picker right">
-            <h2 class="centered">Distribution 2</h2>
-            {{ picker2.as_p }}
-             <h2 class="centered">Dataset Parameters</h2>
-            {{ data2.as_p }}
-    </div>
-    <div class="picker">
-            <h2 class="'centred">Optional Operations </h2>
-    </div>
+    <div class="gspicker2">
+        <form method="post">
+            <h2 class="centred">Optional Operations </h2>
             <div class="blurb">
                 <p>
                     Enabling the convolution will plot a density heatmap of the product of your two chosen variables.

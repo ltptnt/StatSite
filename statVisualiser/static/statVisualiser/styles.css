@@ -143,12 +143,21 @@ p {
 
 /* Form */
 
-.picker {
-    margin: auto;
-    text-align: left;
-    width: 600px;
-    display: table;
-    padding: 20px 5px;
+.spacer {
+    display: flex
+}
+#spacer::after {
+    white-space: pre;
+
+}
+
+.col {
+    flex: 50%;
+}
+
+
+#spacer::before {
+    white-space: pre;
 }
 
 .picker label {
@@ -331,6 +340,31 @@ input[type=submit] {
     text-align: center;
     width: 400px;
     height: 600px;
+    display: table;
+    padding: 50px 50px;
+}
+
+.gspicker {
+    margin: 50px;
+    text-align: center;
+    width: 400px;
+    height: auto;
+    display: table;
+    padding: 50px 50px;
+}
+.gspicker2 {
+    margin: 0px;
+    text-align: center;
+    width: auto;
+    height: auto;
+    display: table;
+    padding: 50px 50px;
+}
+.distpicker2 {
+    margin: auto;
+    text-align: center;
+    width: auto;
+    height: auto;
     display: table;
     padding: 50px 50px;
 }
