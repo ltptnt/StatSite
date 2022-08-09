@@ -28,6 +28,12 @@ try:
     with open('/etc/secret_key.txt') as f:
         SECRET_KEY = f.read().strip()
         Debug = False
+        CACHES = {
+            'default': {
+                'BACKEND': 'django.core.cache.backends.memcached.PyMemcacheCache',
+                'LOCATION': 'statsite.uqcloud.net:11211',
+            }
+        }
 except FileNotFoundError:
     SECRET_KEY = 'django-insecure-mh19zq#q^q$i4go079svfwm&igq_e@g&so#sbdm!m&+2^-l4_6'
 
