@@ -23,8 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-
-#Will be not secure key if no key at location otherwise it will be
+# Will be not secure key if no key at location otherwise it will be
 try:
     with open('/etc/secret_key.txt') as f:
         SECRET_KEY = f.read().strip()
