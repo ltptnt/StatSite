@@ -68,6 +68,7 @@ class Download(forms.Form):
     download = forms.BooleanField(label="Download dataset", initial=False, required=False)
     convolution = forms.BooleanField(label="Plot the Convolution?", initial=True, required=False)
 
+
 class SampleDist(forms.Form):
     Type = forms.ModelChoiceField(label='Distribution', queryset=Distribution.objects.all(), required=False,
                                   empty_label='')
@@ -79,18 +80,35 @@ class SampleDist(forms.Form):
     Probability = forms.FloatField(label='Probability', min_value=0, max_value=1, required=False)
     Trials = forms.IntegerField(label='Trials', min_value=0, required=False)
 
+    def get_data(self) -> dict[str, float] | dict[str, int] | None:
+        data = dict()
+        try:
+            dist = self.cleaned_data.get("Type")
+            stored_info = Distribution.objects.get(name=dist)
+        except statVisualiser.models.Distribution.DoesNotExist:
+            return None
+
+        required_variables = json.loads(json.dumps(stored_info.required_variable_names))
+
+        for variable in required_variables:
+            if self.cleaned_data.get(variable) is None:
+                data[variable] = ''
+            else:
+                data[variable] = self.cleaned_data.get(variable)
+
+        return data
+
+
 
 class ConvolutionOptions(forms.Form):
     choices = (
         ("prob", "Probability Functions"),
     )
-
     type = (
         ("sum", "Sum"),
         ("product", "Product"),
 
     )
-
     Output = forms.BooleanField(label='Plot Convolution?',
                                 initial=False, required=False)
     Type = forms.ChoiceField(choices=type)

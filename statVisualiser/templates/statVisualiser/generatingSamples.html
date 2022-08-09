@@ -85,7 +85,7 @@
                     {{ data2.as_p }}
                 </div>
             </div>
-            <div class="glpicker">
+            <div>
                 <hr>
                 <h2 class="centred">Optional Operations </h2>
                 <div class="blurb">
@@ -107,15 +107,15 @@
         </div>
         <div style="flex: 50%">
             <div class="tab_bar">
-                <button id='g1_tab' class="tab_button" onclick="changeTab('g1')">Graph 1</button>
-                <button id='g2_tab' class="tab_button" onclick="changeTab('g2')">Graph 2</button>
-                <button id='g3_tab' class="tab_button" onclick="changeTab('g3')">Graph 3</button>
+                <button id='g1_tab' class="tab_button" onclick="changeTab('g1')">Sample 1</button>
+                <button id='g2_tab' class="tab_button" onclick="changeTab('g2')">Sample 2</button>
+                <button id='g3_tab' class="tab_button" onclick="changeTab('g3')">Joint Heatmap</button>
             </div>
 
             <div id="g1" class="tab">
                 <div id="g1_plot" class="graph">
-                    {% if graph %}
-                        {{ graph|safe }}
+                    {% if graph1 %}
+                        {{ graph1|safe }}
                     {% else %}
                         <div class="blank_graph">Please enter parameters to see a Graph!</div>
                     {% endif %}
@@ -125,8 +125,8 @@
 
             <div id="g2" class="tab">
                 <div id="g2_plot" class = "graph">
-                    {% if conv_graph %}
-                        {{ conv_graph|safe }}
+                    {% if graph2 %}
+                        {{ graph2|safe }}
                     {% else %}
                         <div class="blank_graph">Please enter parameters to see a Graph!</div>
                     {% endif %}
@@ -136,8 +136,8 @@
 
             <div id="g3" class="tab">
                  <div id="g3_plot" class = "graph">
-                    {% if supported %}
-                        {{ supported |safe }}
+                    {% if graph3 %}
+                        {{ graph3 |safe }}
                     {% else %}
                         <div class="blank_graph">Please enter parameters to see a Graph!</div>
                     {% endif %}

@@ -338,10 +338,9 @@ class Binomial(Variable):
 Note this function is only applicable for independant variables collected in pairs i.e var1_i belongs to \n
  the same event as var2_i."""
 def graph_density_product(data1, data2):
-    convolution_trials = [data1[i] * data2[i] for i in range(len(data1))]
     fig = px.density_heatmap(x=data1, y=data2,
                              histnorm="probability", marginal_x='histogram', marginal_y='histogram',
-                             title="Density heatmap of the product of input datasets")
+                             title="Joint density heatmap of the input datasets")
 
     return fig
 
@@ -387,12 +386,11 @@ def convolution_pdf(var1, var2, fig=None, geom=None):
     for i in range(len(var1_region)):
         for y in var2_pdf:
             conv_pdf[i].append(var1_pdf[i]*y)
-    print(conv_pdf)
     trace = go.Surface(y=var1_region, x=var2_region, z=conv_pdf)
     if fig is None:
         fig = go.Figure()
         fig.add_trace(trace)
-        fig.update_layout(dict(title=pdf_pmf + " of the convolution of " + str(var1) + " and " + str(var2),
+        fig.update_layout(dict(title="Joint" + pdf_pmf + " of the convolution of " + str(var1) + " and " + str(var2),
             coloraxis_colorbar=dict(title="Probability" + dens),
             scene=dict(
                 xaxis_title="X ~ " + str(var2),
@@ -454,7 +452,7 @@ and a histogram of the probability density overlayed with the prob density of th
 def dataset_plots(var: Variable, data: []) -> go.Figure:
     minim2, maxim2 = var.get_region()
     fig2 = make_subplots(rows=2, cols=1, subplot_titles=["Histogram of generated sample",
-                                                         "Probability Density of sample overlayed with the fitted distribution"])
+                                                         "Probability Density of Sample"])
     fig2.add_trace(
         go.Histogram(x=data, name="Sample data"),
         row=1, col=1)

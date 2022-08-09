@@ -97,7 +97,8 @@ def distributions(request) -> HttpResponse:
                 for value in dist1s.cleaned_data.get('Output'):
                     if str(value) == 'pdf':
                         a.graph_pdf(g_min1, g_max1, fig=fig, geom=(int((count + 1) / 2), 2 - (count % 2)))
-                        titles.append("PDF of " + str(a))
+                        title = "PDF of " + str(a) if a.continuous else "PMF of " + str(a)
+                        titles.append(title)
                     elif str(value) == 'cdf':
                         a.graph_cdf(g_min1, g_max1, fig=fig, geom=(int((count + 1) / 2), 2 - (count % 2)))
                         titles.append("CDF of " + str(a))
@@ -106,7 +107,8 @@ def distributions(request) -> HttpResponse:
                 for values in dist2s.cleaned_data.get('Output'):
                     if str(values) == 'pdf':
                         b.graph_pdf(g_min2, g_max2, fig=fig, geom=(int((count + 1) / 2), 2 - (count % 2)))
-                        titles.append("PDF of " + str(b))
+                        title = "PDF of " + str(b) if a.continuous else "PMF of " + str(b)
+                        titles.append(title)
                     elif str(values) == 'cdf':
                         b.graph_cdf(g_min2, g_max2, fig=fig, geom=(int((count + 1) / 2), 2 - (count % 2)))
                         titles.append("CDF of " + str(b))
@@ -198,7 +200,6 @@ def large_numbers(request):
             context['poi_graph'] = poi_graph.to_html(full_html=False)
 
         if n_approx.is_valid():
-            print(n_approx.cleaned_data)
             b_min = n_approx.cleaned_data.get('min_trials') if \
                 n_approx.cleaned_data.get('min_trials') is not None else 10
             b_max = n_approx.cleaned_data.get('max_trials') if \
