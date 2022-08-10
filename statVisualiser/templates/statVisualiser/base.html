@@ -3,18 +3,21 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="shortcut icon" type="image/png" href="{% static 'statVisualiser/logo.png' %}"/>
+    <meta charset="UTF-8">
+    <meta name="description" content="Visualise some basic statistics distributions">
+    <meta name="keywords" content="Statistics, Visualiser, distributions">
+    <meta name="author" content="Luke and Chris">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="{% static 'statVisualiser/logo.png' %}"/>
     <title>{% block title %}{% endblock title %}</title>
-    <link rel="stylesheet" href="{% static 'statVisualiser/styles.css' %}">
+    <link type="text/css" rel="stylesheet" href="{% static 'statVisualiser/styles.css' %}">
     {% block style %}
     {% endblock style %}
 </head>
 
 <body>
     <div class="title_bar">
-        <h1>  Stats & Stuff</h1>
+        <h1>  Stats &amp Stuff</h1>
     </div>
     {% block content %}
     {% endblock content %}
