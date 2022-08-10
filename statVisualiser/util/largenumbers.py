@@ -1,6 +1,6 @@
 #Comment out the from .\ line if testing this package alone
-#from .\
-import distributions as dt
+from .\
+    import distributions as dt
 import numpy as np
 from plotly.subplots import make_subplots
 import plotly.graph_objs as go
