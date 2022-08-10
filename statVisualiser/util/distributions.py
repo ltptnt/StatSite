@@ -1,5 +1,6 @@
 import math
 import random as rd
+import time
 from abc import ABC, abstractmethod
 
 from plotly.subplots import make_subplots
@@ -7,6 +8,8 @@ import plotly.graph_objs as go
 import plotly.express as px
 import numpy as np
 import scipy.stats as st
+import scipy.special as sp
+
 DP = 3
 """
 Abstract class representing the basic methods a distribution needs
@@ -198,7 +201,7 @@ class Normal(Variable):
 
     def cdf(self, x: int):
         x = (x-self.mean)/self.sd
-        return st.norm.cdf(x, loc=0, scale=1)
+        return sp.ndtr(x)
 
     def inverse_cdf(self, x: float):
         return st.norm.ppf(x, loc=self.mean, scale=self.sd)
@@ -289,10 +292,13 @@ class Binomial(Variable):
     def __init__(self, trials: int, prob: float):
         self.prob = prob
         self.trials = trials
-        self.cache = {
-            "log_p":  math.log(self.prob),
+        try:
+            self.cache = {
+                "log_p":  math.log(self.prob),
             "log_q": math.log(1 - self.prob)
-        }
+            }
+        except ValueError:
+            raise ValueError("Invalid input for binomial probability")
 
     def get_region(self):
         return 0, self.trials
@@ -330,8 +336,81 @@ class Binomial(Variable):
             + (self.trials - x) * self.cache.get("log_q")
         return np.e ** a
 
+    def graph_pdf(self, minim: float, maxim: float, fig=None, geom=None, titles=False, **kwargs):
+        if self.trials > 100:
+            criteria = self.trials*self.prob
+            criteria2 = self.trials*(1 - self.prob)
+            #Use of binomial and poisson approximation to improve efficiccy
+            match criteria < 5 or criteria2 < 5:
+                case True:
+                    criteria = min(criteria, criteria2)
+                    approximator = Poisson(criteria).graph_pdf(minim, maxim, fig=fig, geom=geom, titles=titles, **kwargs)
+                    approximator.update_layout(title="PDF of " + str(self))
+                    return approximator
+                case False:
+                    if not criteria > 5 and not criteria2 > 5:
+                        return super().graph_pdf(minim, maxim, fig=fig, geom=geom, titles=titles, **kwargs)
+                    approximator = Normal(criteria, np.sqrt(criteria*(1-self.prob)))#.graph_pdf(minim, maxim, fig=fig, geom=geom, titles=titles, **kwargs)
+                    x1 = [i+0.5 for i in range(int(minim), int(maxim) + 1)]
+                    pmf = [approximator.pdf(i) for i in x1]
+                    trace = go.Bar(x=x1, y=pmf, name="PMF of " + str(self), **kwargs)
+
+                    if fig is None:
+                        fig = make_subplots()
+                        fig.add_trace(trace)
+                    else:
+                        if geom is None:
+                            fig.add_trace(trace)
+                        else:
+                            fig.add_trace(trace, row=geom[0], col=geom[1])
+
+                    if titles:
+                        fig.update_layout(title=str(self))
+
+                    return fig
+
+        return super().graph_pdf(minim, maxim, fig=fig, geom=geom, titles=titles, **kwargs)
+
+
+    def graph_cdf(self, minim: float, maxim: float, fig=None, geom=None, titles=False,  **kwargs):
+        if self.trials < 100:
+            return super().graph_cdf(minim, maxim, fig=fig, geom=geom, titles=titles, **kwargs)
+        criteria = self.trials * self.prob
+        criteria2 = self.trials * (1 - self.prob)
+        # Use of binomial and poisson approximation to improve efficiccy
+        match criteria < 5 or criteria2 < 5:
+            case True:
+                approximator = Poisson(criteria).graph_cdf(minim, maxim, fig=fig, geom=geom, titles=titles,
+                                                           **kwargs)
+                approximator.update_layout(title="CDF of " + str(self))
+                return approximator
+            case False:
+                if not criteria > 5 and not criteria2 > 5:
+                    return super().graph_cdf(minim, maxim, fig=fig, geom=geom, titles=titles, **kwargs)
+                approximator = Normal(criteria, np.sqrt(criteria * (1 - self.prob)))
+                x1 = [i for i in range(int(minim), int(maxim) + 1)]
+                cdf = [approximator.cdf(i) for i in x1]
+                trace = go.Bar(x=x1, y=cdf, name="CDF of " + str(self), **kwargs)
+
+                if fig is None:
+                    fig = make_subplots()
+                    fig.add_trace(trace)
+                else:
+                    if geom is None:
+                        fig.add_trace(trace)
+                    else:
+                        fig.add_trace(trace, row=geom[0], col=geom[1])
+
+                if titles:
+                    fig.update_layout(title=str(self))
+
+                return fig
+
+
+
+
     def __str__(self):
-        return "Bin({0}, {1})".format(self.trials, round(self.prob,DP))
+        return "Bin({0}, {1})".format(self.trials, round(self.prob, DP))
 
 """
 Note this function is only applicable for independant variables collected in pairs i.e var1_i belongs to \n
@@ -372,7 +451,7 @@ def convolution_pdf(var1, var2, fig=None, geom=None):
     if var1.continuous:
         var1_region = np.linspace(max(min1, -100), min(max1, 100), 10**3)
     else:
-        var1_region = [i for i in range(min1, max1+1)]
+        var1_region = [i for i in range(int(min1), int(max1)+1)]
 
     if var2.continuous:
         var2_region = np.linspace(max(min2, -100), min(max2, 100), 10**3)
@@ -407,9 +486,7 @@ def convolution_pdf(var1, var2, fig=None, geom=None):
 
     return fig
 
-"""
 
-"""
 def convolution_cdf(var1, var2, type="product", fig=None, geom=None):
     var1_trials = [var1.trial() for i in range(10 ** 5)]
     var2_trials = [var2.trial() for i in range(10 ** 5)]
@@ -467,9 +544,19 @@ def dataset_plots(var: Variable, data: []) -> go.Figure:
     return fig2
 
 def main():
-    a = Binomial(5, 0.5)
-    b = Poisson(1)
-    convolution_pdf(a,b).show()
+    a = Binomial(10000, 0.5)
+    c, d = a.get_region()
+    start = time.time()
+    b = a.graph_pdf(c, d)
+    end = time.time()
+    print(end-start)
+    b.show()
+    start = time.time()
+    b = a.graph_cdf(c, d)
+    end = time.time()
+    print(end - start)
+    b.show()
+
 
     #dataset_plots(a, a.generate_dataset(10000)).show()
 
