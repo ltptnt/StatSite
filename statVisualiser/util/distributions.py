@@ -371,7 +371,6 @@ class Binomial(Variable):
 
         return super().graph_pdf(minim, maxim, fig=fig, geom=geom, titles=titles, **kwargs)
 
-
     def graph_cdf(self, minim: float, maxim: float, fig=None, geom=None, titles=False,  **kwargs):
         if self.trials < 100:
             return super().graph_cdf(minim, maxim, fig=fig, geom=geom, titles=titles, **kwargs)
@@ -405,9 +404,6 @@ class Binomial(Variable):
                     fig.update_layout(title=str(self))
 
                 return fig
-
-
-
 
     def __str__(self):
         return "Bin({0}, {1})".format(self.trials, round(self.prob, DP))
