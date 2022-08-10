@@ -128,7 +128,7 @@ USE_TZ = True
 
 STATIC_URL = '/statVisualiser/static/'
 
-STATIC_ROOT = os.path.join(BASE_DIR, STATIC_URL)
+STATIC_ROOT = os.path.join(BASE_DIR, 'statVisualiser/static/')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
