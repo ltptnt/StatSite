@@ -1,5 +1,4 @@
 import distributions as dist
-import numpy as np
 import matplotlib.pyplot as plt
 
 
@@ -13,7 +12,7 @@ def main() -> list:
     seq = [bank]
     iterations = 100
     for n in range(1, iterations):
-        bet = 2/3*bank
+        bet = 2 / 3 * bank
         bank -= bet
         bank += (wheel_spin(bet, variable))
         seq.append(bank)

@@ -102,13 +102,6 @@ hr {
     align-content: center;
     max-width:90%;
 }
-#blurb::before{
-    white-space: pre;
-}
-
-#blurb::after{
-    white-space: pre;
-}
 
 .page_title p {
     line-height: 0;
@@ -168,14 +161,6 @@ form {
     display: flex;
     width: 90%;
     margin: auto;
-}
-
-#spacer::after {
-    white-space: pre;
-}
-
-#spacer::before {
-    white-space: pre;
 }
 
 .picker label, .lnpicker label {
