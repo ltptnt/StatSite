@@ -85,19 +85,20 @@ if (document.getElementById("g1_tab") != null) {
 
 
 window.onload = function() {
+    if (document.getElementById('picker1-Type') != null) {
+        Picker1()
+        Picker2()
+        document.getElementById('picker1-Type').onchange = Picker1;
+        document.getElementById('picker2-Type').onchange = Picker2;
 
-                Picker1()
-                Picker2()
-                document.getElementById('picker1-Type').onchange = Picker1;
-                document.getElementById('picker2-Type').onchange = Picker2;
-
-                let close = document.getElementsByClassName("alert_close");
-                for (let i = 0; i < close.length; i++) {
-                    close[i].onclick = function(){
-                        let div = this.parentElement;
-                        div.style.opacity = "0";
-                        setTimeout(function(){ div.style.display = "none"; }, 600);
-                    }
-                    setTimeout(function(){close[i].click()}, 10000)
-                 }
-            };
+        let close = document.getElementsByClassName("alert_close");
+        for (let i = 0; i < close.length; i++) {
+            close[i].onclick = function(){
+                let div = this.parentElement;
+                div.style.opacity = "0";
+                setTimeout(function(){ div.style.display = "none"; }, 600);
+            }
+            setTimeout(function(){close[i].click()}, 10000)
+         }
+    }
+}
