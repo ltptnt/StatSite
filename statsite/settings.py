@@ -25,7 +25,7 @@ DEBUG = True
 
 # Will be not secure key if no key at location otherwise it will be
 try:
-    with open('/etc/secret_key.txt') as f:
+    with open('/var/www/uwsgi/key.txt') as f:
         SECRET_KEY = f.read().strip()
         Debug = False
         CACHES = {
