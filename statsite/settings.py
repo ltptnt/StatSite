@@ -27,7 +27,7 @@ DEBUG = True
 try:
     with open('/var/www/uwsgi/key.txt') as f:
         SECRET_KEY = f.read().strip()
-        DEBUG = False
+        #DEBUG = False
         CACHES = {
             'default': {
                 'BACKEND': 'django.core.cache.backends.memcached.PyMemcacheCache',
@@ -129,8 +129,6 @@ USE_TZ = True
 STATIC_URL = '/statVisualiser/static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'statVisualiser/static/')
-
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
