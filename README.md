@@ -12,3 +12,7 @@ The application has the ability to manipulate and visualise the following distri
 - Uniform: [a, b] where a and b are elements of the set of real numbers
 - Bernoulli: {0, 1}
 - Poisson: {0, ..., ∞}
+
+## Authors
+- [Chris O'Brien](https://github.com/chrisobi02)
+- [Luke Pearce](https://github.com/ltptnt)
