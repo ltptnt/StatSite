@@ -27,7 +27,7 @@ DEBUG = True
 try:
     with open('/var/www/uwsgi/key.txt') as f:
         SECRET_KEY = f.read().strip()
-        Debug = False
+        DEBUG = False
         CACHES = {
             'default': {
                 'BACKEND': 'django.core.cache.backends.memcached.PyMemcacheCache',
@@ -36,6 +36,7 @@ try:
         }
 except FileNotFoundError:
     SECRET_KEY = 'django-insecure-mh19zq#q^q$i4go079svfwm&igq_e@g&so#sbdm!m&+2^-l4_6'
+
 
 ALLOWED_HOSTS = ['statsite.uqcloud.net', '127.0.0.1', 's4721618-statsite.uqcloud.net']
 
