@@ -374,15 +374,16 @@ input[type=submit] {
         width: 100%;
     }
     form {
-    padding-bottom: 50px;
+        padding-bottom: 50px;
     }
     .blank_graph {
-    line-height: 450px;
-    width: 100%;
-    height: 450px;
-    background-color: #ECF7FF;
-    text-align: center;
-    margin: auto;
+        line-height: 450px;
+        width: 100%;
+        height: 450px;
+        background-color: #ECF7FF;
+        text-align: center;
+        margin: auto;
+        padding-bottom: 20px;
     }
     .graph {
         margin: 0;
