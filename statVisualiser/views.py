@@ -86,10 +86,12 @@ def distributions(request) -> HttpResponse:
                     dist1s.cleaned_data.get('G_Min') is not None else a.get_region()[0]
                 g_max1 = dist1s.cleaned_data.get('G_Max') if \
                     dist1s.cleaned_data.get('G_Min') is not None else a.get_region()[1]
-                g_min2 = dist2s.cleaned_data.get('G_Min') if \
-                    dist2s.cleaned_data.get('G_Min') is not None else b.get_region()[0]
-                g_max2 = dist2s.cleaned_data.get('G_Max') if \
-                    dist2s.cleaned_data.get('G_Max') is not None else b.get_region()[1]
+
+                if b is not None:
+                    g_min2 = dist2s.cleaned_data.get('G_Min') if \
+                        dist2s.cleaned_data.get('G_Min') is not None else b.get_region()[0]
+                    g_max2 = dist2s.cleaned_data.get('G_Max') if \
+                        dist2s.cleaned_data.get('G_Max') is not None else b.get_region()[1]
 
                 count = 1
                 titles = []
@@ -121,36 +123,37 @@ def distributions(request) -> HttpResponse:
                 context['graph'] = fig.to_html(full_html=False,
                                                div_id='graph')
 
+                # Figure form: choose whether pdf or cdf, with the choice append a title to a list.
+                # This list will be the subplot_titles argument in make_subplots
+                # Titles each plot dynamically
+                # Form also requires for the pdf, cdf:
+                # min, max values to plot over.
+                # If they want to make more than one graph, requires a geometry argument
+                if convolution.is_valid() and convolution.get_context():
+                    fig2 = None
+                    fig3 = None
+                    if convolution.cleaned_data["Output"] and a is not None and b is not None:
+                        fig2 = make_subplots(rows=1, cols=2, specs=[[{'type': 'xy'}, {'type': 'surface'}]],
+                                             subplot_titles=["CDF of Convolution", "PDF of Convolution"])
+                        convolution_pdf(a, b, fig=fig2, geom=(1, 2))
+                        convolution_cdf(a, b, fig=fig2, geom=(1, 1))
+
+                        match convolution.cleaned_data["Type"]:
+                            case "sum":
+                                fig3 = two_var_3d(a, b, conv_type="sum")
+                            case "product":
+                                fig3 = two_var_3d(a, b)
+
+                        if fig2 is not None:
+                            context['conv_graph'] = fig2.to_html(full_html=False, div_id='conv_graph')
+
+                        if fig3 is not None:
+                            context['supported'] = fig3.to_html(full_html=False, div_id='supported')
             else:
                 for text in messages_text:
                     messages.error(request, text, extra_tags='alert')
 
-            # Figure form: choose whether pdf or cdf, with the choice append a title to a list.
-            # This list will be the subplot_titles argument in make_subplots
-            # Titles each plot dynamically
-            # Form also requires for the pdf, cdf:
-            # min, max values to plot over.
-            # If they want to make more than one graph, requires a geometry argument
-            if convolution.is_valid():
-                fig2 = None
-                fig3 = None
-                if convolution.cleaned_data["Output"] and a is not None and b is not None:
-                    fig2 = make_subplots(rows=1, cols=2, specs=[[{'type': 'xy'}, {'type': 'surface'}]],
-                                         subplot_titles=["CDF of Convolution", "PDF of Convolution"])
-                    convolution_pdf(a, b, fig=fig2, geom=(1, 2))
-                    convolution_cdf(a, b, fig=fig2, geom=(1, 1))
 
-                match convolution.cleaned_data["Type"]:
-                    case "sum":
-                        fig3 = two_var_3d(a, b, conv_type="sum")
-                    case "product":
-                        fig3 = two_var_3d(a, b)
-
-                if fig2 is not None:
-                    context['conv_graph'] = fig2.to_html(full_html=False, div_id='conv_graph')
-
-                if fig3 is not None:
-                    context['supported'] = fig3.to_html(full_html=False, div_id='supported')
 
     return HttpResponse(template.render(context, request))
 
