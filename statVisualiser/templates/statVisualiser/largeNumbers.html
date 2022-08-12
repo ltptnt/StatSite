@@ -5,10 +5,10 @@
 {% block content %}
     <div class="navbar">
         <ul>
-            <li><a href="/statVisualiser">Home</a></li>
-            <li><a href="/statVisualiser/distributions">Distributions</a></li>
-            <li><a class="active" href="/statVisualiser/largeNumbers">The Law of Large Numbers</a></li>
-            <li><a href="/statVisualiser/generatingSamples">Create Samples</a></li>
+            <li><a href="/">Home</a></li>
+            <li><a href="/distributions">Distributions</a></li>
+            <li><a class="active" href="/largeNumbers">The Law of Large Numbers</a></li>
+            <li><a href="/generatingSamples">Create Samples</a></li>
             <li><a href="https://github.com/ltptnt/StatSite">Github</a></li>
         </ul>
     </div>
@@ -63,6 +63,7 @@
             The law of rare events describes the conditions under which a binomial distribution converges to a poisson distribution.
             As the number of trials in a binomial distribution increases, the distribution converges to the poisson distribution with a corresponding mean equal to np.
             To use this approximation in an applied context, the following conditions must be met to apply the approximation:
+            </p>
             <ul>
                 <li>n>20</li>
 
@@ -72,6 +73,7 @@
 
                 <li>This threshold represents the success or failure event respectively as sufficiently rare</li>
             </ul>
+            <p>
             This approximation is computationally simple compared to the binomial distribution it approximates for a large number of trials.
             Fill out the information below to see the pdf of a binomial distribution and its corresponding poisson approximation.
             </p>

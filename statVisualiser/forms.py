@@ -41,8 +41,8 @@ class DistributionSelect(SampleDist):
         ("cdf", "Cumulative Distribution Function"),
     )
 
-    G_Min = forms.FloatField(label='Domain Minimum (Optional)', initial=None,  required=False)
-    G_Max = forms.FloatField(label='Domain Maximum (Optional)', initial=None , required=False)
+    G_Min = forms.FloatField(label='Domain Minimum (Optional)', initial=None, required=False)
+    G_Max = forms.FloatField(label='Domain Maximum (Optional)', initial=None, required=False)
     Output = forms.MultipleChoiceField(label='', widget=forms.CheckboxSelectMultiple,
                                        choices=Outputs, required=False)
 
@@ -70,8 +70,6 @@ class DatasetParams(forms.Form):
 class Download(forms.Form):
     download = forms.BooleanField(label="Download dataset", initial=False, required=False)
     convolution = forms.BooleanField(label="Plot the Convolution?", initial=True, required=False)
-
-
 
 
 class ConvolutionOptions(forms.Form):

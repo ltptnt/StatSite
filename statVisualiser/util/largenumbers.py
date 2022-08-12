@@ -1,14 +1,15 @@
-#Comment out the from .\ line if testing this package alone
-from .\
-     import distributions as dt
+# Comment out line 2 if testing this package alone
+from . \
+    import distributions as dt
 import numpy as np
 from plotly.subplots import make_subplots
 import plotly.graph_objs as go
-import time
+
+
 def binomial_normal(min_trials: int, max_trials: int, prob: float, steps=10):
     fig = make_subplots()
     titles = []
-    for trials in range(min_trials, max_trials+1, steps):
+    for trials in range(min_trials, max_trials + 1, steps):
         binom = dt.Binomial(trials, prob)
         converge = dt.Normal(binom.trials * binom.prob, np.sqrt(binom.trials * binom.prob * (1 - binom.prob)))
         minim, maxim = binom.get_region()
@@ -22,7 +23,7 @@ def binomial_normal(min_trials: int, max_trials: int, prob: float, steps=10):
         step = dict(method="update",
                     args=[{"visible": [False] * len(fig.data)},
                           {"title": titles[int(i / 2)]}],
-                    label=round(i/2) * steps + min_trials
+                    label=round(i / 2) * steps + min_trials
                     )
         step["args"][0]["visible"][i] = True  # Toggle i'th trace to "visible"
         step["args"][0]["visible"][i + 1] = True  # Toggle i'th trace to "visible"
@@ -57,17 +58,17 @@ def brute_binomial(minim: float, maxim: float, binom: dt.Binomial, fig=None):
 
     return fig
 
+
 def binomial_poi_approx(min_trials: int, max_trials: int, mean: int, steps=10):
     fig = make_subplots()
     converge = dt.Poisson(mean)
     minim, maxim = converge.get_region()
     converge.graph_pdf(0, maxim, fig=fig)
 
-    for trials in range(min_trials, max_trials+1, steps):
-        prob = mean/trials
+    for trials in range(min_trials, max_trials + 1, steps):
+        prob = mean / trials
         binom = dt.Binomial(trials, prob)
         brute_binomial(0, maxim, binom, fig=fig)
-
 
     fig.update_layout(xaxis_title="Probability X=x", title="Poisson approximation with a mean of " + str(mean))
     increment = []
@@ -98,13 +99,12 @@ def binomial_poi_approx(min_trials: int, max_trials: int, mean: int, steps=10):
 
 
 def main():
-    #start = time.time()
-    #fig = binomial_poi_approx(1, 1000, 4, steps=10)
-    #end=time.time()
-    #print(end - start)
-    #fig = binomial_normal(10, 100,0.5)
-    #fig.show()
-    pass
+    # start = time.time()
+    fig = binomial_poi_approx(1, 1000, 4, steps=10)
+    # end=time.time()
+    # print(end - start)
+    # fig = binomial_normal(10, 100,0.5)
+    fig.show()
 
 
 if __name__ == '__main__':

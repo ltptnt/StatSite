@@ -1,4 +1,3 @@
-import numpy as np
 from django.http import HttpResponse
 from django.template import loader
 from .forms import *
@@ -6,7 +5,6 @@ from .util.distributions import *
 from .util import largenumbers as ln
 from django.contrib import messages
 import csv
-from statsite.settings import BASE_DIR
 
 
 def index(request):
@@ -45,7 +43,8 @@ def distributions(request) -> HttpResponse:
         if dist1s.is_valid() and dist2s.is_valid():
             data1 = dist1s.get_data()
             data2 = dist2s.get_data()
-
+            a = None
+            b = None
             # if there is no data in form 1
             if data1 is None:
                 messages_text.append("ERROR: Please select a distribution!")
@@ -56,7 +55,7 @@ def distributions(request) -> HttpResponse:
                         messages_text.append("ERROR: No Value for {key_name} in Distribution 1!".format(key_name=key))
 
                 # if a distribution has not been selected warn the user
-                # the program will stil return a graph but it will most likely be empty
+                # the program will still return a graph, but it will most likely be empty
                 if len(dist1s.cleaned_data.get('Output')) == 0:
                     messages_text.append("ERROR: You did not select a PDF or CDF for distribution 1.")
 
@@ -135,7 +134,7 @@ def distributions(request) -> HttpResponse:
             if convolution.is_valid():
                 fig2 = None
                 fig3 = None
-                if convolution.cleaned_data["Output"]:
+                if convolution.cleaned_data["Output"] and a is not None and b is not None:
                     fig2 = make_subplots(rows=1, cols=2, specs=[[{'type': 'xy'}, {'type': 'surface'}]],
                                          subplot_titles=["CDF of Convolution", "PDF of Convolution"])
                     convolution_pdf(a, b, fig=fig2, geom=(1, 2))
@@ -143,7 +142,7 @@ def distributions(request) -> HttpResponse:
 
                 match convolution.cleaned_data["Type"]:
                     case "sum":
-                        fig3 = two_var_3d(a, b, type="sum")
+                        fig3 = two_var_3d(a, b, conv_type="sum")
                     case "product":
                         fig3 = two_var_3d(a, b)
 

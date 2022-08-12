@@ -25,9 +25,9 @@ DEBUG = True
 
 # Will be not secure key if no key at location otherwise it will be
 try:
-    with open('/etc/secret_key.txt') as f:
+    with open('/var/www/uwsgi/key.txt') as f:
         SECRET_KEY = f.read().strip()
-        Debug = False
+        #DEBUG = False
         CACHES = {
             'default': {
                 'BACKEND': 'django.core.cache.backends.memcached.PyMemcacheCache',
@@ -36,6 +36,7 @@ try:
         }
 except FileNotFoundError:
     SECRET_KEY = 'django-insecure-mh19zq#q^q$i4go079svfwm&igq_e@g&so#sbdm!m&+2^-l4_6'
+
 
 ALLOWED_HOSTS = ['statsite.uqcloud.net', '127.0.0.1', 's4721618-statsite.uqcloud.net']
 
@@ -126,6 +127,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = '/statVisualiser/static/'
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'statVisualiser/static/')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
