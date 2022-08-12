@@ -168,14 +168,14 @@ form {
 }
 
 .picker label, .lnpicker label {
-    line-height: 40px;
+    line-height: 25px;
     font-weight: bold;
-    font-size: 15px;
+    font-size: 14px;
     margin: auto;
 }
 
 .picker h2, .lnpicker h2 {
-    font-size: 20px;
+    font-size: 19px;
 }
 
 input[type=number], select {
@@ -207,7 +207,7 @@ input[type=submit] {
     background-color: #191f23;
     border: none;
     color: #dcfdfd;
-    padding: 16px 32px;
+    padding: 8px 10px;
     text-decoration: none;
     margin: 10px 2px;
     cursor: pointer;
@@ -219,22 +219,15 @@ input[type=submit] {
 
 /* Graph */
 
-.graph {
-    text-align: center;
-    width: auto;
-    height: fit-content;
-    margin: auto;
-}
-
 .blank_graph {
-    line-height: 500px;
-    width: 700px;
+    line-height: 450px;
+    width: 45vw;
     height: 450px;
     background-color: #ECF7FF;
-    text-align: center;
     margin: auto;
+    text-align: center;
+    margin-bottom: 10px;
 }
-
 
 /* Misc Divs  */
 
@@ -276,21 +269,20 @@ input[type=submit] {
     overflow: hidden;
     float: left;
     width: 100%;
+    padding-bottom: 30px;
     margin: auto;
-    text-align: center;
-    place-content: center;
-    padding-bottom: 50px;
     top:0;
 }
 
 .alert {
-    padding: 15px;
+    padding: 10px 0;
     color: white;
     opacity: 1;
-    transition: opacity 0.6s;
+    transition: opacity 0.3s;
     width: 98%;
     text-align: left;
-    margin: 5px auto;
+    margin: 5px auto auto;
+    text-indent: 10px;
 }
 
 .success {
@@ -310,7 +302,7 @@ input[type=submit] {
 }
 
 .alert_close {
-    margin-left: 15px;
+    margin-right: 10px;
     color: white;
     font-weight: bold;
     float: right;
@@ -319,8 +311,6 @@ input[type=submit] {
     cursor: pointer;
     transition: 0.3s;
 }
-
-
 
 .picker, .lnpicker {
     display: table;
@@ -340,7 +330,7 @@ input[type=submit] {
     color: #ECF7FF;
     text-align: center;
     font-weight: 600;
-    padding: 10px 14px;
+    padding: 8px 10px;
     text-decoration: none;
     margin:auto;
 }
@@ -369,7 +359,7 @@ input[type=submit] {
 
 }
 
-@media (max-width: 500px) {
+@media (max-width: 670px) {
     .spacer {
         flex-direction: column;
     }
@@ -414,7 +404,10 @@ input[type=submit] {
         text-align: left;
         font-size: 20px;
         line-height: 100%;
-}
+    }
+    .alert {
+        font-size: 3vw;
+    }
 
 }
 
