@@ -1,6 +1,6 @@
 #Comment out the from .\ line if testing this package alone
 from .\
-    import distributions as dt
+     import distributions as dt
 import numpy as np
 from plotly.subplots import make_subplots
 import plotly.graph_objs as go
@@ -99,12 +99,12 @@ def binomial_poi_approx(min_trials: int, max_trials: int, mean: int, steps=10):
 
 def main():
     #start = time.time()
-    fig = binomial_poi_approx(1, 1000, 4, steps=10)
+    #fig = binomial_poi_approx(1, 1000, 4, steps=10)
     #end=time.time()
     #print(end - start)
     #fig = binomial_normal(10, 100,0.5)
-    fig.show()
-
+    #fig.show()
+    pass
 
 
 if __name__ == '__main__':
