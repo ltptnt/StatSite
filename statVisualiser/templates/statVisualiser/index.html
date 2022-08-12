@@ -46,15 +46,25 @@
             You can generate up to 2 variables, with an option to visualise the convolution of the two variables.
         </p>
         <hr>
-        <title> Glossary of figures available</title>
-        <li>PMF: Probability Mass Function. A function for discrete variables that returns the probability of a given event occurring.</li>
-        <li>PDF: Probability Density Function. This is analogous to the PMF for continuous variables, however it indicates the probability density, not the probability of a given outcome.</li>
-        <li>CDF: Cumulative Density Function. This returns the cumulative probability for a given input i.e. the probability the variable will be less than the input value.
-        <p>For the discrete case, the CDF function sums over all values of the PMF up to the input. For the continuous case, it integrates the variable's PDF over the region to the input value.
-        </p></li>
-        <li>Supported region: Shows the values a given distribution can occupy with a non-zero probability.</li>
-        <li>Joint Probability Functions: The multi-dimensional case of the PDF and CDF. This website supports up to 2 independent variables. The PDF is a product of each variable's PMF/PDF.</li>
+        <br>
+        <h2> Glossary of figures available</h2>
         <hr>
-
+        <ol>
+            <li>PMF: Probability Mass Function.
+                A function for discrete variables that returns the probability of a given event occurring.</li>
+            <li>PDF: Probability Density Function.
+                This is analogous to the PMF for continuous variables, however it indicates the probability density,
+                not the probability of a given outcome.</li>
+            <li>CDF: Cumulative Density Function.
+                This returns the cumulative probability for a given input i.e.
+                the probability the variable will be less than the input value.</li>
+        </ol>
+        <p>For the discrete case, the CDF function sums over all values of the PMF up to the input.
+            For the continuous case, it integrates the variable's PDF over the region to the input value.</p>
+        <ol>
+            <li>Supported region: Shows the values a given distribution can occupy with a non-zero probability.</li>
+            <li>Joint Probability Functions: The multidimensional case of the PDF and CDF. This website supports up to 2 independent variables. The PDF is a product of each variable's PMF/PDF.</li>
+        </ol>
+        <hr>
     </div>
 {% endblock content %}
