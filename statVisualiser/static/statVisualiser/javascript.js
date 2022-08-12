@@ -103,9 +103,9 @@ window.onload = function() {
             close[i].onclick = function(){
                 let div = this.parentElement;
                 div.style.opacity = "0";
-                setTimeout(function(){ div.style.display = "none"; }, 600);
+                setTimeout(function(){ div.style.display = "none"; }, 300);
             }
-            setTimeout(function(){close[i].click()}, 10000)
+            setTimeout(function(){close[i].click()}, 8000)
          }
     }
 }
