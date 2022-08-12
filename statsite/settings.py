@@ -27,7 +27,7 @@ DEBUG = True
 try:
     with open('/var/www/uwsgi/key.txt') as f:
         SECRET_KEY = f.read().strip()
-        #DEBUG = False
+        DEBUG = False
         CACHES = {
             'default': {
                 'BACKEND': 'django.core.cache.backends.memcached.PyMemcacheCache',
