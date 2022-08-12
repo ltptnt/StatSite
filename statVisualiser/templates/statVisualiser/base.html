@@ -16,9 +16,12 @@
 </head>
 
 <body>
-    <div class="title_bar">
+    <div class="title_bar" style="display: flex">
+        <button id="navbar_toggle" onclick="toggle_nav()">☰</button>
         <h1>  Stats &amp; Stuff</h1>
     </div>
+
+
     {% block content %}
     {% endblock content %}
 

@@ -18,7 +18,8 @@ h1, h2, h3, h4, h5, h6 {
     font-size:30px;
     text-transform:uppercase;
     color: #DCFDFDFF;
-    margin: auto;
+    margin: 0;
+    padding: 10px 20px;
 }
 
 p {
@@ -36,7 +37,7 @@ hr {
 
 /* Navigation Bar */
 
-.navbar ul {
+#navbar ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
@@ -47,11 +48,11 @@ hr {
     top: 0;
 }
 
-.navbar li {
+#navbar li {
     float: left;
 }
 
-.navbar li a {
+#navbar li a {
     display: block;
     color: #ECF7FF;
     text-align: center;
@@ -60,14 +61,18 @@ hr {
     text-decoration: none;
 }
 
-.navbar li a:hover {
+#navbar li a:hover {
     background-color: #191f23;;
     color: #ECF7FF;
 }
 
-.navbar li a.active, .tab_button.active, .tab_button.active:hover {
+#navbar li a.active, .tab_button.active, .tab_button.active:hover {
     background-color: #ECF7FF;
     color: #232A32;
+}
+
+#navbar_toggle {
+    display: none;
 }
 
 
@@ -117,7 +122,6 @@ hr {
 }
 
 .styled-table {
-    min-width: 500px;
     text-align: center;
     border-collapse: collapse;
     margin: auto;
@@ -252,13 +256,10 @@ input[type=submit] {
 
 .title_bar {
     background: #111518;
-    padding-top: 20px;
-    padding-bottom: 40px;
-    padding-left: 10px;
-    margin-bottom: -20px;
+    width: 100%;
 }
 
-.navbar {
+#navbar {
     padding-bottom: 0;
     top: 0;
 }
@@ -367,3 +368,55 @@ input[type=submit] {
     overflow: hidden;
 
 }
+
+@media (max-width: 500px) {
+    .spacer {
+        flex-direction: column;
+    }
+    #navbar li {
+        width:100%
+    }
+    #navbar {
+        display: none;
+    }
+
+    .tab_button {
+        width: 100%;
+    }
+    form {
+    padding-bottom: 50px;
+    }
+    .blank_graph {
+    line-height: 450px;
+    width: 100%;
+    height: 450px;
+    background-color: #ECF7FF;
+    text-align: center;
+    margin: auto;
+    }
+    .graph {
+        margin: 0;
+    }
+
+    .page_title h1 {
+        line-height: 25px;
+    }
+
+    .page_title h2 {
+        line-height: 15px;
+    }
+
+    #navbar_toggle {
+        display: block;
+        border: none;
+        background-color: #232A32;
+        color: #dcfdfd;
+        text-align: left;
+        font-size: 20px;
+        line-height: 100%;
+}
+
+}
+
+
+
