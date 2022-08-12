@@ -104,7 +104,6 @@ hr {
 .blurb {
   margin: auto;
   text-align: left;
-  align-content: center;
   max-width: 90%;
 }
 
@@ -163,9 +162,8 @@ form {
 
 .picker label,
 .lnpicker label {
-  line-height: 25px;
-  font-weight: bold;
-  font-size: 14px;
+  line-height: 20px;
+  font-size: 17px;
   margin: auto;
 }
 
@@ -407,3 +405,10 @@ input[type="submit"] {
     font-size: 3vw;
   }
 }
+input[type="checkbox"] {
+  width: 1.15em;
+  height: 1.15em;
+}
+
+
+

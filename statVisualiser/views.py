@@ -275,13 +275,13 @@ def generating_samples(request):
             var1 = dist_selector(pick_one)
             dataset1 = var1.generate_dataset(data1.cleaned_data.get("n_trials"), data1.cleaned_data.get("std_error"))
             fig1 = dataset_plots(var1, dataset1)
-            context['graph1'] = fig1.to_html(full_html=False, default_height=700, default_width=700)
+            context['graph1'] = fig1.to_html(full_html=False)
 
         if pick_two.is_valid() and data2.is_valid():
             var2 = dist_selector(pick_two)
             dataset2 = var2.generate_dataset(data2.cleaned_data.get("n_trials"), data2.cleaned_data.get("std_error"))
             fig2 = dataset_plots(var2, dataset2)
-            context['graph2'] = fig2.to_html(full_html=False, default_height=700, default_width=700)
+            context['graph2'] = fig2.to_html(full_html=False)
 
         if download_data.is_valid() and download_data.cleaned_data.get("convolution"):
             while len(dataset1) < len(dataset2):
@@ -289,7 +289,7 @@ def generating_samples(request):
             while len(dataset1) > len(dataset2):
                 dataset2.append([None])
             conv_fig = graph_density_product(dataset1, dataset2)
-            context['graph3'] = conv_fig.to_html(full_html=False, default_height=700, default_width=700)
+            context['graph3'] = conv_fig.to_html(full_html=False)
 
         if download_data.is_valid() and download_data.cleaned_data.get("download"):
             response = HttpResponse(content_type='text/csv',
