@@ -212,14 +212,6 @@ def large_numbers(request):
 
     return HttpResponse(template.render(context, request))
 
-
-"""
-Stretch goal for samples:
-Implement a user input to add a custom dataset to be turned into a histogram, maybe with a desired proposal pdf?
-e.g. they can choose to have an exp(1) pdf layered over their data.
-"""
-
-
 def generating_samples(request):
     dist_one_select = SampleDist(auto_id=True, prefix='picker1')
     dist_two_select = SampleDist(auto_id=True, prefix='picker2')
@@ -247,11 +239,29 @@ def generating_samples(request):
         data1 = DatasetParams(request.POST, prefix='data1', label_suffix='')
         data2 = DatasetParams(request.POST, prefix='data2', label_suffix='')
         download_data = Download(request.POST, prefix='download', label_suffix='')
-
+        messages_text = []  # Array of messages that are sent to the user
         dataset1 = []
         dataset2 = []
         var1 = None
         var2 = None
+
+        if pick_one.get_data() is None:
+            messages_text.append("ERROR: Please Select Distribution 1")
+        elif data1.data.get("n_trials") is None:
+            messages_text.append("ERROR: Please Specify the Number of Trials")
+
+        if pick_two.get_data() is not None:
+            if data2.data.get("n_trials") is None:
+                messages_text.append("ERROR: Please Specify the Number of Trials")
+        if download_data.data.get("convolution"):
+            if pick_two.get_data() is None:
+                messages_text.append("ERROR: Please Select Distribution 2")
+
+
+
+        if messages_text is not None:
+            for text in messages_text:
+                messages.error(request, text, extra_tags='alert')
 
         if pick_one.is_valid() and data1.is_valid():
             var1 = dist_selector(pick_one)
@@ -266,12 +276,14 @@ def generating_samples(request):
             context['graph2'] = fig2.to_html(full_html=False, default_height=700, default_width=700)
 
         if download_data.is_valid() and download_data.cleaned_data.get("convolution"):
+
             while len(dataset1) < len(dataset2):
                 dataset1.append([None])
             while len(dataset1) > len(dataset2):
                 dataset2.append([None])
             conv_fig = graph_density_product(dataset1, dataset2)
             context['graph3'] = conv_fig.to_html(full_html=False, default_height=700, default_width=700)
+
 
         if download_data.is_valid() and download_data.cleaned_data.get("download"):
             response = HttpResponse(content_type='text/csv',
