@@ -217,25 +217,12 @@ input[type="submit"] {
   width: 45vw;
   height: 450px;
   background-color: #ecf7ff;
-  margin: auto;
   text-align: center;
-  margin-bottom: 10px;
+  margin: auto auto 10px;
 }
 
 .centered {
   text-align: center;
-}
-
-.left {
-  float: left;
-  max-width: 50%;
-  margin: auto;
-}
-
-.right {
-  float: right;
-  margin: auto;
-  max-width: 50%;
 }
 
 .title_bar {

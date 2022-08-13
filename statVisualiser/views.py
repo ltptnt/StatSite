@@ -230,6 +230,7 @@ def large_numbers(request):
 
     return HttpResponse(template.render(context, request))
 
+
 def generating_samples(request):
     dist_one_select = SampleDist(auto_id=True, prefix='picker1', label_suffix='')
     dist_two_select = SampleDist(auto_id=True, prefix='picker2', label_suffix='')
@@ -275,8 +276,6 @@ def generating_samples(request):
             if pick_two.get_data() is None:
                 messages_text.append("ERROR: Please Select Distribution 2")
 
-
-
         if messages_text is not None:
             for text in messages_text:
                 messages.error(request, text, extra_tags='alert')
@@ -301,7 +300,6 @@ def generating_samples(request):
                 dataset2.append([None])
             conv_fig = graph_density_product(dataset1, dataset2)
             context['graph3'] = conv_fig.to_html(full_html=False)
-
 
         if download_data.is_valid() and download_data.cleaned_data.get("download"):
             response = HttpResponse(content_type='text/csv',
