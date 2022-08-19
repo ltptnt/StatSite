@@ -285,7 +285,7 @@ transition:.3s
 }
 
 .tab {
-border:1px solid #ecf7ff;
+border:1px solid #83a2b7;
 display:none;
 padding:6px 12px
 }
@@ -361,4 +361,9 @@ width:100%
 input[type="checkbox"] {
 height:1.15em;
 width:1.15em
+}
+
+.link {
+    text-decoration: none;
+    color: inherit;
 }
