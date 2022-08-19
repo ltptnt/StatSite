@@ -81,6 +81,6 @@ class ConvolutionOptions(forms.Form):
         ("product", "Product"),
 
     )
-    Output = forms.BooleanField(label='Plot Convolution?',
+    Output = forms.BooleanField(label='Plot Convolution',
                                 initial=False, required=False)
     Type = forms.ChoiceField(choices=type)

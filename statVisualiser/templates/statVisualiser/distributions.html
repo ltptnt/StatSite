@@ -6,9 +6,9 @@
     <div id="navbar">
         <ul>
             <li><a href="/">Home</a></li>
-            <li><a class="active" href="/distributions">Distributions</a></li>
-            <li><a href="/largeNumbers">The Law of Large Numbers</a></li>
-            <li><a href="/generatingSamples">Create Samples</a></li>
+            <li><a class="active" href="/distributions">Distribution Visualiser</a></li>
+            <li><a href="/large_numbers">The Law of Large Numbers</a></li>
+            <li><a href="/generating_samples">Create Samples</a></li>
             <li><a href="https://github.com/ltptnt/StatSite">Github</a></li>
         </ul>
     </div>
@@ -66,13 +66,13 @@
         <form method="post">
         <div class="spacer">
             <div class="picker" style="flex: 50%">
-                <h2 class="centered">Distribution 1</h2>
+                <h2 class="centered">Distribution 1 Parameters</h2>
                 <hr>
                     {% csrf_token %}
                     {{ picker1.as_p }}
             </div>
             <div class="picker" style="flex: 50%">
-                <h2 class="centered">Distribution 2 <i style="color: #83a2b7">(Optional)</i></h2>
+                <h2 class="centered">Distribution 2 Parameters<i style="color: #83a2b7">(Optional)</i></h2>
                 <hr>
                     {{ picker2.as_p }}
             </div>

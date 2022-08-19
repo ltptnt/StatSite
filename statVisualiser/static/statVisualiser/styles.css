@@ -78,7 +78,7 @@ color:#a6adb9;
 font-size:15px;
 font-style:italic;
 font-weight:lighter;
-line-height:0
+line-height:15px
 }
 
 .blurb {
@@ -319,10 +319,6 @@ margin:0;
 
 .page_title h1 {
 line-height:25px
-}
-
-.page_title h2 {
-line-height:15px
 }
 
 #navbar_toggle {

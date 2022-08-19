@@ -195,7 +195,7 @@ def dist_selector(picker: DistributionSelect | SampleDist) -> Variable | None:
 def large_numbers(request):
     n_approx = NormalApproximation(request.POST, prefix='normal', label_suffix='')
     p_approx = PoissonApproximation(request.POST, prefix='poisson', label_suffix='')
-    template = loader.get_template("statVisualiser/largeNumbers.html")
+    template = loader.get_template("statVisualiser/large_numbers.html")
     context = {
         'normal': n_approx,
         'normal_graph': None,
@@ -238,7 +238,7 @@ def generating_samples(request):
     d1 = DatasetParams(auto_id=True, prefix='data1')
     d2 = DatasetParams(auto_id=True, prefix='data2')
     dist_table = Distribution.objects.all().values()
-    template = loader.get_template('statVisualiser/generatingSamples.html')
+    template = loader.get_template('statVisualiser/generating_samples.html')
 
     context = {
         'dist': dist_table,
