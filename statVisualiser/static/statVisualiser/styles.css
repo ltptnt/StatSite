@@ -27,7 +27,7 @@ font-size:17px
 }
 
 hr {
-border-top:1px solid #d2d2d2;
+border-top:1px solid #ecf7ff;
 margin:20px auto
 }
 
@@ -53,7 +53,7 @@ text-decoration:none
 
 #navbar li a.active,.tab_button.active,.tab_button.active:hover {
 background-color:#ecf7ff;
-color:#232a32
+color:#232a32;
 }
 
 #navbar_toggle {
@@ -92,13 +92,13 @@ line-height:0
 }
 
 .database {
-background:#fff;
+background:#ffffff;
 margin:auto;
 padding:0 5%
 }
 
 .styled-table {
-background:#fff;
+background:#ffffff;
 border-collapse:collapse;
 box-shadow:0 0 20px rgba(0,0,0,0.15);
 margin:auto;
@@ -110,12 +110,12 @@ padding:6px
 }
 
 .styled-table thead tr {
-background-color:#000;
-color:#fff
+background-color: #232a32;
+color:#ffffff
 }
 
 .styled-table tbody tr {
-border-bottom:1px solid #fff
+border-bottom:1px solid #ffffff
 }
 
 .styled-table tbody tr td {
@@ -127,7 +127,7 @@ background-color:#c9c9c9
 }
 
 .styled-table tbody tr:last-of-type {
-border-bottom:2px solid #000
+border-bottom:2px solid #232a32
 }
 
 form {
@@ -178,7 +178,7 @@ border:3px solid #232a32
 input[type="submit"] {
 background-color:#191f23;
 border:none;
-color:#dcfdfd;
+color:#ecf7ff;
 cursor:pointer;
 font-size:17px;
 font-weight:600;
@@ -188,7 +188,7 @@ text-decoration:none
 }
 
 .blank_graph {
-background-color:#ecf7ff;
+user-select: none;
 height:450px;
 line-height:450px;
 margin:auto auto 10px;
@@ -226,7 +226,7 @@ width:100%
 }
 
 .alert {
-color:#fff;
+color:#ffffff;
 margin:5px auto auto;
 opacity:1;
 padding:10px 0;
@@ -253,7 +253,7 @@ background-color:red
 }
 
 .alert_close {
-color:#fff;
+color:#ffffff;
 cursor:pointer;
 float:right;
 font-size:22px;
@@ -285,7 +285,7 @@ transition:.3s
 }
 
 .tab {
-border:1px solid #ccc;
+border:1px solid #ecf7ff;
 display:none;
 padding:6px 12px
 }
@@ -342,7 +342,7 @@ line-height:15px
 #navbar_toggle {
 background-color:#232a32;
 border:none;
-color:#dcfdfd;
+color:#ecf7ff;
 display:block;
 font-size:20px;
 line-height:100%;
