@@ -285,7 +285,6 @@ transition:.3s
 }
 
 .tab {
-border:1px solid #83a2b7;
 display:none;
 padding:6px 12px
 }
@@ -318,17 +317,17 @@ padding-bottom:50px
 }
 
 .blank_graph {
-background-color:#ecf7ff;
+background-color: #a6adb9;
 height:450px;
 line-height:450px;
 margin:auto;
 padding-bottom:20px;
 text-align:center;
-width:100%
+width:100%;
 }
 
 .graph {
-margin:0
+margin:0;
 }
 
 .page_title h1 {
