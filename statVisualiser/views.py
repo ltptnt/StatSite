@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, StreamingHttpResponse
 from django.template import loader
 from .forms import *
 from .util.distributions import *
@@ -258,63 +258,98 @@ def generating_samples(request):
         data1 = DatasetParams(request.POST, prefix='data1', label_suffix='')
         data2 = DatasetParams(request.POST, prefix='data2', label_suffix='')
         download_data = Download(request.POST, prefix='download', label_suffix='')
+        #context['picker1'] = pick_one
+        #context['picker2'] = pick_two
+        #context['data1'] = data1
+        #context['data2'] = data2
+
         messages_text = []  # Array of messages that are sent to the user
         dataset1 = []
         dataset2 = []
         var1 = None
         var2 = None
 
-        if pick_one.get_data() is None:
-            messages_text.append("ERROR: Please Select Distribution 1")
-        elif data1.data.get("n_trials") is None:
-            messages_text.append("ERROR: Please Specify the Number of Trials")
-
-        if pick_two.get_data() is not None:
-            if data2.data.get("n_trials") is None:
+        if pick_one.is_valid() and pick_two.is_valid() and data1.is_valid() and data2.is_valid() and download_data.is_valid():
+            if data1.cleaned_data.get("n_trials") is None:
                 messages_text.append("ERROR: Please Specify the Number of Trials")
-        if download_data.data.get("convolution"):
-            if pick_two.get_data() is None:
-                messages_text.append("ERROR: Please Select Distribution 2")
+            if pick_one.get_data() is None:
+                messages_text.append("ERROR: Please Select Distribution 1")
+            else:
+            # add messages to the end for all the values that are not present but should be
+                required_vars = ''
+                for key, value in pick_one.get_data().items():
+                    if value == '':
+                        required_vars += key + ', '
+                if required_vars != '':
+                    messages_text.append("ERROR: No Value/s for {var} in Distribution 1!".format(var=required_vars))
 
-        if messages_text is not None:
+            if pick_two.get_data() is not None:
+                required_vars = ''
+                for key, value in pick_two.get_data().items():
+                    if value == '':
+                        required_vars += key + ', '
+                if required_vars != '':
+                    messages_text.append("ERROR: No Value/s for {var} in Distribution 2!".format(var=required_vars))
+
+            if download_data.cleaned_data.get("convolution"):
+                if pick_two.get_data() is None:
+                    messages_text.append("ERROR: Please Select Distribution 2")
+                elif data2.cleaned_data.get("n_trials") is None:
+                    messages_text.append("ERROR: Please Specify the Number of Trials")
+
+        if len(messages_text) != 0:
             for text in messages_text:
                 messages.error(request, text, extra_tags='alert')
-
-        if pick_one.is_valid() and data1.is_valid():
+        else:
             var1 = dist_selector(pick_one)
             dataset1 = var1.generate_dataset(data1.cleaned_data.get("n_trials"), data1.cleaned_data.get("std_error"))
             fig1 = dataset_plots(var1, dataset1)
             context['graph1'] = fig1.to_html(full_html=False)
 
-        if pick_two.is_valid() and data2.is_valid():
-            var2 = dist_selector(pick_two)
-            dataset2 = var2.generate_dataset(data2.cleaned_data.get("n_trials"), data2.cleaned_data.get("std_error"))
-            fig2 = dataset_plots(var2, dataset2)
-            context['graph2'] = fig2.to_html(full_html=False)
+            if pick_two.get_data() is not None:
+                var2 = dist_selector(pick_two)
+                dataset2 = var2.generate_dataset(data2.cleaned_data.get("n_trials"), data2.cleaned_data.get("std_error"))
+                fig2 = dataset_plots(var2, dataset2)
+                context['graph2'] = fig2.to_html(full_html=False)
 
-        if download_data.is_valid() and download_data.cleaned_data.get("convolution"):
+            if download_data.is_valid() and download_data.cleaned_data.get("convolution"):
+                while len(dataset1) < len(dataset2):
+                    dataset1.append("")
+                while len(dataset1) > len(dataset2):
+                    dataset2.append("")
+                conv_fig = graph_density_product(dataset1, dataset2)
+                context['graph3'] = conv_fig.to_html(full_html=False)
 
-            while len(dataset1) < len(dataset2):
-                dataset1.append([None])
-            while len(dataset1) > len(dataset2):
-                dataset2.append([None])
-            conv_fig = graph_density_product(dataset1, dataset2)
-            context['graph3'] = conv_fig.to_html(full_html=False)
-
-        if download_data.is_valid() and download_data.cleaned_data.get("download"):
-            response = HttpResponse(content_type='text/csv',
-                                    headers={'Content-Disposition': 'attachment; filename="sample_dataset.csv"'}, )
-            title1 = str(var1) if var1 is not None else ""
-            title2 = str(var2) if var2 is not None else ""
-            title = [title1, title2]
-            while len(dataset1) < len(dataset2):
-                dataset1.append([None])
-            while len(dataset1) > len(dataset2):
-                dataset2.append([None])
-
-            big_data = list(zip(dataset1, dataset2))
-            download = csv.writer(response)
-            download.writerow(title)
-            download.writerows([trial[0], trial[1]] for trial in big_data)
-            return response
+            if download_data.cleaned_data.get("download"):
+                response = HttpResponse(content_type='text/csv',
+                                        headers={'Content-Disposition': 'attachment; filename="sample_dataset.csv"'}, )
+                title1 = str(var1) if var1 is not None else ""
+                title2 = str(var2) if var2 is not None else ""
+                title = title1
+                download = csv.writer(response)
+                if download_data.cleaned_data.get("convolution") and var2 is not None:
+                    title = [title1, title2, "Convolution"]
+                    if len(dataset1) != len(dataset2):
+                        mindex = min(len(dataset1), len(dataset2))
+                        dataset1 = dataset1[:mindex]
+                        dataset2 = dataset2[:mindex]
+                    dataset_conv = []
+                    for i in range(len(dataset1)):
+                        dataset_conv.append(dataset1[i]*dataset2[i])
+                    bigger_data = list(zip(dataset1, dataset2, dataset_conv))
+                    download.writerow(title)
+                    download.writerows([trial[0], trial[1], trial[2]] for trial in bigger_data)
+                elif var2 is not None:
+                    title = [title1, title2]
+                    while len(dataset1) < len(dataset2):
+                        dataset1.append("")
+                    while len(dataset1) > len(dataset2):
+                        dataset2.append("")
+                    big_data = list(zip(dataset1, dataset2))
+                    download.writerow(title)
+                    download.writerows([trial[0], trial[1]] for trial in big_data)
+                else:
+                    download.writerow([title])
+                    download.writerows([i] for i in dataset1)
+                return response
     return HttpResponse(template.render(context, request))

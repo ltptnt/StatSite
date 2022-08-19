@@ -63,7 +63,7 @@ class PoissonApproximation(forms.Form):
 
 
 class DatasetParams(forms.Form):
-    n_trials = forms.IntegerField(label="Number of Trials", initial=None, required=False)
+    n_trials = forms.IntegerField(label="Number of Trials", initial=None, min_value=1, max_value=10000, required=False)
     std_error = forms.FloatField(label="Standard Error Term (optional)", initial=0, required=False)
 
 
