@@ -27,7 +27,7 @@ font-size:17px
 }
 
 hr {
-border-top:1px solid #ecf7ff;
+border-top:1px solid #a6adb9;
 margin:20px auto
 }
 
@@ -193,7 +193,9 @@ height:450px;
 line-height:450px;
 margin:auto auto 10px;
 text-align:center;
-width:45vw
+width:45vw;
+border: 1px solid #a6adb9;
+padding-bottom:20px;
 }
 
 .centered {
@@ -284,11 +286,6 @@ text-decoration:none;
 transition:.3s
 }
 
-.tab {
-display:none;
-padding:6px 12px
-}
-
 .tab_bar {
 background-color:#232a32;
 overflow:hidden
@@ -314,16 +311,6 @@ display:none
 
 form {
 padding-bottom:50px
-}
-
-.blank_graph {
-background-color: #a6adb9;
-height:450px;
-line-height:450px;
-margin:auto;
-padding-bottom:20px;
-text-align:center;
-width:100%;
 }
 
 .graph {
@@ -363,6 +350,6 @@ width:1.15em
 }
 
 .link {
-    text-decoration: none;
-    color: inherit;
+text-decoration: none;
+color: inherit;
 }
