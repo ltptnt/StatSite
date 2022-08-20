@@ -253,15 +253,15 @@ def generating_samples(request):
     }
 
     if request.method == "POST":
-        pick_one = SampleDist(request.POST, prefix='picker1', label_suffix='')
-        pick_two = SampleDist(request.POST, prefix='picker2', label_suffix='')
-        data1 = DatasetParams(request.POST, prefix='data1', label_suffix='')
-        data2 = DatasetParams(request.POST, prefix='data2', label_suffix='')
-        download_data = Download(request.POST, prefix='download', label_suffix='')
-        #context['picker1'] = pick_one
-        #context['picker2'] = pick_two
-        #context['data1'] = data1
-        #context['data2'] = data2
+        pick_one = SampleDist(request.POST, auto_id=True, prefix='picker1', label_suffix='')
+        pick_two = SampleDist(request.POST, auto_id=True, prefix='picker2', label_suffix='')
+        data1 = DatasetParams(request.POST, auto_id=True, prefix='data1', label_suffix='')
+        data2 = DatasetParams(request.POST, auto_id=True, prefix='data2', label_suffix='')
+        download_data = Download(request.POST, auto_id=True, prefix='download', label_suffix='')
+        context['picker1'] = pick_one
+        context['picker2'] = pick_two
+        context['data1'] = data1
+        context['data2'] = data2
 
         messages_text = []  # Array of messages that are sent to the user
         dataset1 = []
