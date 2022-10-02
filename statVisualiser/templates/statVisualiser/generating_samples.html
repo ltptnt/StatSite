@@ -28,90 +28,103 @@
     <div class="blurb">
         <hr>
         <p>
-            On this page, you can generate your own sample dataset of 1 or 2 independent random variables from the table below.
+            On this page, you can generate your own sample dataset of 1 or 2 independent random
+            variables from the table below.
             Fill out the forms below to generate your dataset.
         </p>
         <p>
-            The standard error parameter lets you add more "noise" to a sample. This random error term is a standard normal with an input standard deviation. Note: this feature may be problematic around values of 0.
+            The standard error parameter lets you add more "noise" to a sample. This random error
+            term is a standard normal with an input standard deviation. Note: this feature may be
+            problematic around values of 0.
         </p>
         <hr>
     </div>
 
 
     <div class="database">
-        <h2 class="centered">Distributions</h2>
+        <h2 class="centered">Supported Distributions</h2>
         <table class="styled-table">
             <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Continuous</th>
-                    <th>Supported Region</th>
-                </tr>
+            <tr>
+                <th>Name</th>
+                <th>Continuous</th>
+                <th>Supported Region</th>
+            </tr>
             </thead>
             <tbody>
-                {% for x in dist %}
+            {% for x in dist %}
                 <tr>
                     <td>{{ x.name }}</td>
                     <td>{{ x.continuous }}</td>
                     <td>{{ x.supported_region }}</td>
-                    <td id="{{ x.name }}" style="display: none">{{ x.required_variable_names|stringformat:'a' }}</td>
+                    <td id="{{ x.name }}"
+                        style="display: none">{{ x.required_variable_names|stringformat:'a' }}</td>
                 </tr>
-                {% endfor %}
+            {% endfor %}
             </tbody>
         </table>
         <hr>
     </div>
     <div class="spacer">
         <div style="flex: 50%">
-        <form method="post">
-        {% csrf_token %}
-            <div class="spacer">
-                <div class = "picker">
-                    <h2 class="centered">Distribution 1</h2>
-                    <hr>
-                    {{ picker1.as_p }}
-                    <hr>
-                    <h2 class="centered">Dataset 1 Parameters</h2>
-                    <hr>
-                    {{ data1.as_p }}
+            <form method="post">
+                {% csrf_token %}
+                <div class="spacer">
+                    <div class="picker">
+                        <h2 class="centered">Distribution 1</h2>
+                        <hr>
+                        {{ picker1.as_p }}
+                        <hr>
+                        <h2 class="centered">Dataset 1 Parameters</h2>
+                        <hr>
+                        {{ data1.as_p }}
+                    </div>
+                    <div class="picker">
+                        <h2 class="centered">Distribution 2</h2>
+                        <hr>
+                        {{ picker2.as_p }}
+                        <hr>
+                        <h2 class="centered">Dataset 2 Parameters</h2>
+                        <hr>
+                        {{ data2.as_p }}
+                    </div>
                 </div>
-                <div class = "picker">
-                    <h2 class="centered">Distribution 2</h2>
-                    <hr>
-                    {{ picker2.as_p }}
-                    <hr>
-                    <h2 class="centered">Dataset 2 Parameters</h2>
-                    <hr>
-                    {{ data2.as_p }}
-                </div>
-            </div>
-            <div>
+                <div>
 
-                <div class="blurb">
-                    <hr>
-                    <h2 class="centred">Optional Operations </h2>
-                    <hr>
-                    <p>
-                        Enabling the convolution will plot a density heatmap of the product of your two chosen variables.
-                        This feature works better with the same number of trials for each variable.
-                    </p>
-                    <p>
-                        If you would like to download your own data, check the download box. If you want to download the convolution,
-                        you must check plot the convolution.
-                        Note: this will leave the graphs blank, so re-enter it without the download to see the graphs of a sample.
-                    </p>
-                    <hr>
+                    <div class="blurb">
+                        <hr>
+                        <h2 class="centred">Optional Operations </h2>
+                        <hr>
+                        <p>
+                            Enabling the convolution will plot a density heatmap of the product of
+                            your two chosen variables.
+                            This feature works better with the same number of trials for each
+                            variable.
+                        </p>
+                        <p>
+                            If you would like to download your own data, check the download box. If
+                            you want to download the convolution,
+                            you must check plot the convolution.
+                            Note: this will leave the graphs blank, so re-enter it without the
+                            download to see the graphs of a sample.
+                        </p>
+                        <hr>
+
+                    <div class="picker" >
+                        {{ download.as_p }}
+                    </div>
+                    <br>
+                    <input class="centered" type="submit" value="Submit">
+                    </div>
                 </div>
-                {{ download.as_p }}
-                <input class="centered" type="submit" value="Submit">
-                </div>
-        </form>
+            </form>
         </div>
         <div style="flex: 50%">
             <div class="tab_bar">
                 <button id='g1_tab' class="tab_button" onclick="changeTab('g1')">Sample 1</button>
                 <button id='g2_tab' class="tab_button" onclick="changeTab('g2')">Sample 2</button>
-                <button id='g3_tab' class="tab_button" onclick="changeTab('g3')">Joint Histogram</button>
+                <button id='g3_tab' class="tab_button" onclick="changeTab('g3')">Joint Histogram
+                </button>
             </div>
 
             <div id="g1" class="tab">
@@ -122,29 +135,32 @@
                         <div class="blank_graph">Please enter parameters to see a Graph!</div>
                     {% endif %}
                 </div>
-                <button class="open_graph centered" onclick="openGraph('g1_plot')">Open in new tab</button>
+                <button class="open_graph centered" onclick="openGraph('g1_plot')">Open in new tab
+                </button>
             </div>
 
             <div id="g2" class="tab">
-                <div id="g2_plot" class = "graph">
+                <div id="g2_plot" class="graph">
                     {% if graph2 %}
                         {{ graph2|safe }}
                     {% else %}
                         <div class="blank_graph">Please enter parameters to see a Graph!</div>
                     {% endif %}
                 </div>
-            <button class="open_graph centered" onclick="openGraph('g2_plot')">Open in new tab</button>
+                <button class="open_graph centered" onclick="openGraph('g2_plot')">Open in new tab
+                </button>
             </div>
 
             <div id="g3" class="tab">
-                 <div id="g3_plot" class = "graph">
+                <div id="g3_plot" class="graph">
                     {% if graph3 %}
                         {{ graph3 |safe }}
                     {% else %}
                         <div class="blank_graph">Please enter parameters to see a Graph!</div>
                     {% endif %}
                 </div>
-            <button class="open_graph centered" onclick="openGraph('g3_plot')">Open in new tab</button>
+                <button class="open_graph centered" onclick="openGraph('g3_plot')">Open in new tab
+                </button>
             </div>
         </div>
     </div>

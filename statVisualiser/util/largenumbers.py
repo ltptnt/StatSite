@@ -1,9 +1,10 @@
 # Comment out line 2 if testing this package alone
+import numpy as np
+import plotly.graph_objs as go
+from plotly.subplots import make_subplots
+
 from . \
     import distributions as dt
-import numpy as np
-from plotly.subplots import make_subplots
-import plotly.graph_objs as go
 
 
 def binomial_normal(min_trials: int, max_trials: int, prob: float, steps=10):
@@ -11,7 +12,8 @@ def binomial_normal(min_trials: int, max_trials: int, prob: float, steps=10):
     titles = []
     for trials in range(min_trials, max_trials + 1, steps):
         binom = dt.Binomial(trials, prob)
-        converge = dt.Normal(binom.trials * binom.prob, np.sqrt(binom.trials * binom.prob * (1 - binom.prob)))
+        converge = dt.Normal(binom.trials * binom.prob,
+                             np.sqrt(binom.trials * binom.prob * (1 - binom.prob)))
         minim, maxim = binom.get_region()
         brute_binomial(int(minim), maxim, binom, fig=fig)
         converge.graph_pdf(minim, maxim, fig=fig)
@@ -70,7 +72,8 @@ def binomial_poi_approx(min_trials: int, max_trials: int, mean: int, steps=10):
         binom = dt.Binomial(trials, prob)
         brute_binomial(0, maxim, binom, fig=fig)
 
-    fig.update_layout(xaxis_title="Probability X=x", title="Poisson approximation with a mean of " + str(mean))
+    fig.update_layout(xaxis_title="Probability X=x",
+                      title="Poisson approximation with a mean of " + str(mean))
     increment = []
     for i in range(1, len(fig.data)):
         step = dict(method="update",

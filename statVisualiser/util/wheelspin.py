@@ -1,5 +1,6 @@
-import distributions as dist
 import matplotlib.pyplot as plt
+
+import distributions as dist
 
 
 def wheel_spin(bet: float, variable: dist.Variable) -> float:

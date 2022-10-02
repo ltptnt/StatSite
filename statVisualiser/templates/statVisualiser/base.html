@@ -8,7 +8,7 @@
     <meta name="keywords" content="Statistics, Visualiser, distributions">
     <meta name="author" content="Luke and Chris">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="google-site-verification" content="jgK9jsJADa_XGZyjaaK1xiVNiYtr-dXR3WeyYJhm8oc" />
+    <meta name="google-site-verification" content="jgK9jsJADa_XGZyjaaK1xiVNiYtr-dXR3WeyYJhm8oc"/>
     <link rel="icon" type="image/ico" href="{% static 'favicon.ico' %}"/>
     <title>{% block title %}{% endblock title %}</title>
     <link type="text/css" rel="stylesheet" href="{% static 'statVisualiser/styles.css' %}">
@@ -17,18 +17,18 @@
 </head>
 
 <body>
-    <div class="title_bar" style="display: flex">
-        <button id="navbar_toggle" onclick="toggle_nav()">☰</button>
-        <h1>  Stats &amp; Stuff</h1>
-    </div>
+<div class="title_bar" style="display: flex">
+    <button id="navbar_toggle" onclick="toggle_nav()">☰</button>
+    <h1> Stats &amp; Stuff</h1>
+</div>
 
 
-    {% block content %}
-    {% endblock content %}
+{% block content %}
+{% endblock content %}
 
-    <script type="text/javascript" src={% static 'statVisualiser/javascript.js' %}></script>
-    {% block javascript %}
-    {% endblock javascript %}
+<script type="text/javascript" src={% static 'statVisualiser/javascript.js' %}></script>
+{% block javascript %}
+{% endblock javascript %}
 </body>
 
 </html>

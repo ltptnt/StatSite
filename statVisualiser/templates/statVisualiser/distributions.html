@@ -39,7 +39,7 @@
     </div>
 
     <div class="database">
-        <h2 class="centered">Distributions</h2>
+        <h2 class="centered">Supported Distributions</h2>
         <table class="styled-table">
             <thead>
                 <tr>
@@ -66,13 +66,13 @@
         <form method="post">
         <div class="spacer">
             <div class="picker" style="flex: 50%">
-                <h2 class="centered">Distribution 1 Parameters</h2>
+                <h2 class="centered">Distribution 1</h2>
                 <hr>
                     {% csrf_token %}
                     {{ picker1.as_p }}
             </div>
             <div class="picker" style="flex: 50%">
-                <h2 class="centered">Distribution 2 Parameters<i style="color: #83a2b7">(Optional)</i></h2>
+                <h2 class="centered">Distribution 2 <i style="color: #83a2b7">(Optional)</i></h2>
                 <hr>
                     {{ picker2.as_p }}
             </div>

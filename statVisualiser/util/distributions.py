@@ -3,12 +3,12 @@ import random as rd
 import time
 from abc import ABC, abstractmethod
 
-from plotly.subplots import make_subplots
-import plotly.graph_objs as go
-import plotly.express as px
 import numpy as np
-import scipy.stats as st
+import plotly.express as px
+import plotly.graph_objs as go
 import scipy.special as sp
+import scipy.stats as st
+from plotly.subplots import make_subplots
 
 DP = 3
 """
@@ -349,13 +349,15 @@ class Binomial(Variable):
             match criteria < 5 or criteria2 < 5:
                 case True:
                     criteria = min(criteria, criteria2)
-                    approximator = Poisson(criteria).graph_pdf(minim, maxim, fig=fig, geom=geom, titles=titles,
+                    approximator = Poisson(criteria).graph_pdf(minim, maxim, fig=fig, geom=geom,
+                                                               titles=titles,
                                                                **kwargs)
                     approximator.update_layout(title="PDF of " + str(self))
                     return approximator
                 case False:
                     if not criteria > 5 and not criteria2 > 5:
-                        return super().graph_pdf(minim, maxim, fig=fig, geom=geom, titles=titles, **kwargs)
+                        return super().graph_pdf(minim, maxim, fig=fig, geom=geom, titles=titles,
+                                                 **kwargs)
                     approximator = Normal(criteria, np.sqrt(criteria * (
                             1 - self.prob)))  # .graph_pdf(minim, maxim, fig=fig, geom=geom, titles=titles, **kwargs)
                     x1 = [i + 0.5 for i in range(int(minim), int(maxim) + 1)]
@@ -386,13 +388,15 @@ class Binomial(Variable):
         # Use of binomial and poisson approximation to improve efficiency
         match criteria < 5 or criteria2 < 5:
             case True:
-                approximator = Poisson(criteria).graph_cdf(minim, maxim, fig=fig, geom=geom, titles=titles,
+                approximator = Poisson(criteria).graph_cdf(minim, maxim, fig=fig, geom=geom,
+                                                           titles=titles,
                                                            **kwargs)
                 approximator.update_layout(title="CDF of " + str(self))
                 return approximator
             case False:
                 if not criteria > 5 and not criteria2 > 5:
-                    return super().graph_cdf(minim, maxim, fig=fig, geom=geom, titles=titles, **kwargs)
+                    return super().graph_cdf(minim, maxim, fig=fig, geom=geom, titles=titles,
+                                             **kwargs)
                 approximator = Normal(criteria, np.sqrt(criteria * (1 - self.prob)))
                 x1 = [i for i in range(int(minim), int(maxim) + 1)]
                 cdf = [approximator.cdf(i) for i in x1]
@@ -442,17 +446,19 @@ def two_var_3d(var1, var2, conv_type="product"):
         case _:
             raise TypeError("Only product and sum are supported")
     fig = px.scatter_3d(x=var1_trials, y=var2_trials, z=convolution_trials)
-    fig.update_layout(title="Simulated supported region of the convolution of " + str(var1) + " and " + str(var2),
-                      scene=dict(xaxis_title=str(var1),
-                                 yaxis_title=str(var2),
-                                 zaxis_title=title_text + str(var1) + " and " + str(var2)))
+    fig.update_layout(
+        title="Simulated supported region of the convolution of " + str(var1) + " and " + str(var2),
+        scene=dict(xaxis_title=str(var1),
+                   yaxis_title=str(var2),
+                   zaxis_title=title_text + str(var1) + " and " + str(var2)))
     return fig
 
 
 def convolution_pdf(var1, var2, fig=None, geom=None):
     min1, max1 = var1.get_region()
     min2, max2 = var2.get_region()
-    pdf_pmf, dens = ("PMF", "Mass") if not var1.continuous and not var2.continuous else ("PDF", "Density")
+    pdf_pmf, dens = ("PMF", "Mass") if not var1.continuous and not var2.continuous else (
+    "PDF", "Density")
 
     if var1.continuous:
         var1_region = np.linspace(max(min1, -100), min(max1, 100), 10 ** 3)
@@ -474,12 +480,13 @@ def convolution_pdf(var1, var2, fig=None, geom=None):
     if fig is None:
         fig = go.Figure()
         fig.add_trace(trace)
-        fig.update_layout(dict(title="Joint" + pdf_pmf + " of the convolution of " + str(var1) + " and " + str(var2),
-                               coloraxis_colorbar=dict(title="Probability" + dens),
-                               scene=dict(
-                                   xaxis_title="X ~ " + str(var2),
-                                   yaxis_title="Y ~ " + str(var1),
-                                   zaxis_title="Probability " + dens + " of X*Y")), )
+        fig.update_layout(dict(
+            title="Joint" + pdf_pmf + " of the convolution of " + str(var1) + " and " + str(var2),
+            coloraxis_colorbar=dict(title="Probability" + dens),
+            scene=dict(
+                xaxis_title="X ~ " + str(var2),
+                yaxis_title="Y ~ " + str(var1),
+                zaxis_title="Probability " + dens + " of X*Y")), )
 
     else:
         if geom is None:

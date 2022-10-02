@@ -1,10 +1,12 @@
-from django.http import HttpResponse, StreamingHttpResponse
-from django.template import loader
-from .forms import *
-from .util.distributions import *
-from .util import largenumbers as ln
-from django.contrib import messages
 import csv
+
+from django.contrib import messages
+from django.http import HttpResponse
+from django.template import loader
+
+from .forms import *
+from .util import largenumbers as ln
+from .util.distributions import *
 
 
 def index(request):
@@ -34,8 +36,10 @@ def distributions(request) -> HttpResponse:
         # get results of forms if POST from server
         dist1s = DistributionSelect(request.POST, auto_id=True, prefix='picker1', label_suffix='')
         dist2s = DistributionSelect(request.POST, auto_id=True, prefix='picker2', label_suffix='')
-        convolution = ConvolutionOptions(request.POST, auto_id=True, prefix="convol", label_suffix='')
-        context['picker1'] = dist1s  # sets the context to these values. This prevents the data from being lost
+        convolution = ConvolutionOptions(request.POST, auto_id=True, prefix="convol",
+                                         label_suffix='')
+        context[
+            'picker1'] = dist1s  # sets the context to these values. This prevents the data from being lost
         context['picker2'] = dist2s  # after refreshing the page
         context['convol'] = convolution
         messages_text = []  # Array of messages that are sent to the user
@@ -54,7 +58,8 @@ def distributions(request) -> HttpResponse:
                     if value == '':
                         required_vars += key + ', '
                 if required_vars != '':
-                    messages_text.append("ERROR: No Value/s for {var} in Distribution 1!".format(var=required_vars))
+                    messages_text.append(
+                        "ERROR: No Value/s for {var} in Distribution 1!".format(var=required_vars))
 
                 # Ensure that if the domain is entered it is a valid range i.e. Min <= Max
                 if dist1s.cleaned_data.get('G_Min') is not None \
@@ -64,7 +69,8 @@ def distributions(request) -> HttpResponse:
                 # if a distribution has not been selected warn the user
                 # the program will still return a graph, but it will most likely be empty
                 if len(dist1s.cleaned_data.get('Output')) == 0:
-                    messages_text.append("ERROR: You did not select a PDF or CDF for distribution 1.")
+                    messages_text.append(
+                        "ERROR: You did not select a PDF or CDF for distribution 1.")
 
                 # the second form is allowed to be none
                 if data2 is not None:
@@ -73,16 +79,20 @@ def distributions(request) -> HttpResponse:
                         if value == '':
                             required_vars += key + ', '
                     if required_vars != '':
-                        messages_text.append("ERROR: No Value/s for {var} in Distribution 2!".format(var=required_vars))
+                        messages_text.append(
+                            "ERROR: No Value/s for {var} in Distribution 2!".format(
+                                var=required_vars))
 
                     # Ensure that if the domain is entered it is a valid range i.e. Min <= Max
                     if dist2s.cleaned_data.get('G_Min') is not None \
-                            and dist2s.cleaned_data.get('G_Min') >= dist2s.cleaned_data.get('G_Max'):
+                            and dist2s.cleaned_data.get('G_Min') >= dist2s.cleaned_data.get(
+                        'G_Max'):
                         messages_text.append("ERROR: Invalid Domain for Distribution 2!")
 
                     # Warn the user if there are values selected but no output selected
                     if len(dist2s.cleaned_data.get('Output')) == 0:
-                        messages.warning(request, "WARN: You did not select a PDF or CDF for distribution 2.",
+                        messages.warning(request,
+                                         "WARN: You did not select a PDF or CDF for distribution 2.",
                                          extra_tags='alert')
 
             if len(messages_text) == 0:
@@ -95,7 +105,8 @@ def distributions(request) -> HttpResponse:
                 if graph_count == 1:
                     fig = make_subplots(rows=1, cols=1, subplot_titles=[' '])
                 else:
-                    fig = make_subplots(rows=int((graph_count + 1) / 2), cols=2, subplot_titles=[' ', ' ', ' ', ' '])
+                    fig = make_subplots(rows=int((graph_count + 1) / 2), cols=2,
+                                        subplot_titles=[' ', ' ', ' ', ' '])
 
                 g_min1 = dist1s.cleaned_data.get('G_Min') if \
                     dist1s.cleaned_data.get('G_Min') is not None else a.get_region()[0]
@@ -107,11 +118,13 @@ def distributions(request) -> HttpResponse:
 
                 for value in dist1s.cleaned_data.get('Output'):
                     if str(value) == 'pdf':
-                        a.graph_pdf(g_min1, g_max1, fig=fig, geom=(int((count + 1) / 2), 2 - (count % 2)))
+                        a.graph_pdf(g_min1, g_max1, fig=fig,
+                                    geom=(int((count + 1) / 2), 2 - (count % 2)))
                         title = "PDF of " + str(a) if a.continuous else "PMF of " + str(a)
                         titles.append(title)
                     elif str(value) == 'cdf':
-                        a.graph_cdf(g_min1, g_max1, fig=fig, geom=(int((count + 1) / 2), 2 - (count % 2)))
+                        a.graph_cdf(g_min1, g_max1, fig=fig,
+                                    geom=(int((count + 1) / 2), 2 - (count % 2)))
                         titles.append("CDF of " + str(a))
                     count += 1
 
@@ -123,11 +136,13 @@ def distributions(request) -> HttpResponse:
 
                     for values in dist2s.cleaned_data.get('Output'):
                         if str(values) == 'pdf':
-                            b.graph_pdf(g_min2, g_max2, fig=fig, geom=(int((count + 1) / 2), 2 - (count % 2)))
+                            b.graph_pdf(g_min2, g_max2, fig=fig,
+                                        geom=(int((count + 1) / 2), 2 - (count % 2)))
                             title = "PDF of " + str(b) if a.continuous else "PMF of " + str(b)
                             titles.append(title)
                         elif str(values) == 'cdf':
-                            b.graph_cdf(g_min2, g_max2, fig=fig, geom=(int((count + 1) / 2), 2 - (count % 2)))
+                            b.graph_cdf(g_min2, g_max2, fig=fig,
+                                        geom=(int((count + 1) / 2), 2 - (count % 2)))
                             titles.append("CDF of " + str(b))
                         count += 1
 
@@ -146,8 +161,10 @@ def distributions(request) -> HttpResponse:
                 # If they want to make more than one graph, requires a geometry argument
                 if convolution.is_valid() and convolution.get_context():
                     if convolution.cleaned_data["Output"] and a is not None and b is not None:
-                        fig2 = make_subplots(rows=1, cols=2, specs=[[{'type': 'xy'}, {'type': 'surface'}]],
-                                             subplot_titles=["CDF of Convolution", "PDF of Convolution"])
+                        fig2 = make_subplots(rows=1, cols=2,
+                                             specs=[[{'type': 'xy'}, {'type': 'surface'}]],
+                                             subplot_titles=["CDF of Convolution",
+                                                             "PDF of Convolution"])
                         fig3 = None
                         convolution_pdf(a, b, fig=fig2, geom=(1, 2))
                         convolution_cdf(a, b, fig=fig2, geom=(1, 1))
@@ -159,12 +176,14 @@ def distributions(request) -> HttpResponse:
                                 fig3 = two_var_3d(a, b)
 
                         if fig2 is not None:
-                            context['conv_graph'] = fig2.to_html(full_html=False, div_id='conv_graph')
+                            context['conv_graph'] = fig2.to_html(full_html=False,
+                                                                 div_id='conv_graph')
 
                         if fig3 is not None:
                             context['supported'] = fig3.to_html(full_html=False, div_id='supported')
                     elif convolution.cleaned_data["Output"] and b is None:
-                        messages.warning(request, "WARN: Cannot plot convolution, no data in Distribution 2.",
+                        messages.warning(request,
+                                         "WARN: Cannot plot convolution, no data in Distribution 2.",
                                          extra_tags='alert')
             else:
                 for text in messages_text:
@@ -275,13 +294,14 @@ def generating_samples(request):
             if pick_one.get_data() is None:
                 messages_text.append("ERROR: Please Select Distribution 1")
             else:
-            # add messages to the end for all the values that are not present but should be
+                # add messages to the end for all the values that are not present but should be
                 required_vars = ''
                 for key, value in pick_one.get_data().items():
                     if value == '':
                         required_vars += key + ', '
                 if required_vars != '':
-                    messages_text.append("ERROR: No Value/s for {var} in Distribution 1!".format(var=required_vars))
+                    messages_text.append(
+                        "ERROR: No Value/s for {var} in Distribution 1!".format(var=required_vars))
 
             if pick_two.get_data() is not None:
                 required_vars = ''
@@ -289,7 +309,8 @@ def generating_samples(request):
                     if value == '':
                         required_vars += key + ', '
                 if required_vars != '':
-                    messages_text.append("ERROR: No Value/s for {var} in Distribution 2!".format(var=required_vars))
+                    messages_text.append(
+                        "ERROR: No Value/s for {var} in Distribution 2!".format(var=required_vars))
 
             if download_data.cleaned_data.get("convolution"):
                 if pick_two.get_data() is None:
@@ -302,13 +323,15 @@ def generating_samples(request):
                 messages.error(request, text, extra_tags='alert')
         else:
             var1 = dist_selector(pick_one)
-            dataset1 = var1.generate_dataset(data1.cleaned_data.get("n_trials"), data1.cleaned_data.get("std_error"))
+            dataset1 = var1.generate_dataset(data1.cleaned_data.get("n_trials"),
+                                             data1.cleaned_data.get("std_error"))
             fig1 = dataset_plots(var1, dataset1)
             context['graph1'] = fig1.to_html(full_html=False)
 
             if pick_two.get_data() is not None:
                 var2 = dist_selector(pick_two)
-                dataset2 = var2.generate_dataset(data2.cleaned_data.get("n_trials"), data2.cleaned_data.get("std_error"))
+                dataset2 = var2.generate_dataset(data2.cleaned_data.get("n_trials"),
+                                                 data2.cleaned_data.get("std_error"))
                 fig2 = dataset_plots(var2, dataset2)
                 context['graph2'] = fig2.to_html(full_html=False)
 
@@ -322,7 +345,8 @@ def generating_samples(request):
 
             if download_data.cleaned_data.get("download"):
                 response = HttpResponse(content_type='text/csv',
-                                        headers={'Content-Disposition': 'attachment; filename="sample_dataset.csv"'}, )
+                                        headers={
+                                            'Content-Disposition': 'attachment; filename="sample_dataset.csv"'}, )
                 title1 = str(var1) if var1 is not None else ""
                 title2 = str(var2) if var2 is not None else ""
                 title = title1
@@ -335,7 +359,7 @@ def generating_samples(request):
                         dataset2 = dataset2[:mindex]
                     dataset_conv = []
                     for i in range(len(dataset1)):
-                        dataset_conv.append(dataset1[i]*dataset2[i])
+                        dataset_conv.append(dataset1[i] * dataset2[i])
                     bigger_data = list(zip(dataset1, dataset2, dataset_conv))
                     download.writerow(title)
                     download.writerows([trial[0], trial[1], trial[2]] for trial in bigger_data)

@@ -1,9 +1,11 @@
 # StatSite [![Check Django](https://github.com/ltptnt/StatSite/actions/workflows/CheckDjango.yml/badge.svg)](https://github.com/ltptnt/StatSite/actions/workflows/CheckDjango.yml) [![Test Django](https://github.com/ltptnt/StatSite/actions/workflows/TestDjango.yml/badge.svg)](https://github.com/ltptnt/StatSite/actions/workflows/TestDjango.yml)
- 
+
 Python Webserver that Visualises Statistical Models  
 Developed using python 3.10 and will work for version 3.10.0 and greater.  
-See the website: [StatSite](https://statsite.uqcloud.net)  
-## Distributions  
+See the website: [StatSite](https://statsite.uqcloud.net)
+
+## Distributions
+
 The application has the ability to manipulate and visualise the following distributions.
 
 - Exponential: (0, ∞)
@@ -14,5 +16,6 @@ The application has the ability to manipulate and visualise the following distri
 - Poisson: {0, ..., ∞}
 
 ## Authors
+
 - [Chris O'Brien](https://github.com/chrisobi02)
 - [Luke Pearce](https://github.com/ltptnt)
